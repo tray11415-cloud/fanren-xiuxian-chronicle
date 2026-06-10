@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { usePlayer, useLogs } from '../../store/gameStore';
+import { usePlayer, useLogs, useGameStore } from '../../store/gameStore';
+import type { Item } from '../../types';
+import { useUIStore } from '../../store/uiStore';
+import TurnBasedBattleModal from '../../components/TurnBasedBattleModal';
 import { useWorldStore } from '../worldStore';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
@@ -26,8 +29,28 @@ const CanonView: React.FC = () => {
   const world = useWorldStore((s) => s.world);
   const busy = useWorldStore((s) => s.busy);
   const submitAction = useWorldStore((s) => s.submitAction);
+  const resolveChoice = useWorldStore((s) => s.resolveChoice);
+  const applyBattleResult = useWorldStore((s) => s.applyBattleResult);
+  const isBattleOpen = useUIStore((s) => s.modals.isTurnBasedBattleOpen);
+  const battleParams = useUIStore((s) => s.turnBasedBattleParams);
+  const setModal = useUIStore((s) => s.setModal);
+  const setTurnBasedBattleParams = useUIStore((s) => s.setTurnBasedBattleParams);
   const [input, setInput] = useState('');
   const logEndRef = useRef<HTMLDivElement>(null);
+
+  const pendingChoice = world.pendingChoice;
+
+  const handleBattleClose = (
+    result?: { victory: boolean; hpLoss: number; expChange: number; spiritChange: number },
+    updatedInventory?: Item[]
+  ) => {
+    if (updatedInventory) {
+      useGameStore.getState().setPlayer((prev) => (prev ? { ...prev, inventory: updatedInventory } : prev));
+    }
+    if (result) applyBattleResult(result);
+    setModal('isTurnBasedBattleOpen', false);
+    setTurnBasedBattleParams(null);
+  };
 
   const reminders = useMemo(() => buildReminders(world), [world]);
   const region = getRegion(world.currentLocationId);
@@ -51,6 +74,7 @@ const CanonView: React.FC = () => {
   const gfPct = gf && gfRt ? Math.round((gfRt.energy / gf.energyMax) * 100) : 0;
 
   return (
+    <>
     <div className="min-h-screen w-full bg-gradient-to-b from-black via-zinc-950 to-zinc-900 text-zinc-100">
       <div className="mx-auto max-w-6xl px-3 py-4">
         {/* 頂部狀態列 */}
@@ -77,12 +101,32 @@ const CanonView: React.FC = () => {
               <div ref={logEndRef} />
             </div>
 
+            {/* 正史節點・介入抉擇 */}
+            {pendingChoice && (
+              <div className="mt-2 rounded-xl border border-amber-500/70 bg-amber-950/40 p-3 shadow-lg shadow-amber-900/20">
+                <div className="mb-2 whitespace-pre-wrap text-sm text-amber-100">{pendingChoice.prompt}</div>
+                <div className="flex flex-col gap-1.5">
+                  {pendingChoice.options.map((o) => (
+                    <button
+                      key={o.id}
+                      disabled={busy}
+                      onClick={() => resolveChoice(o.id)}
+                      className="rounded-lg border border-amber-700/60 bg-zinc-900/70 px-3 py-2 text-left text-sm text-amber-100 transition hover:border-amber-400 disabled:opacity-50"
+                    >
+                      ▸ {o.text}
+                      {o.hint ? <span className="ml-2 text-xs text-zinc-400">（{o.hint}）</span> : null}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* 快捷行動 */}
             <div className="mt-2 flex flex-wrap gap-1.5">
               {QUICK.map((q) => (
                 <button
                   key={q.label}
-                  disabled={busy}
+                  disabled={busy || !!pendingChoice}
                   onClick={() => submit(q.text)}
                   className="rounded-lg border border-zinc-700 bg-zinc-800/70 px-2.5 py-1.5 text-xs text-zinc-200 transition hover:border-amber-500 disabled:opacity-50"
                 >
@@ -97,12 +141,12 @@ const CanonView: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') submit(input); }}
-                disabled={busy}
-                placeholder="輸入你的行動……（例：前往黃楓谷拜師 / 用背包中的丹藥修煉 / 與南宮婉結交）"
+                disabled={busy || !!pendingChoice}
+                placeholder={pendingChoice ? '請先就上方正史節點做出抉擇……' : '輸入你的行動……（例：前往黃楓谷拜師 / 用背包中的丹藥修煉 / 與南宮婉結交 / 出手攻擊邪修）'}
                 className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm outline-none focus:border-amber-500 disabled:opacity-50"
               />
               <button
-                disabled={busy || !input.trim()}
+                disabled={busy || !input.trim() || !!pendingChoice}
                 onClick={() => submit(input)}
                 className="rounded-lg bg-amber-500 px-5 py-2.5 font-semibold text-black transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-500"
               >
@@ -161,6 +205,18 @@ const CanonView: React.FC = () => {
         </div>
       </div>
     </div>
+    {isBattleOpen && player && battleParams && (
+      <TurnBasedBattleModal
+        isOpen={isBattleOpen}
+        player={player}
+        adventureType={battleParams.adventureType}
+        riskLevel={battleParams.riskLevel}
+        realmMinRealm={battleParams.realmMinRealm}
+        bossId={battleParams.bossId}
+        onClose={handleBattleClose}
+      />
+    )}
+    </>
   );
 };
 

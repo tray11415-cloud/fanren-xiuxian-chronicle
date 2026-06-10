@@ -56,6 +56,20 @@ export function getNpc(idOrName: string): CanonNpcSource | undefined {
   return NPC_MAP[idOrName];
 }
 
+const EVENT_MAP: Record<string, ScheduledEvent> = {};
+for (const e of SCHEDULED_EVENTS) EVENT_MAP[e.id] = e;
+export function getEvent(id: string): ScheduledEvent | undefined {
+  return EVENT_MAP[id];
+}
+
+/** 進度章號 → 可見劇透層級預算（0 公開 → 3 終局）。 */
+export function spoilerBudget(chapter: number): number {
+  if (chapter >= 1900) return 3;
+  if (chapter >= 1180) return 2;
+  if (chapter >= 500) return 1;
+  return 0;
+}
+
 export interface ResolvedNpc {
   locationId: string;
   realm: string;

@@ -3,6 +3,7 @@ import type {
   FanrenWorldState,
   MemoryEntry,
   NpcReaction,
+  TurnChoice,
   TurnResult,
 } from '../types';
 import { advanceTime, dayToChapter, dayToGameTime, daysForScale } from './clock';
@@ -10,7 +11,7 @@ import { parseIntent } from './keywordRouter';
 import { govern, violationFeedback } from './governor';
 import { regenGoldenFinger, useGoldenFinger } from './goldenFinger';
 import { evolveWorld } from './worldEvolution';
-import { allLocationNames, allNpcNames, getNpc, getRegion, resolveNpcAtDay } from './canonLoader';
+import { allLocationNames, allNpcNames, eventsInWindow, getNpc, getRegion, resolveNpcAtDay, spoilerBudget } from './canonLoader';
 import { generateRegion, isUnknownDestination } from './worldExpansion';
 import { buildReminders, makeMemory, recall } from './reminderRecall';
 import { narrate } from './gmService';
@@ -20,6 +21,7 @@ export interface TurnContext {
   player: {
     name: string;
     realm: string;
+    realmType: string; // 純境界（RealmType 列舉值），供戰鬥敵人生成
     exp: number;
     maxExp: number;
     hp: number;
@@ -29,6 +31,14 @@ export interface TurnContext {
     cultivationMult: number; // 由靈根決定的修煉倍率
     inventoryNames: string[];
   };
+}
+
+/** 觸發既有回合制戰鬥的請求（由 worldStore 接 openTurnBasedBattle）。 */
+export interface BattleTrigger {
+  realmMinRealm: string; // 敵人境界（RealmType）
+  riskLevel: '低' | '中' | '高' | '极度危险';
+  context: string; // 戰鬥緣由（敘事用）
+  divergenceEventId?: string; // 若為正史介入戰鬥
 }
 
 export interface PlayerDeltas {
@@ -43,6 +53,7 @@ export interface TurnOutcome {
   worldPatch: Partial<FanrenWorldState>;
   playerDeltas: PlayerDeltas;
   newMemory?: MemoryEntry;
+  battle?: BattleTrigger; // 若本回合應開啟回合制戰鬥
 }
 
 function cultivateExpPerDay(maxExp: number, mult: number): number {
@@ -110,6 +121,7 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
   let newLocationId = w.currentLocationId;
   let gfRuntime = w.goldenFingerRuntime;
   let memoryNote: { summary: string; tags: string[]; important: boolean } | null = null;
+  let battle: BattleTrigger | undefined;
 
   const newDay = oldDay + days;
 
@@ -218,7 +230,11 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
       break;
     }
     case 'fight': {
-      mechanical = `你與對手交手。（戰鬥的勝負與得失，將於戰鬥介面中以回合制定奪——此處先記下你的戰意。）`;
+      const foe = intent.targets.find((t) => getNpc(t));
+      const foeNpc = foe ? getNpc(foe) : undefined;
+      const foeRealm = foeNpc ? String(w.npcStates[foeNpc.id]?.realm || ctx.player.realmType) : ctx.player.realmType;
+      battle = { realmMinRealm: foeRealm, riskLevel: '中', context: foe ? `與${foe}交手` : '與來犯之敵交手' };
+      mechanical = `${foe ? `你向${foe}出手` : '你拔出兵刃，迎向來敵'}，一場惡鬥一觸即發。`;
       logType = 'danger';
       break;
     }
@@ -241,8 +257,38 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
   // ── 時間推進 + 世界演化 ──
   const clock = dayToGameTime(newDay);
   const progressChapter = Math.max(w.progressChapter, dayToChapter(newDay));
+
+  // 正史事件互動式介入：短行動且事件正發生於你所在地 → 暫扣住該事件、生成抉擇
+  let pendingChoice: TurnChoice | null = null;
+  const heldIds = new Set<string>();
+  const interactiveScale = intent.durationScale === 'instant' || intent.durationScale === 'short' || intent.durationScale === 'medium';
+  if (interactiveScale && !battle) {
+    const dueAtLoc = eventsInWindow(oldDay, newDay).filter(
+      (e) =>
+        e.locationId === newLocationId &&
+        e.interventions && e.interventions.length > 0 &&
+        e.spoilerLevel <= spoilerBudget(progressChapter) &&
+        !w.worldEventStates[e.id]?.fired &&
+        !w.worldEventStates[e.id]?.diverged
+    );
+    if (dueAtLoc.length) {
+      const ev = dueAtLoc[0];
+      heldIds.add(ev.id);
+      pendingChoice = {
+        prompt: `【正史節點・${ev.title}】${ev.summary}\n\n此刻你正身處其中——是否介入？`,
+        sourceEventId: ev.id,
+        options: [
+          ...ev.interventions.slice(0, 4).map((iv) => ({ id: iv.id, text: iv.description, hint: iv.minRealm ? `需 ${iv.minRealm}` : undefined })),
+          { id: '__observe__', text: '旁觀，任其依正史發生', hint: '不改寫歷史' },
+        ],
+      };
+      mechanical += `\n\n你恰逢一樁正史變局，正身處其中——天機已動，你的抉擇將決定歷史是否轉向。`;
+      logType = 'special';
+    }
+  }
+
   const evolvingWorld: FanrenWorldState = { ...w, ...worldPatch, currentLocationId: newLocationId, clock, progressChapter };
-  const evo = evolveWorld(evolvingWorld, oldDay, newDay);
+  const evo = evolveWorld(evolvingWorld, oldDay, newDay, heldIds);
 
   // 金手指能量回復（若本回合未主動使用，也隨時間回能）
   if (intent.type !== 'use_golden_finger' && w.goldenFinger && gfRuntime) {
@@ -257,6 +303,7 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
     npcStates: evo.npcStates,
     worldEventStates: evo.worldEventStates,
     goldenFingerRuntime: gfRuntime,
+    pendingChoice,
   };
 
   // ── 敘事 ──
@@ -288,5 +335,5 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
     reminders,
     logType,
   };
-  return { result, worldPatch, playerDeltas, newMemory };
+  return { result, worldPatch, playerDeltas, newMemory, battle };
 }

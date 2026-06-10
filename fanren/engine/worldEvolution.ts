@@ -25,7 +25,8 @@ export interface EvolutionResult {
 export function evolveWorld(
   state: FanrenWorldState,
   oldDay: number,
-  newDay: number
+  newDay: number,
+  heldEventIds?: Set<string>
 ): EvolutionResult {
   const npcStates: Record<string, NpcRuntimeState> = { ...state.npcStates };
   const worldEventStates: Record<string, WorldEventState> = { ...state.worldEventStates };
@@ -36,6 +37,7 @@ export function evolveWorld(
   // 1) 觸發此區間內的正史事件（未被玩家改寫者）
   const due = eventsInWindow(oldDay, newDay);
   for (const ev of due) {
+    if (heldEventIds?.has(ev.id)) continue; // 互動式介入事件：暫不自動觸發，待玩家抉擇
     const prev = worldEventStates[ev.id];
     if (prev?.fired || prev?.diverged) continue;
     worldEventStates[ev.id] = { id: ev.id, fired: true, firedDay: ev.scheduledDay, diverged: false };
