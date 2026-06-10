@@ -9,7 +9,7 @@ import type {
 import { advanceTime, dayToChapter, dayToGameTime, daysForScale } from './clock';
 import { parseIntent } from './keywordRouter';
 import { govern, violationFeedback } from './governor';
-import { regenGoldenFinger, useGoldenFinger } from './goldenFinger';
+import { AWAKEN_NAMES, regenGoldenFinger, useGoldenFinger } from './goldenFinger';
 import { evolveWorld } from './worldEvolution';
 import { allLocationNames, allNpcNames, eventsInWindow, getNpc, getRegion, resolveNpcAtDay, spoilerBudget } from './canonLoader';
 import { generateRegion, isUnknownDestination } from './worldExpansion';
@@ -165,12 +165,16 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
           mechanical = `你發動了「${w.goldenFinger.name}」，獨特之力悄然生效。`;
         }
         logType = 'special';
+        if (ur.awakened) {
+          const nm = AWAKEN_NAMES[Math.min(AWAKEN_NAMES.length, ur.awakenLevel || 1) - 1];
+          mechanical += `\n\n✦ 金手指覺醒！「${w.goldenFinger.name}」臻入「${nm}」之境（覺醒第${ur.awakenLevel}階），自此威能更勝往昔。`;
+        }
         if (ur.anomaly) {
           mechanical += `\n但業力陡增，引動「系統異常」——金手指暫陷沉寂，須待時日方能復原。`;
           logType = 'danger';
         }
       }
-      memoryNote = { summary: `動用金手指「${w.goldenFinger.name}」`, tags: ['金手指'], important: ur.anomaly };
+      memoryNote = { summary: `動用金手指「${w.goldenFinger.name}」`, tags: ['金手指'], important: !!ur.anomaly || !!ur.awakened };
       break;
     }
     case 'travel': {

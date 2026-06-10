@@ -79,6 +79,7 @@ export interface GoldenFingerRuntime {
   usesTotal: number;
   lastRegenDay: number; // 上次回能的絕對天數
   suppressedUntilDay?: number; // 系統異常導致的維修期（暫時失效）
+  awakenLevel?: number; // 覺醒等級：隨使用次數累積，提升威能（0=未覺醒）
 }
 
 // ──────────────────────────────────────────────

@@ -109,7 +109,14 @@ function effectDesc(hook: GoldenFingerEffect['hook']): string {
 }
 
 export function createGoldenFingerRuntime(gf: GoldenFinger, currentDay: number): GoldenFingerRuntime {
-  return { energy: gf.energyMax, karma: 0, usesTotal: 0, lastRegenDay: currentDay };
+  return { energy: gf.energyMax, karma: 0, usesTotal: 0, lastRegenDay: currentDay, awakenLevel: 0 };
+}
+
+// 覺醒里程碑（累計使用次數）。每跨一階，威能上升。
+export const AWAKEN_THRESHOLDS = [15, 40, 80, 150];
+export const AWAKEN_NAMES = ['初窺門徑', '小有所成', '駕輕就熟', '臻於化境', '通神入聖'];
+export function awakenBoost(level: number): number {
+  return 1 + level * 0.3; // 每階 +30% 威能
 }
 
 /** 依經過天數回復能量（純函式，回傳新 runtime）。 */
@@ -128,6 +135,8 @@ export interface UseResult {
   effect?: GoldenFingerEffect;
   runtime: GoldenFingerRuntime;
   anomaly?: boolean; // 是否觸發系統異常
+  awakened?: boolean; // 本次是否跨入新覺醒階
+  awakenLevel?: number; // 當前覺醒階
 }
 
 export const KARMA_ANOMALY_THRESHOLD = 60;
@@ -143,11 +152,19 @@ export function useGoldenFinger(rt: GoldenFingerRuntime, gf: GoldenFinger, curre
   const energy = r.energy - gf.energyCostPerUse;
   const karma = r.karma + gf.karmaPerUse;
   let runtime: GoldenFingerRuntime = { ...r, energy, karma, usesTotal: r.usesTotal + 1 };
+  // 覺醒判定：使用次數跨越里程碑 → 提升覺醒階
+  const prevAwaken = r.awakenLevel || 0;
+  const newAwaken = AWAKEN_THRESHOLDS.filter((t) => runtime.usesTotal >= t).length;
+  const awakened = newAwaken > prevAwaken;
+  runtime.awakenLevel = newAwaken;
+  // 依覺醒階放大威能
+  const baseEff = gf.effects[0];
+  const effect: GoldenFingerEffect = { ...baseEff, magnitude: baseEff.magnitude * awakenBoost(newAwaken) };
   let anomaly = false;
   if (karma >= KARMA_ANOMALY_THRESHOLD) {
     // 業力爆表 → 系統異常（維修期），業力清零
     runtime = { ...runtime, karma: 0, suppressedUntilDay: currentDay + 30 + gf.powerTier * 10 };
     anomaly = true;
   }
-  return { ok: true, effect: gf.effects[0], runtime, anomaly };
+  return { ok: true, effect, runtime, anomaly, awakened, awakenLevel: newAwaken };
 }

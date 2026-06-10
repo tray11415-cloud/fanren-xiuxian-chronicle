@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { usePlayer, useLogs } from '../../store/gameStore';
 import { useUIStore } from '../../store/uiStore';
 import { useWorldStore } from '../worldStore';
+import ChroniclePanel from './ChroniclePanel';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
 import { getRegion } from '../engine/canonLoader';
@@ -44,6 +45,7 @@ const CanonView: React.FC = () => {
   const resolveChoice = useWorldStore((s) => s.resolveChoice);
   const setModal = useUIStore((s) => s.setModal);
   const [input, setInput] = useState('');
+  const [showChronicle, setShowChronicle] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const pendingChoice = world.pendingChoice;
@@ -85,6 +87,12 @@ const CanonView: React.FC = () => {
 
         {/* 系統工具列：開啟既有功能（背包/角色/煉丹/洞府/宗門…） */}
         <div className="mb-3 flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setShowChronicle(true)}
+            className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400"
+          >
+            📜 史冊
+          </button>
           {SYSTEM_TABS.map((t) => (
             <button
               key={t.key}
@@ -180,7 +188,10 @@ const CanonView: React.FC = () => {
             {/* 金手指 */}
             {gf && gfRt && (
               <div className="rounded-xl border border-amber-800/50 bg-amber-950/20 p-3">
-                <div className="mb-1 text-sm font-semibold text-amber-300">金手指 · {gf.name}</div>
+                <div className="mb-0.5 text-sm font-semibold text-amber-300">金手指 · {gf.name}</div>
+                <div className="mb-1 text-xs text-cyan-300/80">
+                  {gfRt.awakenLevel ? `✦ 覺醒第${gfRt.awakenLevel}階（威能+${gfRt.awakenLevel * 30}%）` : '尚未覺醒'} · 已動用 {gfRt.usesTotal} 次
+                </div>
                 <div className="mb-1 flex justify-between text-xs text-zinc-400">
                   <span>能量</span><span>{Math.floor(gfRt.energy)}/{gf.energyMax}</span>
                 </div>
@@ -214,6 +225,7 @@ const CanonView: React.FC = () => {
         </div>
       </div>
     </div>
+    {showChronicle && <ChroniclePanel world={world} player={player} onClose={() => setShowChronicle(false)} />}
     </>
   );
 };
