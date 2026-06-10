@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { WORLD_MAP } from '../data/worldMap';
 import type { WorldMapNode } from '../types';
 import { useWorldStore } from '../worldStore';
+import { connectionNamesOf, isConcretePlace } from '../engine/mapIntel';
 
 interface Props { onClose: () => void; onTravel: (name: string) => void; }
 
@@ -36,13 +37,18 @@ const MapPanel: React.FC<Props> = ({ onClose, onTravel }) => {
   const renderNode = (n: WorldMapNode, depth: number): React.ReactNode => {
     const kids = childrenOf[n.id] || [];
     const isHere = n.name === here;
+    const concrete = isConcretePlace(n); // 只有具體地點（葉節點）才可前往
+    const conns = connectionNamesOf(n.name);
     return (
       <div key={n.id} style={{ marginLeft: depth * 12 }} className="mt-1">
-        <div className={`rounded-lg border px-2 py-1.5 ${isHere ? 'border-amber-400 bg-amber-500/15' : 'border-zinc-800 bg-zinc-900/50'}`}>
+        <div className={`rounded-lg border px-2 py-1.5 ${isHere ? 'border-amber-400 bg-amber-500/15' : concrete ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-800/60 bg-zinc-900/20'}`}>
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-semibold ${isHere ? 'text-amber-200' : 'text-zinc-200'}`}>{depth > 0 ? '└ ' : ''}{n.name}{isHere ? '（你在此）' : ''}</span>
+            <span className={`text-sm ${concrete ? 'font-semibold' : 'font-medium text-zinc-400'} ${isHere ? 'text-amber-200' : concrete ? 'text-zinc-200' : ''}`}>
+              {depth > 0 ? '└ ' : ''}{!concrete ? '◇ ' : ''}{n.name}{isHere ? '（你在此）' : ''}
+            </span>
             {n.firstVolume ? <span className="text-[10px] text-zinc-600">V{n.firstVolume}</span> : null}
-            {!isHere && !tierLocked && (
+            {!concrete && kids.length > 0 ? <span className="text-[10px] text-zinc-600">（{kids.length}處）</span> : null}
+            {concrete && !isHere && !tierLocked && (
               <button
                 disabled={busy}
                 onClick={() => { onTravel(n.name); onClose(); }}
@@ -54,6 +60,7 @@ const MapPanel: React.FC<Props> = ({ onClose, onTravel }) => {
           </div>
           {n.description && <div className="mt-0.5 text-[11px] text-zinc-400">{n.description}</div>}
           {n.factions && n.factions.length > 0 && <div className="text-[11px] text-zinc-600">勢力：{n.factions.slice(0, 5).join('、')}</div>}
+          {conns.length > 0 && <div className="text-[11px] text-emerald-300/50">通往：{conns.join('、')}</div>}
         </div>
         {kids.map((k) => renderNode(k, Math.min(depth + 1, 5)))}
       </div>

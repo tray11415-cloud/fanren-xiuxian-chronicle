@@ -2,6 +2,7 @@ import React from 'react';
 import type { FanrenWorldState } from '../types';
 import type { PlayerStats } from '../../types';
 import { SCHEDULED_EVENTS, spoilerBudget } from '../engine/canonLoader';
+import { factionTerritories } from '../engine/mapIntel';
 import { formatTime } from '../engine/clock';
 import { ORIGINS, DAO_HEARTS } from '../data/creationOptions';
 
@@ -24,7 +25,9 @@ const ChroniclePanel: React.FC<Props> = ({ world, player, onClose }) => {
   const upcoming = SCHEDULED_EVENTS.filter(
     (e) => e.scheduledDay > world.clock.totalDays && e.spoilerLevel <= budget && !world.worldEventStates[e.id]?.fired
   ).slice(0, 6);
-  const factions = Object.values(world.factionStates || {}).sort((a, b) => b.power - a.power).slice(0, 10);
+  const territories = factionTerritories().slice(0, 12);
+  const maxTerr = territories[0]?.score || 1;
+  const factionStatus = (name: string): string | undefined => (world.factionStates || {})[name]?.status;
   const gf = world.goldenFinger;
   const gfRt = world.goldenFingerRuntime;
   const mechanics = world.mechanics || [];
@@ -117,17 +120,25 @@ const ChroniclePanel: React.FC<Props> = ({ world, player, onClose }) => {
           </div>
 
           <div className={section}>
-            <div className={h}>勢力榜</div>
-            <div className="space-y-1 text-xs text-zinc-300">
-              {factions.map((f) => (
-                <div key={f.id} className="flex items-center gap-2">
-                  <span className="w-20 shrink-0 truncate">{f.name}</span>
-                  <span className="h-1.5 flex-1 overflow-hidden rounded bg-zinc-800">
-                    <span className="block h-full bg-gradient-to-r from-amber-700 to-amber-400" style={{ width: `${Math.min(100, f.power)}%` }} />
-                  </span>
-                  <span className="w-8 text-right text-zinc-500">{f.power}</span>
-                </div>
-              ))}
+            <div className={h}>勢力榜 <span className="text-xs text-zinc-500">（依地圖地盤）</span></div>
+            <div className="space-y-1.5 text-xs text-zinc-300">
+              {territories.map((t) => {
+                const destroyed = factionStatus(t.name) === 'destroyed';
+                return (
+                  <div key={t.name}>
+                    <div className="flex items-center gap-2">
+                      <span className={`w-24 shrink-0 truncate ${destroyed ? 'text-zinc-600 line-through' : ''}`}>{t.name}</span>
+                      <span className="h-1.5 flex-1 overflow-hidden rounded bg-zinc-800">
+                        <span className="block h-full bg-gradient-to-r from-amber-700 to-amber-400" style={{ width: `${Math.round((t.score / maxTerr) * 100)}%` }} />
+                      </span>
+                      <span className="w-10 text-right text-zinc-500">{t.locations.length}地</span>
+                    </div>
+                    <div className="pl-1 text-[10px] text-zinc-600">
+                      {t.locations.slice(0, 4).join('、')}{t.locations.length > 4 ? '…' : ''}{destroyed ? '（已覆滅）' : ''}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             {knownNpcs.length > 0 && (
               <div className="mt-2 border-t border-zinc-800 pt-2 text-xs text-zinc-400">
