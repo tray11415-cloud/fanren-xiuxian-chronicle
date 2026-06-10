@@ -18,6 +18,11 @@ import ModeChooser from './fanren/ui/ModeChooser';
 import { useWorldStore } from './fanren/worldStore';
 import { buildCanonPlayer } from './fanren/engine/charBuild';
 import type { CharacterCreation } from './fanren/types';
+// canon 模式下複用既有模態框基礎設施
+import ModalsContainer from './views/modals/ModalsContainer';
+import AlertModal from './components/AlertModal';
+import TribulationModal from './components/TribulationModal';
+import DeathModal from './components/DeathModal';
 
 import { SaveData } from './utils/saveManagerUtils';
 import { BattleReplay } from './services/battleService';
@@ -493,9 +498,60 @@ function App() {
     );
   }
 
-  // 凡人編年史模式：遊戲進行中（取代主流程）
+  // 凡人編年史模式：遊戲進行中（取代主流程，但複用既有模態框基礎設施）
   if (canonWorld.enabled && player) {
-    return <CanonView />;
+    return (
+      <>
+        <CanonView />
+        {isAnyModalOpen && (
+          <ModalsContainer
+            player={player}
+            settings={settings}
+            setItemActionLog={setItemActionLog}
+            autoAdventure={autoAdventure}
+            handlers={modalsHandlers as any}
+          />
+        )}
+        {alertState && (
+          <AlertModal
+            isOpen={alertState.isOpen}
+            onClose={closeAlert}
+            type={alertState.type}
+            title={alertState.title}
+            message={alertState.message}
+            onConfirm={alertState.onConfirm}
+            showCancel={alertState.showCancel}
+            onCancel={alertState.onCancel}
+          />
+        )}
+        {tribulationState && (
+          <TribulationModal
+            tribulationState={tribulationState}
+            onTribulationComplete={handleTribulationComplete}
+            player={player}
+          />
+        )}
+        {isDead && player && (
+          <DeathModal
+            isOpen={isDead}
+            player={player}
+            battleData={deathBattleData}
+            deathReason={deathReason}
+            difficulty={settings.difficulty || 'normal'}
+            onRebirth={handleRebirth}
+            onContinue={
+              settings.difficulty !== 'hard'
+                ? () => {
+                    setIsDead(false);
+                    setDeathBattleData(null);
+                    setDeathReason('');
+                  }
+                : undefined
+            }
+          />
+        )}
+      </>
+    );
   }
 
   // 凡人編年史模式：創角中

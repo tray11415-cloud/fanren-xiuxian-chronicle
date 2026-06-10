@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { usePlayer, useLogs, useGameStore } from '../../store/gameStore';
-import type { Item } from '../../types';
+import { usePlayer, useLogs } from '../../store/gameStore';
 import { useUIStore } from '../../store/uiStore';
-import TurnBasedBattleModal from '../../components/TurnBasedBattleModal';
 import { useWorldStore } from '../worldStore';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
@@ -23,6 +21,20 @@ const QUICK = [
   { label: '動用金手指', text: '發動我的金手指' },
 ];
 
+// 系統工具列：開啟既有功能模態框（背包/角色/煉丹/洞府…）
+const SYSTEM_TABS: { key: string; label: string; icon: string }[] = [
+  { key: 'isCharacterOpen', label: '角色', icon: '👤' },
+  { key: 'isInventoryOpen', label: '背包', icon: '🎒' },
+  { key: 'isCultivationOpen', label: '功法', icon: '📖' },
+  { key: 'isAlchemyOpen', label: '煉丹', icon: '⚗️' },
+  { key: 'isGrottoOpen', label: '洞府', icon: '🏔️' },
+  { key: 'isSectOpen', label: '宗門', icon: '🏛️' },
+  { key: 'isPetOpen', label: '靈寵', icon: '🐉' },
+  { key: 'isRealmOpen', label: '境界', icon: '🌌' },
+  { key: 'isAchievementOpen', label: '成就', icon: '🏆' },
+  { key: 'isSettingsOpen', label: '設定', icon: '⚙️' },
+];
+
 const CanonView: React.FC = () => {
   const player = usePlayer();
   const logs = useLogs();
@@ -30,27 +42,11 @@ const CanonView: React.FC = () => {
   const busy = useWorldStore((s) => s.busy);
   const submitAction = useWorldStore((s) => s.submitAction);
   const resolveChoice = useWorldStore((s) => s.resolveChoice);
-  const applyBattleResult = useWorldStore((s) => s.applyBattleResult);
-  const isBattleOpen = useUIStore((s) => s.modals.isTurnBasedBattleOpen);
-  const battleParams = useUIStore((s) => s.turnBasedBattleParams);
   const setModal = useUIStore((s) => s.setModal);
-  const setTurnBasedBattleParams = useUIStore((s) => s.setTurnBasedBattleParams);
   const [input, setInput] = useState('');
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const pendingChoice = world.pendingChoice;
-
-  const handleBattleClose = (
-    result?: { victory: boolean; hpLoss: number; expChange: number; spiritChange: number },
-    updatedInventory?: Item[]
-  ) => {
-    if (updatedInventory) {
-      useGameStore.getState().setPlayer((prev) => (prev ? { ...prev, inventory: updatedInventory } : prev));
-    }
-    if (result) applyBattleResult(result);
-    setModal('isTurnBasedBattleOpen', false);
-    setTurnBasedBattleParams(null);
-  };
 
   const reminders = useMemo(() => buildReminders(world), [world]);
   const region = getRegion(world.currentLocationId);
@@ -85,6 +81,19 @@ const CanonView: React.FC = () => {
           <span className="text-zinc-400">📍 {region?.name || world.currentLocationId}</span>
           <span className="text-emerald-300/90">壽元 {Math.floor(player.lifespan)}/{player.maxLifespan}</span>
           <span className="ml-auto text-zinc-400">靈石 {player.spiritStones}</span>
+        </div>
+
+        {/* 系統工具列：開啟既有功能（背包/角色/煉丹/洞府/宗門…） */}
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {SYSTEM_TABS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setModal(t.key as any, true)}
+              className="rounded-lg border border-zinc-700 bg-zinc-800/60 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-500 hover:text-amber-200"
+            >
+              {t.icon} {t.label}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
@@ -205,17 +214,6 @@ const CanonView: React.FC = () => {
         </div>
       </div>
     </div>
-    {isBattleOpen && player && battleParams && (
-      <TurnBasedBattleModal
-        isOpen={isBattleOpen}
-        player={player}
-        adventureType={battleParams.adventureType}
-        riskLevel={battleParams.riskLevel}
-        realmMinRealm={battleParams.realmMinRealm}
-        bossId={battleParams.bossId}
-        onClose={handleBattleClose}
-      />
-    )}
     </>
   );
 };
