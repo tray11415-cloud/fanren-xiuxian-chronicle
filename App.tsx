@@ -11,6 +11,13 @@ import {
 import WelcomeScreen from './components/WelcomeScreen';
 import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
+// 凡人編年史模式
+import CanonCreation from './fanren/ui/CanonCreation';
+import CanonView from './fanren/ui/CanonView';
+import ModeChooser from './fanren/ui/ModeChooser';
+import { useWorldStore } from './fanren/worldStore';
+import { buildCanonPlayer } from './fanren/engine/charBuild';
+import type { CharacterCreation } from './fanren/types';
 
 import { SaveData } from './utils/saveManagerUtils';
 import { BattleReplay } from './services/battleService';
@@ -134,6 +141,33 @@ function App() {
     setIsTreasureVaultOpen,
     setIsAutoAdventureConfigOpen,
   } = modalSetters;
+
+  // ========== 凡人編年史模式 ==========
+  const canonWorld = useWorldStore((s) => s.world);
+  const initCanonWorld = useWorldStore((s) => s.initCanonWorld);
+  const resetCanonWorld = useWorldStore((s) => s.reset);
+  const [canonCreating, setCanonCreating] = useState(false);
+  const [classicMode, setClassicMode] = useState(false);
+
+  const handleCanonComplete = useCallback(
+    (creation: CharacterCreation) => {
+      const newPlayer = buildCanonPlayer(creation);
+      setPlayer(newPlayer);
+      setLogs([
+        {
+          id: `${Date.now()}-canon-1`,
+          text: `【凡人修仙·編年史】${creation.name}的仙途自此開始。${creation.goldenFinger ? `你身懷本命機緣「${creation.goldenFinger.name}」。` : ''}`,
+          type: 'special',
+          timestamp: Date.now(),
+        },
+      ]);
+      setGameStarted(true);
+      setHasSave(true);
+      initCanonWorld(creation);
+      setCanonCreating(false);
+    },
+    [setPlayer, setLogs, setGameStarted, setHasSave, initCanonWorld]
+  );
 
   // ========== 本地状态 ==========
   const [showWelcome, setShowWelcome] = useState(true);
@@ -459,13 +493,34 @@ function App() {
     );
   }
 
+  // 凡人編年史模式：遊戲進行中（取代主流程）
+  if (canonWorld.enabled && player) {
+    return <CanonView />;
+  }
+
+  // 凡人編年史模式：創角中
+  if (canonCreating) {
+    return <CanonCreation onComplete={handleCanonComplete} onBack={() => setCanonCreating(false)} />;
+  }
+
   // 加载中
   if (hasSave && !player && gameStarted) {
     return <LoadingScreen />;
   }
 
-  // 开始界面
+  // 开始界面：先選模式
   if (!hasSave && (!gameStarted || !player)) {
+    if (!classicMode) {
+      return (
+        <ModeChooser
+          onCanon={() => {
+            resetCanonWorld();
+            setCanonCreating(true);
+          }}
+          onClassic={() => setClassicMode(true)}
+        />
+      );
+    }
     return <StartScreen onStart={handleStartGame} />;
   }
 

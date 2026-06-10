@@ -1,0 +1,167 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { usePlayer, useLogs } from '../../store/gameStore';
+import { useWorldStore } from '../worldStore';
+import { formatTime } from '../engine/clock';
+import { buildReminders } from '../engine/reminderRecall';
+import { getRegion } from '../engine/canonLoader';
+
+const logColor: Record<string, string> = {
+  normal: 'text-zinc-300',
+  gain: 'text-emerald-300',
+  danger: 'text-rose-300',
+  special: 'text-amber-300',
+};
+
+const QUICK = [
+  { label: '閉關修煉十年', text: '閉關修煉十年' },
+  { label: '外出歷練', text: '外出歷練查探一番' },
+  { label: '查看天下動向', text: '查看天下動向與四周' },
+  { label: '回憶往事', text: '回憶我過去發生過什麼' },
+  { label: '動用金手指', text: '發動我的金手指' },
+];
+
+const CanonView: React.FC = () => {
+  const player = usePlayer();
+  const logs = useLogs();
+  const world = useWorldStore((s) => s.world);
+  const busy = useWorldStore((s) => s.busy);
+  const submitAction = useWorldStore((s) => s.submitAction);
+  const [input, setInput] = useState('');
+  const logEndRef = useRef<HTMLDivElement>(null);
+
+  const reminders = useMemo(() => buildReminders(world), [world]);
+  const region = getRegion(world.currentLocationId);
+
+  useEffect(() => {
+    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs.length]);
+
+  if (!player) return null;
+
+  const submit = (text: string) => {
+    const t = text.trim();
+    if (!t || busy) return;
+    setInput('');
+    void submitAction(t);
+  };
+
+  const expPct = Math.min(100, Math.round((player.exp / Math.max(1, player.maxExp)) * 100));
+  const gf = world.goldenFinger;
+  const gfRt = world.goldenFingerRuntime;
+  const gfPct = gf && gfRt ? Math.round((gfRt.energy / gf.energyMax) * 100) : 0;
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-b from-black via-zinc-950 to-zinc-900 text-zinc-100">
+      <div className="mx-auto max-w-6xl px-3 py-4">
+        {/* 頂部狀態列 */}
+        <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-amber-900/40 bg-zinc-900/70 px-4 py-2 text-sm">
+          <span className="font-semibold text-amber-300">{player.name}</span>
+          <span className="text-zinc-300">{player.realm}{player.realmLevel}層</span>
+          <span className="text-amber-200/80">{formatTime(world.clock)}</span>
+          <span className="text-zinc-400">📍 {region?.name || world.currentLocationId}</span>
+          <span className="text-emerald-300/90">壽元 {Math.floor(player.lifespan)}/{player.maxLifespan}</span>
+          <span className="ml-auto text-zinc-400">靈石 {player.spiritStones}</span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+          {/* 左：敘事 + 輸入 */}
+          <div className="lg:col-span-2 flex flex-col">
+            <div className="h-[58vh] overflow-y-auto rounded-xl border border-zinc-800 bg-black/40 p-4 leading-relaxed">
+              {logs.length === 0 && <div className="text-zinc-500">你的仙途自此展開……輸入你的行動，或點選下方快捷。</div>}
+              {logs.map((l) => (
+                <p key={l.id} className={`mb-3 whitespace-pre-wrap ${logColor[l.type] || 'text-zinc-300'}`}>
+                  {l.text}
+                </p>
+              ))}
+              {busy && <p className="animate-pulse text-amber-400/70">（天機演算中……）</p>}
+              <div ref={logEndRef} />
+            </div>
+
+            {/* 快捷行動 */}
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {QUICK.map((q) => (
+                <button
+                  key={q.label}
+                  disabled={busy}
+                  onClick={() => submit(q.text)}
+                  className="rounded-lg border border-zinc-700 bg-zinc-800/70 px-2.5 py-1.5 text-xs text-zinc-200 transition hover:border-amber-500 disabled:opacity-50"
+                >
+                  {q.label}
+                </button>
+              ))}
+            </div>
+
+            {/* 輸入列 */}
+            <div className="mt-2 flex gap-2">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') submit(input); }}
+                disabled={busy}
+                placeholder="輸入你的行動……（例：前往黃楓谷拜師 / 用背包中的丹藥修煉 / 與南宮婉結交）"
+                className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm outline-none focus:border-amber-500 disabled:opacity-50"
+              />
+              <button
+                disabled={busy || !input.trim()}
+                onClick={() => submit(input)}
+                className="rounded-lg bg-amber-500 px-5 py-2.5 font-semibold text-black transition hover:bg-amber-400 disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-500"
+              >
+                行動
+              </button>
+            </div>
+          </div>
+
+          {/* 右：狀態 / 提醒 / 金手指 */}
+          <div className="space-y-3">
+            {/* 修為 */}
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+              <div className="mb-1 flex justify-between text-xs text-zinc-400">
+                <span>修為</span><span>{expPct}%</span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded bg-zinc-800">
+                <div className="h-full bg-gradient-to-r from-amber-600 to-amber-400" style={{ width: `${expPct}%` }} />
+              </div>
+              {expPct >= 100 && <div className="mt-1 text-xs text-amber-300">修為已滿，可尋機突破境界。</div>}
+            </div>
+
+            {/* 金手指 */}
+            {gf && gfRt && (
+              <div className="rounded-xl border border-amber-800/50 bg-amber-950/20 p-3">
+                <div className="mb-1 text-sm font-semibold text-amber-300">金手指 · {gf.name}</div>
+                <div className="mb-1 flex justify-between text-xs text-zinc-400">
+                  <span>能量</span><span>{Math.floor(gfRt.energy)}/{gf.energyMax}</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded bg-zinc-800">
+                  <div className="h-full bg-gradient-to-r from-cyan-600 to-cyan-300" style={{ width: `${gfPct}%` }} />
+                </div>
+                <div className="mt-1 text-xs text-zinc-400">業力 {Math.floor(gfRt.karma)}/60 {gfRt.suppressedUntilDay && world.clock.totalDays < gfRt.suppressedUntilDay ? '· ⚠ 異常維修中' : ''}</div>
+                <button disabled={busy} onClick={() => submit('發動金手指')} className="mt-2 w-full rounded-lg border border-cyan-700/60 bg-cyan-900/30 py-1.5 text-xs text-cyan-200 hover:border-cyan-400 disabled:opacity-50">
+                  發動
+                </button>
+              </div>
+            )}
+
+            {/* 世界提醒 */}
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+              <div className="mb-2 text-sm font-semibold text-amber-300">📜 天機提醒</div>
+              <div className="space-y-1.5 text-xs text-zinc-300">
+                {reminders.map((r, i) => (
+                  <div key={i} className="flex gap-1.5">
+                    <span>{r.kind === 'opportunity' ? '✦' : r.kind === 'npc_nearby' ? '👤' : r.kind === 'danger' ? '⚠' : r.kind === 'world_event' ? '🌐' : '·'}</span>
+                    <span>{r.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3 text-xs text-zinc-500">
+              提示：世界依正史自然流轉。你可改寫命運，但無法憑空成神。閉關會跳過漫長歲月，期間天下大事照常發生。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CanonView;
