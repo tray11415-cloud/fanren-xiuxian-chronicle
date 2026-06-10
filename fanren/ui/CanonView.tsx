@@ -44,6 +44,7 @@ const CanonView: React.FC = () => {
   const busy = useWorldStore((s) => s.busy);
   const submitAction = useWorldStore((s) => s.submitAction);
   const resolveChoice = useWorldStore((s) => s.resolveChoice);
+  const onKill = useWorldStore((s) => s.onKill);
   const setModal = useUIStore((s) => s.setModal);
   const [input, setInput] = useState('');
   const [showChronicle, setShowChronicle] = useState(false);
@@ -58,6 +59,14 @@ const CanonView: React.FC = () => {
   useEffect(() => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs.length]);
+
+  // 戰鬥擊殺自動觸發 on:'kill' 異能（吞噬/吸取）
+  const killCount = player?.statistics?.killCount ?? 0;
+  const prevKillRef = useRef(killCount);
+  useEffect(() => {
+    if (killCount > prevKillRef.current) onKill();
+    prevKillRef.current = killCount;
+  }, [killCount, onKill]);
 
   if (!player) return null;
 

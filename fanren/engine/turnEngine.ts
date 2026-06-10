@@ -384,6 +384,8 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
     reactions,
     playerRealm: ctx.player.realm,
     playerName: ctx.player.name,
+    mechanics: (w.mechanics || []).map((m) => ({ name: m.name, category: m.category, summary: m.summary })),
+    activeMechanic: isDevour && activation ? activation.spec.name : undefined,
   });
 
   const reminders = buildReminders({ ...evolvingWorld, ...worldPatch });

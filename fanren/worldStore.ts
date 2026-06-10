@@ -8,7 +8,7 @@ import { runTurn } from './engine/turnEngine';
 import { markDivergence } from './engine/worldEvolution';
 import { makeMemory } from './engine/reminderRecall';
 import { createGoldenFingerRuntime } from './engine/goldenFinger';
-import { passiveStatBonus } from './engine/mechanics';
+import { applyTrigger, passiveStatBonus } from './engine/mechanics';
 import { extrapolateMechanic, extrapolateMechanicSync } from './engine/extrapolate';
 import { CANON_FACTIONS } from './data/factions';
 import { ORIGINS, SPIRITUAL_ROOT_PROFILES } from './data/creationOptions';
@@ -103,6 +103,7 @@ interface WorldStoreState {
   resolveChoice: (optionId: string) => void;
   applyBattleResult: (result: { victory: boolean; hpLoss: number; expChange: number; spiritChange: number; spiritStones?: number }) => void;
   createMechanic: (rawText: string, kind: 'ability' | 'art' | 'recipe') => Promise<void>;
+  onKill: () => void; // 戰鬥擊殺後觸發 on:'kill' 機制（吞噬/吸取等）
   reset: () => void;
 }
 
@@ -314,6 +315,38 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
       result.victory ? 'gain' : 'danger'
     );
     set({ pendingBattle: null });
+  },
+
+  // 戰鬥擊殺 → 執行所有 on:'kill' 機制（如噬靈祕術、奪元大法）
+  onKill: () => {
+    const gameStore = useGameStore.getState();
+    const player = gameStore.player;
+    const world = get().world;
+    if (!player || !world.enabled || !world.mechanics.length) return;
+    const day = world.clock.totalDays;
+    const mechanics = world.mechanics.map((m) => ({ ...m, gainedByEffect: { ...m.gainedByEffect }, dailyByEffect: { ...m.dailyByEffect } }));
+    let karma = 0;
+    const deltas: Record<string, number> = {};
+    const notes: string[] = [];
+    let any = false;
+    for (const spec of mechanics) {
+      const r = applyTrigger(spec, 'kill', { day, maxHp: player.maxHp });
+      if (!r.applied) continue;
+      any = true;
+      for (const k of Object.keys(r.deltas)) deltas[k] = (deltas[k] || 0) + (r.deltas as any)[k];
+      karma += r.karma;
+      if (r.narrative) notes.push(`〔${spec.name}〕${r.narrative}`);
+    }
+    if (!any) return;
+    gameStore.setPlayer((prev) => {
+      if (!prev) return prev;
+      const base = applyStatDeltas(prev, deltas);
+      return { ...base, exp: Math.min(prev.maxExp, prev.exp + (deltas.exp || 0)), spiritStones: prev.spiritStones + (deltas.spiritStones || 0), luck: prev.luck + (deltas.luck || 0) };
+    });
+    const nextWorld = { ...world, mechanics, karma: world.karma + karma };
+    persistWorld(nextWorld);
+    set({ world: nextWorld });
+    gameStore.addLog(`【戰利・異能】${notes.join('；')}${karma > 0 ? `（業力 +${Math.round(karma)}）` : ''}`, 'danger');
   },
 
   // 自創/改良：把玩家文本演繹成新機制（異能/功法/丹方）
