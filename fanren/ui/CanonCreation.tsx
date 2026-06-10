@@ -3,6 +3,7 @@ import type { CharacterCreation, GoldenFinger } from '../types';
 import { ORIGINS, SPIRITUAL_ROOT_PROFILES, DAO_HEARTS } from '../data/creationOptions';
 import { GOLDEN_FINGER_ARCHETYPES } from '../data/goldenFingerArchetypes';
 import { parseGoldenFinger } from '../engine/goldenFinger';
+import { extrapolateMechanicSync } from '../engine/extrapolate';
 
 interface Props {
   onComplete: (creation: CharacterCreation) => void;
@@ -25,7 +26,13 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
   const [rootId, setRootId] = useState(SPIRITUAL_ROOT_PROFILES[3]?.id || SPIRITUAL_ROOT_PROFILES[0]?.id || '');
   const [daoId, setDaoId] = useState(DAO_HEARTS[0]?.id || '');
   const [gfText, setGfText] = useState('');
+  const [abilityText, setAbilityText] = useState('');
   const [difficulty, setDifficulty] = useState<'easy' | 'normal' | 'hard'>('normal');
+
+  const abilityPreview = useMemo(
+    () => (abilityText.trim().length >= 4 ? extrapolateMechanicSync(abilityText, 'ability') : null),
+    [abilityText]
+  );
 
   const origin = ORIGINS.find((o) => o.id === originId);
   const root = SPIRITUAL_ROOT_PROFILES.find((r) => r.id === rootId);
@@ -48,6 +55,7 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
       startingArtIds: origin?.startingArtIds || [],
       startingItemRefs: origin?.startingItemRefs || [],
       goldenFinger: gfPreview,
+      abilityText: abilityText.trim() || undefined,
       difficulty,
     };
     onComplete(creation);
@@ -162,6 +170,30 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
                 <div className="mt-1 text-zinc-400">能量 {gfPreview.energyMax}（每日回{gfPreview.energyRegenPerDay}，每次耗{gfPreview.energyCostPerUse}）· 每次業力+{gfPreview.karmaPerUse}</div>
                 <div className="mt-1 text-rose-300/80">限制：{gfPreview.limits.join('；')}</div>
                 <div className="text-rose-300/60">盲區：{gfPreview.blindSpots.join('；')}</div>
+              </div>
+            )}
+          </div>
+
+          {/* 天生異能 */}
+          <div className={card}>
+            <div className={label}>天生異能 / 特殊體質（選填 — 用文字描述，系統會「演繹」成可執行的遊戲機制）</div>
+            <textarea
+              value={abilityText}
+              onChange={(e) => setAbilityText(e.target.value)}
+              rows={2}
+              placeholder="例：我有種能吞噬他人屍體增進自身能力的功法 / 我天生肉身不壞 / 我能洞察萬物來歷真偽……"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm outline-none focus:border-rose-500"
+            />
+            {abilityPreview && (
+              <div className="mt-3 rounded-lg border border-rose-700/40 bg-rose-950/20 p-3 text-xs">
+                <div className="font-semibold text-rose-300">演繹結果：「{abilityPreview.name}」 · {abilityPreview.category} · {abilityPreview.powerTier}/5階</div>
+                <div className="mt-1 text-zinc-300">{abilityPreview.summary}</div>
+                <div className="mt-1 text-zinc-400">
+                  觸發：{abilityPreview.triggers.map((t) => t.on).join('、')}　影響：
+                  {abilityPreview.triggers.flatMap((t) => t.effects).map((e) => (e.type === 'permanent_gain' ? `${e.stat}↑` : e.type)).filter((v, i, a) => a.indexOf(v) === i).join('、')}
+                </div>
+                <div className="mt-1 text-rose-300/80">限制：{abilityPreview.limits.join('；')}</div>
+                <div className="text-rose-300/60">風險：{abilityPreview.risks.join('；')}</div>
               </div>
             )}
           </div>

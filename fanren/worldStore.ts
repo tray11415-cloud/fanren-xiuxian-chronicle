@@ -8,6 +8,8 @@ import { runTurn } from './engine/turnEngine';
 import { markDivergence } from './engine/worldEvolution';
 import { makeMemory } from './engine/reminderRecall';
 import { createGoldenFingerRuntime } from './engine/goldenFinger';
+import { passiveStatBonus } from './engine/mechanics';
+import { extrapolateMechanic, extrapolateMechanicSync } from './engine/extrapolate';
 import { CANON_FACTIONS } from './data/factions';
 import { ORIGINS, SPIRITUAL_ROOT_PROFILES } from './data/creationOptions';
 import { useGameStore } from '../store/gameStore';
@@ -36,6 +38,8 @@ function emptyWorld(): FanrenWorldState {
     currentLocationId: '七玄門',
     goldenFinger: null,
     goldenFingerRuntime: null,
+    mechanics: [],
+    karma: 0,
     daoHeartId: null,
     originId: null,
     npcStates: {},
@@ -73,6 +77,21 @@ export function cultivationMultFromRoots(roots: { metal: number; wood: number; w
   return Math.max(0.6, Math.min(3.0, 0.6 + (max / 100) * 1.8 * purity + (nonZero <= 1 ? 0.6 : 0)));
 }
 
+/** 套用屬性增量到玩家（含 maxHp 連動）。 */
+function applyStatDeltas(p: any, d: Record<string, number>): any {
+  const maxHp = Math.max(1, (p.maxHp || 0) + (d.maxHp || 0));
+  return {
+    ...p,
+    maxHp,
+    hp: Math.min(p.hp, maxHp),
+    attack: (p.attack || 0) + (d.attack || 0),
+    defense: (p.defense || 0) + (d.defense || 0),
+    spirit: (p.spirit || 0) + (d.spirit || 0),
+    physique: (p.physique || 0) + (d.physique || 0),
+    speed: (p.speed || 0) + (d.speed || 0),
+  };
+}
+
 interface WorldStoreState {
   world: FanrenWorldState;
   busy: boolean;
@@ -83,6 +102,7 @@ interface WorldStoreState {
   submitAction: (rawText: string) => Promise<void>;
   resolveChoice: (optionId: string) => void;
   applyBattleResult: (result: { victory: boolean; hpLoss: number; expChange: number; spiritChange: number; spiritStones?: number }) => void;
+  createMechanic: (rawText: string, kind: 'ability' | 'art' | 'recipe') => Promise<void>;
   reset: () => void;
 }
 
@@ -102,6 +122,11 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
   initCanonWorld: (creation) => {
     const origin = ORIGINS.find((o) => o.id === creation.originId) || ORIGINS[0];
     const startDay = 0;
+    // 演繹：天生異能/特殊體質
+    const mechanics: any[] = [];
+    if (creation.abilityText && creation.abilityText.trim()) {
+      mechanics.push(extrapolateMechanicSync(creation.abilityText, 'ability', 'born'));
+    }
     const w: FanrenWorldState = {
       ...emptyWorld(),
       enabled: true,
@@ -110,6 +135,8 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
       currentLocationId: origin?.startRegionId || '七玄門',
       goldenFinger: creation.goldenFinger,
       goldenFingerRuntime: creation.goldenFinger ? createGoldenFingerRuntime(creation.goldenFinger, startDay) : null,
+      mechanics,
+      karma: 0,
       daoHeartId: creation.daoHeartId,
       originId: creation.originId,
       npcStates: buildInitialNpcStates(startDay),
@@ -118,6 +145,17 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
     };
     persistWorld(w);
     set({ world: w, lastResult: null });
+    // 套用天生異能的永久被動到角色
+    const passive = mechanics.reduce((acc, m) => {
+      const b = passiveStatBonus(m);
+      for (const k of Object.keys(b)) acc[k] = (acc[k] || 0) + (b as any)[k];
+      return acc;
+    }, {} as Record<string, number>);
+    if (mechanics.length) {
+      const gs = useGameStore.getState();
+      if (Object.keys(passive).length) gs.setPlayer((prev) => (prev ? applyStatDeltas(prev, passive) : prev));
+      gs.addLog(`你身具異能「${mechanics[0].name}」：${mechanics[0].summary}`, 'special');
+    }
   },
 
   submitAction: async (rawText) => {
@@ -153,17 +191,27 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
       persistWorld(nextWorld);
       set({ world: nextWorld, lastResult: outcome.result });
 
-      // 套用玩家數值層（透過 gameStore）
+      // 套用玩家數值層（透過 gameStore）—— 含演繹引擎產生的永久屬性增益
       const d = outcome.playerDeltas;
-      if (d.exp || d.hp || d.spiritStones || d.lifespan) {
+      const anyDelta = d.exp || d.hp || d.spiritStones || d.lifespan || d.attack || d.defense || d.spirit || d.physique || d.speed || d.maxHp || d.luck;
+      if (anyDelta) {
         gameStore.setPlayer((prev) => {
           if (!prev) return prev;
+          const maxHp = Math.max(1, prev.maxHp + (d.maxHp || 0));
           const exp = Math.max(0, Math.min(prev.maxExp, prev.exp + (d.exp || 0)));
-          const hp = Math.max(0, Math.min(prev.maxHp, prev.hp + (d.hp || 0)));
+          const hp = Math.max(0, Math.min(maxHp, prev.hp + (d.hp || 0)));
           const spiritStones = Math.max(0, prev.spiritStones + (d.spiritStones || 0));
           const lifespan = Math.max(0, prev.lifespan + (d.lifespan || 0));
           const gameDays = (prev.gameDays || 0) + outcome.result.daysElapsed;
-          return { ...prev, exp, hp, spiritStones, lifespan, gameDays };
+          return {
+            ...prev, exp, hp, maxHp, spiritStones, lifespan, gameDays,
+            attack: prev.attack + (d.attack || 0),
+            defense: prev.defense + (d.defense || 0),
+            spirit: prev.spirit + (d.spirit || 0),
+            physique: prev.physique + (d.physique || 0),
+            speed: prev.speed + (d.speed || 0),
+            luck: prev.luck + (d.luck || 0),
+          };
         });
       }
       // 物品落地到背包
@@ -266,6 +314,36 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
       result.victory ? 'gain' : 'danger'
     );
     set({ pendingBattle: null });
+  },
+
+  // 自創/改良：把玩家文本演繹成新機制（異能/功法/丹方）
+  createMechanic: async (rawText, kind) => {
+    if (get().busy) return;
+    const gameStore = useGameStore.getState();
+    const world = get().world;
+    if (!world.enabled || !rawText.trim()) return;
+    set({ busy: true });
+    try {
+      const spec = await extrapolateMechanic(rawText, kind, `c${world.mechanics.length}`);
+      const nextWorld = { ...world, mechanics: [...world.mechanics, spec] };
+      persistWorld(nextWorld);
+      set({ world: nextWorld });
+      const passive = passiveStatBonus(spec);
+      if (Object.keys(passive).length) gameStore.setPlayer((prev) => (prev ? applyStatDeltas(prev, passive) : prev));
+      if (kind === 'recipe') {
+        const rarity = ['普通', '稀有', '传说', '仙品'][Math.min(3, Math.max(0, spec.powerTier - 1))];
+        gameStore.setPlayer((prev) =>
+          prev ? { ...prev, inventory: [...prev.inventory, { id: `canon-pill-${Date.now()}`, name: spec.name, type: '丹药', description: spec.summary, quantity: 2, rarity, effect: { exp: 80 * spec.powerTier } } as any] } : prev
+        );
+      }
+      const kindLabel = kind === 'art' ? '功法' : kind === 'recipe' ? '丹方' : '異能';
+      gameStore.addLog(
+        `【演繹・自創${kindLabel}】「${spec.name}」（${spec.category}・第${spec.powerTier}階・${spec.source === 'llm' ? 'AI演繹' : '推演'}）成形！\n${spec.summary}\n限制：${spec.limits.join('；')}\n風險：${spec.risks.join('；')}`,
+        'special'
+      );
+    } finally {
+      set({ busy: false });
+    }
   },
 
   reset: () => {

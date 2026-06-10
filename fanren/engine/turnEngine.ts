@@ -15,6 +15,7 @@ import { allLocationNames, allNpcNames, eventsInWindow, getNpc, getRegion, resol
 import { generateRegion, isUnknownDestination } from './worldExpansion';
 import { buildReminders, makeMemory, recall } from './reminderRecall';
 import { catalyzeHerb, rollExploreLoot, type ItemGrant } from './loot';
+import { applyTrigger, matchActivation } from './mechanics';
 import { narrate } from './gmService';
 
 export interface TurnContext {
@@ -48,6 +49,34 @@ export interface PlayerDeltas {
   hp?: number;
   spiritStones?: number;
   lifespan?: number; // 年
+  attack?: number;
+  defense?: number;
+  spirit?: number;
+  physique?: number;
+  speed?: number;
+  maxHp?: number;
+  luck?: number;
+}
+
+/** 在某時機執行玩家所有機制，合併到 deltas，回傳業力/修煉加成/敘事。 */
+function runMechHook(
+  mechanics: any[],
+  on: any,
+  ctx: { day: number; maxHp: number },
+  deltas: PlayerDeltas
+): { karma: number; cultMult: number; narrative: string } {
+  let karma = 0;
+  let cultMult = 0;
+  const notes: string[] = [];
+  for (const spec of mechanics) {
+    const r = applyTrigger(spec, on, ctx);
+    if (!r.applied) continue;
+    for (const k of Object.keys(r.deltas) as (keyof PlayerDeltas)[]) deltas[k] = (deltas[k] || 0) + (r.deltas as any)[k];
+    karma += r.karma;
+    cultMult += r.cultivationMultBonus;
+    if (r.narrative) notes.push(`〔${spec.name}〕${r.narrative}`);
+  }
+  return { karma, cultMult, narrative: notes.join('；') };
 }
 
 export interface TurnOutcome {
@@ -126,15 +155,34 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
   let memoryNote: { summary: string; tags: string[]; important: boolean } | null = null;
   let battle: BattleTrigger | undefined;
   let itemsGranted: ItemGrant[] | undefined;
+  let mechKarma = 0;
+
+  // 演繹引擎：複製機制（執行期會更新上限/累積），偵測主動施展（如吞噬屍體）
+  const mechanics = (w.mechanics || []).map((m) => ({ ...m, gainedByEffect: { ...m.gainedByEffect }, dailyByEffect: { ...m.dailyByEffect } }));
+  const activation = matchActivation(mechanics, rawText);
+  const isDevour = !!activation && activation.on === 'devour';
+  if (isDevour) days = 0;
 
   const newDay = oldDay + days;
 
+  if (isDevour && activation) {
+    const r = applyTrigger(activation.spec, 'devour', { day: newDay, maxHp: ctx.player.maxHp });
+    for (const k of Object.keys(r.deltas) as (keyof PlayerDeltas)[]) playerDeltas[k] = (playerDeltas[k] || 0) + (r.deltas as any)[k];
+    mechKarma += r.karma;
+    mechanical = `你催動「${activation.spec.name}」——${r.narrative || '攫取對方精粹，自身為之一壯'}。`;
+    if (r.karma > 0) mechanical += `（業力 +${Math.round(r.karma)}，恐招反噬與心魔）`;
+    logType = 'danger';
+    memoryNote = { summary: `施展${activation.spec.name}`, tags: ['異能', activation.spec.category], important: true };
+  } else
   switch (intent.type) {
     case 'cultivate': {
-      const expGain = Math.round(cultivateExpPerDay(ctx.player.maxExp, ctx.player.cultivationMult) * days);
-      playerDeltas.exp = expGain;
-      playerDeltas.lifespan = -(days / 360);
-      mechanical = `你凝神入定，吐納天地靈氣。${days}日苦修，修為精進（修為 +${expGain}）。`;
+      const mh = runMechHook(mechanics, 'cultivate', { day: newDay, maxHp: ctx.player.maxHp }, playerDeltas);
+      mechKarma += mh.karma;
+      const effMult = ctx.player.cultivationMult * (1 + mh.cultMult);
+      const expGain = Math.round(cultivateExpPerDay(ctx.player.maxExp, effMult) * days);
+      playerDeltas.exp = (playerDeltas.exp || 0) + expGain;
+      playerDeltas.lifespan = (playerDeltas.lifespan || 0) - days / 360;
+      mechanical = `你凝神入定，吐納天地靈氣。${days}日苦修，修為精進（修為 +${expGain}）。${mh.narrative ? ' ' + mh.narrative : ''}`;
       memoryNote = { summary: `閉關修煉約${Math.max(1, Math.round(days / 360))}年`, tags: ['修煉', w.currentLocationId], important: days >= 1800 };
       break;
     }
@@ -231,14 +279,16 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
       break;
     }
     case 'explore': {
+      const mh = runMechHook(mechanics, 'explore', { day: newDay, maxHp: ctx.player.maxHp }, playerDeltas);
+      mechKarma += mh.karma;
       const stones = Math.round(5 + dayToChapter(newDay) / 50);
       const expGain = Math.round(cultivateExpPerDay(ctx.player.maxExp, 1) * days * 0.3);
-      playerDeltas.spiritStones = stones;
-      playerDeltas.exp = expGain;
+      playerDeltas.spiritStones = (playerDeltas.spiritStones || 0) + stones;
+      playerDeltas.exp = (playerDeltas.exp || 0) + expGain;
       const tier = getRegion(w.currentLocationId)?.tier || 'human';
       itemsGranted = rollExploreLoot(tier, ctx.player.realmType, ctx.player.luck);
       const lootTxt = itemsGranted.length ? ` 途中尋得：${itemsGranted.map((g) => `${g.name}×${g.quantity}`).join('、')}。` : '';
-      mechanical = `你在${getRegion(w.currentLocationId)?.name || '此地'}遊歷查探${days}日，略有所獲（靈石 +${stones}，修為 +${expGain}）。${lootTxt}`;
+      mechanical = `你在${getRegion(w.currentLocationId)?.name || '此地'}遊歷查探${days}日，略有所獲（靈石 +${stones}，修為 +${expGain}）。${lootTxt}${mh.narrative ? ' ' + mh.narrative : ''}`;
       memoryNote = { summary: `於${w.currentLocationId}歷練`, tags: ['歷練', w.currentLocationId], important: false };
       break;
     }
@@ -317,6 +367,8 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
     worldEventStates: evo.worldEventStates,
     goldenFingerRuntime: gfRuntime,
     pendingChoice,
+    mechanics,
+    karma: w.karma + mechKarma,
   };
 
   // ── 敘事 ──

@@ -27,6 +27,7 @@ const ChroniclePanel: React.FC<Props> = ({ world, player, onClose }) => {
   const factions = Object.values(world.factionStates || {}).sort((a, b) => b.power - a.power).slice(0, 10);
   const gf = world.goldenFinger;
   const gfRt = world.goldenFingerRuntime;
+  const mechanics = world.mechanics || [];
   const knownNpcs = Object.values(world.npcStates || {}).filter((n) => n.knownToPlayer);
 
   return (
@@ -67,6 +68,23 @@ const ChroniclePanel: React.FC<Props> = ({ world, player, onClose }) => {
             )}
           </div>
         </div>
+
+        {/* 演繹異能 / 自創 */}
+        {mechanics.length > 0 && (
+          <div className={section}>
+            <div className={h}>✦ 本命異能 / 自創（演繹引擎）　<span className="text-xs text-rose-300/70">業力 {Math.round(world.karma || 0)}</span></div>
+            <div className="space-y-1.5 text-xs text-zinc-300">
+              {mechanics.map((m) => (
+                <div key={m.id} className="border-l-2 border-rose-700/50 pl-2">
+                  <span className="font-semibold text-rose-200">{m.name}</span>
+                  <span className="text-zinc-500"> · {m.category} · 第{m.powerTier}階 · {m.kind === 'art' ? '功法' : m.kind === 'recipe' ? '丹方' : '異能'}{m.source === 'llm' ? ' · AI演繹' : ''}</span>
+                  <span className="text-zinc-400">　{m.summary}</span>
+                  {m.usesTotal > 0 && <span className="text-zinc-600">（已施展 {m.usesTotal} 次）</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 生平記事 */}
         <div className={section}>

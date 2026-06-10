@@ -147,6 +147,7 @@ export interface CharacterCreation {
   startingArtIds: string[];
   startingItemRefs: StartingItemRef[];
   goldenFinger: GoldenFinger | null;
+  abilityText?: string; // 自由文本「天生異能/特殊體質」→ 由演繹引擎推演
   difficulty: 'easy' | 'normal' | 'hard';
 }
 
@@ -342,6 +343,8 @@ export interface FanrenWorldState {
   currentLocationId: string;
   goldenFinger: GoldenFinger | null;
   goldenFingerRuntime: GoldenFingerRuntime | null;
+  mechanics: MechanicSpec[]; // 玩家自創/天生異能、自創功法等（演繹引擎產物）
+  karma: number; // 異能/禁忌之力累積的業力池（影響天劫/心魔）
   daoHeartId: string | null;
   originId: string | null;
   npcStates: Record<string, NpcRuntimeState>;
@@ -404,5 +407,47 @@ export interface CanonEventSource {
   consequences: string[];
   interventions: InterventionPoint[];
   spoilerLevel: number;
+}
+
+// ──────────────────────────────────────────────
+// 演繹引擎：MechanicSpec（玩家自由文本→可執行機制）
+// ──────────────────────────────────────────────
+export type MechStatKey = 'attack' | 'defense' | 'spirit' | 'physique' | 'speed' | 'maxHp';
+export type MechEffectType =
+  | 'permanent_gain' | 'cultivation_mult' | 'exp' | 'resource' | 'luck' | 'heal' | 'craft_bonus' | 'lifespan' | 'karma' | 'narrative';
+export type MechTriggerOn =
+  | 'devour' | 'kill' | 'cultivate' | 'explore' | 'craft' | 'breakthrough' | 'inspect' | 'activate' | 'passive' | 'turn';
+
+export interface MechEffect {
+  type: MechEffectType;
+  stat?: MechStatKey;
+  amount: number;
+  capPerDay?: number;
+  capTotal?: number;
+  diminish?: number;
+  note?: string;
+}
+export interface MechTriggerRule {
+  on: MechTriggerOn;
+  effects: MechEffect[];
+}
+export interface MechanicSpec {
+  id: string;
+  name: string;
+  kind: 'ability' | 'art' | 'recipe' | 'finger';
+  rawText: string;
+  summary: string;
+  category: string;
+  powerTier: number;
+  flavorVerbs: string[];
+  triggers: MechTriggerRule[];
+  limits: string[];
+  risks: string[];
+  source?: 'offline' | 'llm';
+  // 執行期
+  usesTotal: number;
+  gainedByEffect: Record<string, number>;
+  dailyByEffect: Record<string, number>;
+  lastDay: number;
 }
 

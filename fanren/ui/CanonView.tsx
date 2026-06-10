@@ -3,6 +3,7 @@ import { usePlayer, useLogs } from '../../store/gameStore';
 import { useUIStore } from '../../store/uiStore';
 import { useWorldStore } from '../worldStore';
 import ChroniclePanel from './ChroniclePanel';
+import CreatePanel from './CreatePanel';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
 import { getRegion } from '../engine/canonLoader';
@@ -46,6 +47,7 @@ const CanonView: React.FC = () => {
   const setModal = useUIStore((s) => s.setModal);
   const [input, setInput] = useState('');
   const [showChronicle, setShowChronicle] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const pendingChoice = world.pendingChoice;
@@ -92,6 +94,12 @@ const CanonView: React.FC = () => {
             className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400"
           >
             📜 史冊
+          </button>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="rounded-lg border border-rose-700/60 bg-rose-950/30 px-2.5 py-1 text-xs text-rose-200 transition hover:border-rose-400"
+          >
+            ✦ 自創
           </button>
           {SYSTEM_TABS.map((t) => (
             <button
@@ -226,6 +234,7 @@ const CanonView: React.FC = () => {
       </div>
     </div>
     {showChronicle && <ChroniclePanel world={world} player={player} onClose={() => setShowChronicle(false)} />}
+    {showCreate && <CreatePanel onClose={() => setShowCreate(false)} />}
     </>
   );
 };
