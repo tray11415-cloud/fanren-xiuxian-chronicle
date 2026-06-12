@@ -61,13 +61,27 @@ interface RouteRule {
 
 const NATURAL_QUERY_RE = /(?:哪些|那些|哪幾|有誰|何人|誰在|是誰|什麼|何事|如何|怎麼|哪裡|何處|多少|可有|是否|嗎|呢|[？?])(?:[^。！!]*$)/;
 const PASSIVE_LOOK_RE = /^(?:查看|看看|觀察|观察|檢視|检视|打量|瞧瞧|環顧|环顾)/;
+const LOCAL_SCOPE_RE = /(?:此地|此處|此处|這裡|这里|附近|四周|周圍|周围|周遭|眼前|在場|在场|谷內|谷内|宗內|宗内|城內|城内)/;
+const LOCAL_PERSON_RE = /(?:修士|人物|弟子|長老|长老|同道|有誰|有谁|誰在|谁在|何人)/;
+const LOCAL_QUERY_RE = /(?:哪些|那些|哪幾|哪几|有誰|有谁|誰在|谁在|何人|看看|查看|瞧瞧|觀察|观察|環視|环视|環顧|环顾|打量)/;
+
+/**
+ * 僅辨認「眼前／附近有誰」這類短查詢。
+ * 必須同時具備在地範圍、人物目標與查詢語氣，避免模板吞掉帶有其他目的的自由行動。
+ */
+export function isLocalRosterQuery(rawText: string): boolean {
+  const text = (rawText || '').trim().replace(/[？?。！!]+$/g, '');
+  if (!text || text.length > 36) return false;
+  if (/^(?:環視|环视|環顧|环顾|查看|看看|瞧瞧|觀察|观察)(?:一下)?(?:四周|周遭|附近|眼前)$/.test(text)) return true;
+  return LOCAL_SCOPE_RE.test(text) && LOCAL_PERSON_RE.test(text) && LOCAL_QUERY_RE.test(text);
+}
 
 // 順序即優先序
 const RULES: RouteRule[] = [
   { type: 'use_golden_finger', patterns: [/金手指|外掛|發動.*(瓶|外掛|系統)|催熟|系統面板/], scale: 'instant' },
   { type: 'recall', patterns: [/回憶|想起|回想|記得.*嗎|過去發生/], scale: 'instant' },
   { type: 'inspect', patterns: [
-    /^(?:環視四周|查看天下動向|查看世界局勢|打探消息|打聽風聲|探聽風聲)$/,
+    /^(?:查看天下動向|查看世界局勢|打探消息|打聽風聲|探聽風聲)$/,
     /(?:世界|天下|修仙界).{0,6}(?:動向|局勢|大事|風聲)/,
     /(?:打聽|打探|探聽).{0,6}(?:消息|風聲|天下事|大事)/,
     /(?:最近|近日|近期).{0,6}(?:發生|有).{0,6}(?:什麼|何事|大事)/,

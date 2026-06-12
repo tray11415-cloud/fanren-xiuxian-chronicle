@@ -8,7 +8,7 @@ import type {
   TurnResult,
 } from '../types';
 import { advanceTime, dayToChapter, dayToGameTime, daysForScale } from './clock';
-import { parseIntent } from './keywordRouter';
+import { isLocalRosterQuery, parseIntent } from './keywordRouter';
 import { govern, violationFeedback } from './governor';
 import { AWAKEN_NAMES, regenGoldenFinger, useGoldenFinger } from './goldenFinger';
 import { evolveWorld } from './worldEvolution';
@@ -24,7 +24,7 @@ import { findSectByName } from './sect';
 import { isAtSectHome, sectHomeName } from './sectRitual';
 import { canLearnTechnique } from './techniqueSource';
 import { discoverAround, initialDiscoveries, labelFor } from './mapDiscovery';
-import { npcAvailability, presentNpcs } from './npcAvailability';
+import { npcAvailability, presentNpcs, presentNpcsHere } from './npcAvailability';
 import { settleLoot, willingToJoin, transmitInRange } from './party';
 import { findAvailableOpportunity, magnitudeLabel } from './cascade';
 import { resolveBaiYi, practiceBaiYi, isMakingProduct, rankName } from './baiyi';
@@ -122,6 +122,27 @@ function cultivateExpPerDay(maxExp: number, mult: number): number {
   return Math.max(1, (maxExp * 0.0008) * mult);
 }
 
+function describeLocalRoster(world: FanrenWorldState, currentDay: number): string {
+  const place = getRegion(world.currentLocationId)?.name || world.currentLocationId;
+  const nearby = presentNpcsHere(world, currentDay, 12);
+  const lines = nearby.map((npc) => `· ${npc.name}（${npc.realm || '境界不明'}${npc.activity ? `，${npc.activity.slice(0, 42)}` : ''}）`);
+  const sect = findSectByName(place);
+
+  if (lines.length) {
+    const background = sect
+      ? `\n此外，${sect.name}中尚有不少${sect.ranks.slice(0, 3).map((rank) => rank.name).join('、')}往來；未通名者不逐一列出。`
+      : '';
+    return `【${place}・眼前人物】\n你只將神識在近處輕輕一掃，沒有驚動旁人。此刻能確認身分、可與你接觸的修士有：\n${lines.join('\n')}${background}`;
+  }
+
+  if (sect) {
+    const ranks = sect.ranks.slice(0, 4).map((rank) => rank.name).join('、');
+    return `【${place}・眼前人物】\n${place}並非無人，只是你初來乍到，眼前沒有能確認身分的具名修士。近處往來者多為${ranks}；若想找某一人，可直接說出姓名尋訪。`;
+  }
+
+  return `【${place}・眼前人物】\n你只將神識在近處輕輕一掃。此刻未發現能確認身分、且可與你接觸的具名修士；零星行人多收斂氣息，不宜僅憑一眼妄斷來歷。`;
+}
+
 /** 執行一個回合。永不拋錯。 */
 export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOutcome> {
   const w = ctx.world;
@@ -163,11 +184,27 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
   }
 
   // ── 純查詢類（不耗時）──
+  // 在地人物查詢優先於所有模板路由，避免「看看／環視」被誤當成天下情報。
+  if (isLocalRosterQuery(rawText)) {
+    return {
+      result: {
+        narrative: describeLocalRoster(w, oldDay),
+        intent,
+        verdict,
+        daysElapsed: 0,
+        worldEventsFired: [],
+        npcReactions: [],
+        logType: 'normal',
+      },
+      worldPatch: {},
+      playerDeltas: {},
+    };
+  }
   if (intent.type === 'inspect') {
     const reminders = buildReminders(w);
     const text = reminders.map((r) => `· ${r.text}`).join('\n');
     return {
-      result: { narrative: `【環視四周・打探消息】\n${text}`, intent, verdict, daysElapsed: 0, worldEventsFired: [], npcReactions: [], reminders, logType: 'normal' },
+      result: { narrative: `【打探天下消息】\n${text}`, intent, verdict, daysElapsed: 0, worldEventsFired: [], npcReactions: [], reminders, logType: 'normal' },
       worldPatch: {},
       playerDeltas: {},
     };
@@ -734,15 +771,7 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
       // freeform / reframe：盡量給出有實質的確定性回應（無 LLM 時尤要），而非空泛一句。
       const place = getRegion(w.currentLocationId)?.name || w.currentLocationId;
       const rt = intent.rawText;
-      if (/(?:此地|此處|這裡|这里|附近|周圍|周围|周遭).{0,10}(?:修士|人物|人|誰|谁)|(?:有|有哪些|有那些|哪幾位|哪几位).{0,8}(?:修士|人物|人)|(?:看看|查看).{0,8}(?:修士|人物|有誰|有谁)/.test(rt)) {
-        const nearby = presentNpcs(w, oldDay, 12);
-        if (nearby.length) {
-          const roster = nearby.map((n) => `${n.name}（${n.realm || '境界不明'}${n.activity ? `，${n.activity.slice(0, 36)}` : ''}）`);
-          mechanical = `你放出神識，細察${place}周遭。此刻可辨認的修士有：${roster.join('；')}。`;
-        } else {
-          mechanical = `你放出神識，細察${place}周遭，未發現此刻可確認身分、且能與你接觸的具名修士。其餘來往之人多收斂氣息，身分難辨。`;
-        }
-      } else if (/掌天瓶|小綠瓶|小绿瓶|青色小瓶|綠瓶|绿瓶/.test(rt)) {
+      if (/掌天瓶|小綠瓶|小绿瓶|青色小瓶|綠瓶|绿瓶/.test(rt)) {
         // 掌天瓶乃韓立本命機緣、天授之物，非尋覓強求可得
         mechanical = `你四處探聽、暗中搜尋那只傳說中的青色小瓶。然此物乃機緣天授、冥冥中自有其主——翻找強求皆是徒勞，唯有緣者於命定之時方能得之。你一無所獲，徒耗${days}日光陰。`;
         logType = 'normal';

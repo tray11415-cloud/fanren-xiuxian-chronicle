@@ -93,3 +93,24 @@ export function presentNpcs(world: FanrenWorldState, currentDay: number, max = 8
   }
   return out;
 }
+
+/** 列出確實位於玩家當前「具體地點」的 NPC，供眼前人物查詢使用。 */
+export function presentNpcsHere(world: FanrenWorldState, currentDay: number, max = 8): { name: string; activity: string; realm: string }[] {
+  const out: { name: string; activity: string; realm: string }[] = [];
+  const playerNode = findMapNode(world.currentLocationId);
+  for (const id in world.npcStates) {
+    const npc = getNpc(id);
+    if (!npc) continue;
+    const a = npcAvailability(id, world, currentDay);
+    if (!a.available || !a.resolved) continue;
+    const npcLocation = a.rt?.diverged ? a.rt.locationId : a.resolved.locationId;
+    const npcNode = findMapNode(npcLocation);
+    const samePlace = playerNode && npcNode
+      ? playerNode.id === npcNode.id
+      : npcLocation === world.currentLocationId;
+    if (!samePlace) continue;
+    out.push({ name: npc.name, activity: a.resolved.activity || '', realm: String(a.resolved.realm || a.rt?.realm || '') });
+    if (out.length >= max) break;
+  }
+  return out;
+}
