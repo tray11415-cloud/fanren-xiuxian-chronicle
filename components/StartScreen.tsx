@@ -183,7 +183,7 @@ const StartScreen: React.FC<Props> = ({ onStart }) => {
       <div className="bg-paper-800 border-2 border-mystic-gold rounded-lg p-4 md:p-8 max-w-2xl w-full shadow-2xl my-auto">
         <div className="text-center mb-4 md:mb-8">
           <h1 className="text-2xl md:text-4xl font-serif font-bold text-mystic-gold tracking-widest mb-2">
-            云灵修仙
+            凡人修仙编年史
           </h1>
           <p className="text-stone-400 text-sm md:text-lg">踏上你的长生之路</p>
         </div>

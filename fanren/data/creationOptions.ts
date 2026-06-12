@@ -10,7 +10,7 @@ export const ORIGINS: OriginOption[] = [
     id: 'peasant_boy',
     name: '凡人農家少年',
     description:
-      '窮苦農村出身，家境困頓，被村中長老以「家族榮耀」為由送入七玄門參加資質測試，意外被選中成為記名弟子。體格一般，機智靈活，神秘機緣觸發率最高。難度最高，若能觸發「神秘小瓶」機緣，修煉靈藥效率大幅提升。',
+      '窮苦農村出身，曾被村中長老以「家族榮耀」為由送入七玄門參加資質測試，卻在靈根測試中顯出靈根，自此辭別凡塵武門、踏上仙途。出身彩霞山下，與韓立同鄉同源，最易撞上原著機緣。體格平凡而心思靈活，神秘機緣觸發率最高；難度最高，若能尋得「神秘小瓶」，煉藥育靈之效將遠勝同儕。',
     startRegionId: '七玄門',
     startRealm: '炼气期' as RealmType,
     startRealmLevel: 1,
@@ -21,12 +21,12 @@ export const ORIGINS: OriginOption[] = [
       { ref: '黃龍丹', quantity: 1 },
       { ref: '養精丹', quantity: 2 },
     ],
-    startingSectId: '七玄門',
+    startingSectId: null,
     hooks: [
       '墨大夫的秘密',
       '神秘小瓶機緣',
       '野狼幫血鬥',
-      '七玄門逃出事件',
+      '測出靈根、辭別七玄門踏入仙途',
     ],
     difficulty: 5,
   },
@@ -59,7 +59,7 @@ export const ORIGINS: OriginOption[] = [
     id: 'martial_family',
     name: '武林世家子弟',
     description:
-      '凡人武術底子扎實，自幼修習家傳武功，肉身素質遠勝同齡修士。靈根稍弱，但體修天賦出眾，可同步修習武道功法強化肉身，走體修輔助路線。',
+      '出身凡俗武林世家，自幼習練家傳武功，肉身根基遠勝同齡修士；於踏入仙途時測出靈根，雖靈根稍弱，卻是難得的體修苗子。今以「煉體修仙」正統一脈為修煉本道，引靈淬體、以厚實肉身承載更猛的法力，凡俗武道僅為昔日童子功底。難度中等，體修天賦出眾者後勁悠長。',
     startRegionId: '七玄門',
     startRealm: '炼气期' as RealmType,
     startRealmLevel: 2,
@@ -70,12 +70,12 @@ export const ORIGINS: OriginOption[] = [
       { ref: '養精丹', quantity: 3 },
       { ref: '劍符（灰芒）', quantity: 1 },
     ],
-    startingSectId: '七玄門',
+    startingSectId: null,
     hooks: [
-      '厲飛雨武道指點',
-      '武道技能樹開啟',
+      '厲飛雨點化、由武入道',
+      '體修煉體一脈技能樹開啟',
       '金剛訣機緣',
-      '凡人武道與修仙道路的衝突',
+      '凡俗武道根基與修仙煉體之道的調和',
     ],
     difficulty: 3,
   },
@@ -206,81 +206,217 @@ export const ORIGINS: OriginOption[] = [
 ];
 
 // ──────────────────────────────────────────────
+// 天命等級（開局點數池）：決定可自由分配於五行靈根/悟性/心性/戰鬥五屬的點數總額。
+// ──────────────────────────────────────────────
+export interface FortuneTier { id: string; name: string; points: number; desc: string; accent: string }
+export const FORTUNE_TIERS: FortuneTier[] = [
+  { id: 'mediocre', name: '平庸之輩', points: 10, desc: '資質平平、根骨尋常的凡夫俗子。萬丈高樓平地起，全憑後天勤勉與際遇。', accent: 'text-zinc-400' },
+  { id: 'ordinary', name: '尋常根骨', points: 30, desc: '略勝常人一籌，踏入仙途尚不至寸步難行，然亦無甚倚仗。', accent: 'text-emerald-300' },
+  { id: 'gifted', name: '良才美質', points: 60, desc: '天生資質不俗，靈根悟性皆有可觀，宗門爭相延攬之才。', accent: 'text-sky-300' },
+  { id: 'prodigy', name: '一方天驕', points: 100, desc: '鋒芒畢露的天之驕子，同輩中翹楚，前程不可限量。', accent: 'text-cyan-300' },
+  { id: 'chosen', name: '天命之子', points: 200, desc: '天命所鍾、氣運加身，生而不凡——然樹大招風，機緣與劫數並至。', accent: 'text-amber-300' },
+  { id: 'emperor_star', name: '紫微帝星', points: 350, desc: '應紫微帝星而生，氣運貴不可言，行止間自有威儀，所至皆有際遇相隨。', accent: 'text-yellow-300' },
+  { id: 'immortal_bone', name: '仙骨天成', points: 550, desc: '生具仙骨、靈竅天開，萬載難遇的修道奇才，老怪物見之亦要動心收徒。', accent: 'text-teal-300' },
+  { id: 'primordial', name: '鴻蒙紫氣', points: 750, desc: '身懷一縷鴻蒙紫氣，有望證道成聖——氣運滔天，然亦招天妒，劫數同樣驚世。', accent: 'text-fuchsia-300' },
+  { id: 'dao_scion', name: '大道之子', points: 1000, desc: '大道親鍾、生而近道，舉手投足暗合天地至理。傳說中的命定之人，一念可傾覆山河。', accent: 'text-rose-300' },
+];
+export function getFortune(id: string): FortuneTier | undefined { return FORTUNE_TIERS.find((f) => f.id === id); }
+
+// 變異靈根（異靈根）：五行之外的異種靈根，較尋常五行更純更利，進境尤速、神識術法獨具威能（萬中無一）。
+export interface VariantRootOption { type: string; label: string; desc: string }
+export const VARIANT_ROOTS: VariantRootOption[] = [
+  { type: '雷', label: '雷靈根', desc: '雷霆肅殺、攻伐第一，神識術法之威冠絕同階。' },
+  { type: '風', label: '風靈根', desc: '迅捷如風，遁速與身法絕佳，最利遊鬥與逃遁。' },
+  { type: '冰', label: '冰靈根', desc: '至寒凝煞，控場封凍、傷敵於無形。' },
+  { type: '暗', label: '暗（冥）靈根', desc: '幽冥晦暗，藏匿斂息、攝魂蝕神，魔道珍之。' },
+  { type: '光', label: '光（陽）靈根', desc: '純陽至剛，破邪驅穢、克制陰煞魔物。' },
+  { type: '空間', label: '空間靈根', desc: '通曉空間之力，縮地遁逃、儲物挪移，珍稀無比。' },
+];
+export function getVariantRoot(type: string): VariantRootOption | undefined { return VARIANT_ROOTS.find((v) => v.type === type); }
+
+// ──────────────────────────────────────────────
 // 靈根剖面選項（SPIRITUAL_ROOT_PROFILES）
 // ──────────────────────────────────────────────
 
+// 靈根四等（出自小說）：天根（單一屬性最純）／變異（異變升華的特殊屬性）／真靈根（二至三屬性）／偽靈根（五行混雜遲緩）。
+// 引擎以 roots 五行向量推導修煉倍率（屬性越少越純＝越快）；變異屬性以最相近的本行高純度承載，故修煉同樣迅猛。
 export const SPIRITUAL_ROOT_PROFILES: SpiritualRootProfileOption[] = [
+  // ── 天靈根：單一五行，最純粹、進境最快，萬中無一 ──
   {
-    id: 'heavenly_root',
-    name: '天靈根',
+    id: 'heaven_metal',
+    name: '金天靈根',
     description:
-      '極為稀罕的頂尖靈根，單一屬性達到極致純粹，修煉速度遠超常規，幾乎必然築基。掩月宗一屆新弟子中僅現一例，乃萬中無一的天驕資質。',
+      '單一金行，鋒銳肅殺至純。劍修第一資質，攻伐凌厲、破防無雙。掩月宗數屆難遇一例，萬中無一的天驕之姿，幾乎必然築基。',
     roots: { metal: 100, wood: 0, water: 0, fire: 0, earth: 0 },
     cultivationMult: 3.0,
     probabilityWeight: 1,
+    tier: 'heaven',
+    attributes: ['金'],
   },
   {
-    id: 'variant_root',
-    name: '變異靈根',
+    id: 'heaven_wood',
+    name: '木天靈根',
     description:
-      '特殊稀有靈根，如雷靈根、風靈根、冰髓之體等非五行屬性，走特殊修煉路線，築基成功率極高，往往可獲門派優先分配築基丹。戰鬥方式獨特，威能驚人。',
-    roots: { metal: 0, wood: 0, water: 80, fire: 0, earth: 0 },
-    cultivationMult: 2.5,
-    probabilityWeight: 4,
+      '單一木行，生機綿延至純。療癒、丹道、馭木皆得天獨厚，壽元亦較常人悠長。青元劍訣一脈夢寐以求的頂尖資質。',
+    roots: { metal: 0, wood: 100, water: 0, fire: 0, earth: 0 },
+    cultivationMult: 3.0,
+    probabilityWeight: 1,
+    tier: 'heaven',
+    attributes: ['木'],
   },
   {
-    id: 'true_root_single',
-    name: '真靈根（單屬性）',
+    id: 'heaven_water',
+    name: '水天靈根',
     description:
-      '普通單一屬性靈根，修煉速度快，築基成功率較高，是修仙界眼中的上等資質。雖不及天靈根那般驚豔，也足以在名門大派佔有一席之地。',
-    roots: { metal: 0, wood: 0, water: 0, fire: 90, earth: 0 },
-    cultivationMult: 2.0,
-    probabilityWeight: 11,
+      '單一水行，至柔綿長至純。法力深湛、水法千變，遁逃與持久俱佳，乃綿裡藏針的上選天靈根。',
+    roots: { metal: 0, wood: 0, water: 100, fire: 0, earth: 0 },
+    cultivationMult: 3.0,
+    probabilityWeight: 1,
+    tier: 'heaven',
+    attributes: ['水'],
   },
   {
-    id: 'pseudo_root_double',
-    name: '偽靈根（雙屬性）',
+    id: 'heaven_fire',
+    name: '火天靈根',
     description:
-      '兩種屬性混合的偽靈根，修煉速度較快，築基成功率約一成，乃修仙界中算得上中等的資質，大多數門派均樂於收為正式弟子。',
-    roots: { metal: 60, wood: 60, water: 0, fire: 0, earth: 0 },
+      '單一火行，炎烈迅猛至純。攻殺之威冠絕同儕，亦利煉丹火候。名門大派的火屬天靈根弟子向來優先培養。',
+    roots: { metal: 0, wood: 0, water: 0, fire: 100, earth: 0 },
+    cultivationMult: 3.0,
+    probabilityWeight: 1,
+    tier: 'heaven',
+    attributes: ['火'],
+  },
+  {
+    id: 'heaven_earth',
+    name: '土天靈根',
+    description:
+      '單一土行，厚重堅韌至純。防禦、陣法、煉器根基無雙，根行穩固難動如山，後勁綿長不竭。',
+    roots: { metal: 0, wood: 0, water: 0, fire: 0, earth: 100 },
+    cultivationMult: 3.0,
+    probabilityWeight: 1,
+    tier: 'heaven',
+    attributes: ['土'],
+  },
+
+  // ── 變異靈根：靈根異變後升華的特殊屬性，罕見珍貴，威能獨特，築基成功率極高 ──
+  {
+    id: 'variant_thunder',
+    name: '雷靈根（變異）',
+    description:
+      '五行之外的異變靈根，金木相激而生雷。攻伐破防之威冠絕諸根，雷遁迅捷詭變。應〔五雷之體〕〔天雷〕一脈，雷雲子之流即此資質——變異靈根中最鋒利的鋒芒。',
+    roots: { metal: 95, wood: 0, water: 0, fire: 0, earth: 0 },
+    cultivationMult: 2.9,
+    probabilityWeight: 3,
+    tier: 'variant',
+    attributes: ['雷'],
+    variant: '雷',
+  },
+  {
+    id: 'variant_wind',
+    name: '風靈根（變異）',
+    description:
+      '木行異變而成，身法輕靈、遁術一絕。御風千里、來去無蹤，攻守皆以快制敵。變異靈根中以飄忽難測、最善逃命著稱。',
+    roots: { metal: 0, wood: 90, water: 0, fire: 0, earth: 0 },
+    cultivationMult: 2.8,
+    probabilityWeight: 3,
+    tier: 'variant',
+    attributes: ['風'],
+    variant: '風',
+  },
+  {
+    id: 'variant_ice',
+    name: '冰靈根（玄冰之體）',
+    description:
+      '水行異變至陰至寒，凍封法力、寒氣徹骨。應〔乾藍冰焰〕〔冰鳳寒元〕之屬，田琴兒一類天生寒體即此資質。攻防兼備、天然克火。',
+    roots: { metal: 0, wood: 0, water: 95, fire: 0, earth: 0 },
+    cultivationMult: 2.9,
+    probabilityWeight: 2,
+    tier: 'variant',
+    attributes: ['冰'],
+    variant: '冰',
+  },
+  {
+    id: 'variant_gloom',
+    name: '冥靈根（變異）',
+    description:
+      '罕見的至陰異種靈根，天生親和陰冥鬼煞之力。宜修魔功鬼道、隱匿詭譎，潛力深不可測而代價同樣難料。正道側目，魔道趨之若鶩。',
+    roots: { metal: 0, wood: 0, water: 85, fire: 0, earth: 0 },
+    cultivationMult: 2.7,
+    probabilityWeight: 2,
+    tier: 'variant',
+    attributes: ['冥'],
+    variant: '冥',
+  },
+  {
+    id: 'variant_solar',
+    name: '純陽靈根（變異）',
+    description:
+      '火行異變、至陽至剛，天生克制陰邪鬼物與屍煞。光明熾烈、療傷淨化俱佳，乃魔道與陰物的天敵。世間少見的炎陽異種。',
+    roots: { metal: 0, wood: 0, water: 0, fire: 88, earth: 0 },
+    cultivationMult: 2.8,
+    probabilityWeight: 2,
+    tier: 'variant',
+    attributes: ['陽'],
+    variant: '陽',
+  },
+
+  // ── 真靈根：二至三種屬性，較純、較易修煉，名門上等資質 ──
+  {
+    id: 'true_metal_water',
+    name: '真靈根 · 金水雙屬性',
+    description:
+      '金水相生，鋒銳兼綿長。劍法配水遁，攻守俱宜；屬性較純、較易修煉，名門大派樂於收錄的上等雙靈根。',
+    roots: { metal: 70, wood: 0, water: 70, fire: 0, earth: 0 },
     cultivationMult: 1.5,
-    probabilityWeight: 20,
+    probabilityWeight: 14,
+    tier: 'true',
+    attributes: ['金', '水'],
   },
   {
-    id: 'pseudo_root_triple',
-    name: '偽靈根（三屬性）',
+    id: 'true_wood_fire',
+    name: '真靈根 · 木火雙屬性',
     description:
-      '三種屬性混合的偽靈根，修煉速度中等，築基成功率約五分之一，是修仙界常見資質。大多數普通弟子均屬此列，需依靠後天努力與機緣彌補先天不足。',
-    roots: { metal: 50, wood: 50, water: 50, fire: 0, earth: 0 },
-    cultivationMult: 1.2,
-    probabilityWeight: 30,
+      '木火相生，生機配炎烈。馭木、丹道與火攻皆得其便，是煉丹一途極佳的雙靈根資質。',
+    roots: { metal: 0, wood: 70, water: 0, fire: 70, earth: 0 },
+    cultivationMult: 1.5,
+    probabilityWeight: 14,
+    tier: 'true',
+    attributes: ['木', '火'],
   },
   {
-    id: 'pseudo_root_quad',
-    name: '偽靈根（四屬性）',
+    id: 'true_triple',
+    name: '真靈根 · 三屬性',
     description:
-      '四種屬性混合，即韓立所擁有的靈根類型，築基成功率極低（約百分之一），修煉緩慢。然而正是這種困境催生了最堅韌的修士，是「凡人逆襲」路線的主角原型。',
-    roots: { metal: 0, wood: 40, water: 40, fire: 40, earth: 40 },
+      '三系兼修，路子寬廣而略雜。修煉中規中矩、築基有望，乃修仙界常見的中上之資，多賴後天勤勉與機緣補足。',
+    roots: { metal: 0, wood: 60, water: 60, fire: 0, earth: 60 },
+    cultivationMult: 1.1,
+    probabilityWeight: 18,
+    tier: 'true',
+    attributes: ['水', '木', '土'],
+  },
+
+  // ── 偽靈根：五行混雜而俱弱，進境遲緩，凡人逆襲之資 ──
+  {
+    id: 'pseudo_quad',
+    name: '偽靈根 · 四屬性',
+    description:
+      '四行混雜而俱弱，靈氣感應駁雜不純。修煉遲緩、築基渺茫，唯心志堅者方能於困境中熬出頭。',
+    roots: { metal: 0, wood: 38, water: 38, fire: 38, earth: 38 },
     cultivationMult: 0.8,
-    probabilityWeight: 20,
+    probabilityWeight: 18,
+    tier: 'pseudo',
+    attributes: ['木', '水', '火', '土'],
   },
   {
-    id: 'pseudo_root_five',
-    name: '五行偽靈根',
+    id: 'pseudo_five_hanli',
+    name: '四靈根·五行缺金（韓立之姿）',
     description:
-      '五種屬性均有卻均弱，俗稱廢靈根，修煉速度極慢，築基成功率近乎無望。若無特殊機緣（如大量築基丹或奇遇），幾乎終身困於煉氣期。走這條路意味著最艱難的逆天之路。',
-    roots: { metal: 30, wood: 30, water: 30, fire: 30, earth: 30 },
-    cultivationMult: 0.5,
+      '木水火土四行俱全卻盡皆孱弱、獨缺金行，俗稱廢靈根，本是與長生無緣的最底資質——然韓立正是以此根，憑神秘小瓶與謀存之志，一步步逆天而行；後更以祕法補全所缺之金行，五行漸全。最艱難，也最傳奇的起點。（缺金可後天以「歸元補靈訣」一類補根祕法補全）',
+    roots: { metal: 0, wood: 22, water: 22, fire: 22, earth: 22 },
+    cultivationMult: 0.7,
     probabilityWeight: 10,
-  },
-  {
-    id: 'mutated_dark_root',
-    name: '暗靈根（特殊變異）',
-    description:
-      '極罕見的特殊體質，五行靈氣感知極弱，卻對陰暗、冥府之力有天生親和力。可修習特殊魔道或陰系功法，走一條鮮有人知的偏僻道路，潛力難以估量但風險同樣極高。',
-    roots: { metal: 10, wood: 0, water: 20, fire: 0, earth: 10 },
-    cultivationMult: 1.0,
-    probabilityWeight: 4,
+    tier: 'pseudo',
+    attributes: ['木', '水', '火', '土'],
   },
 ];
 

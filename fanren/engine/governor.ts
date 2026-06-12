@@ -1,5 +1,6 @@
-/** 輸入治理：反「機械降神」。把玩家輸入分類為合法行動、需重構、或拒絕。 */
+/** 輸入治理：反「機械降神」＋反「出戲(OOC)」。把玩家輸入分類為合法行動、需重構、或拒絕。 */
 import type { GovernorVerdict, ParsedIntent } from '../types';
+import { screenCanon } from './canonGuard';
 
 interface Pattern {
   re: RegExp;
@@ -67,6 +68,12 @@ export function govern(
 ): GovernorVerdict {
   const text = (rawText || '').trim();
   if (!text) return { decision: 'reject', reason: '請輸入你的行動。', violationType: 'meta' };
+
+  // 出戲(OOC)守衛優先：現代/科幻/異界事物 → 改寫為修仙界對應或以世界觀回絕（非作弊，故不施天道業力）
+  const ooc = screenCanon(text);
+  if (ooc) {
+    return { decision: ooc.decision, reason: ooc.reason, violationType: 'ooc', sanctionKarma: 0, reframedAs: ooc.reframedAs };
+  }
 
   for (const p of PATTERNS) {
     if (p.re.test(text)) {

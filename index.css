@@ -1,6 +1,38 @@
 @import 'tailwindcss';
 @config "./tailwind.config.js";
 
+/* ===== 凡人修仙編年史 · 品牌視覺（墨青朱印） ===== */
+.brand-serif {
+  font-family: 'Noto Serif SC', serif;
+}
+
+/* 水墨底：墨黑 + 青玉暈 + 朱砂暈，徹底脫離原金色基調 */
+.ink-wash {
+  background-color: #0b0c0f;
+  background-image:
+    radial-gradient(900px 520px at 50% -12%, rgba(79, 143, 120, 0.16), transparent 62%),
+    radial-gradient(720px 620px at 86% 112%, rgba(150, 58, 48, 0.14), transparent 58%),
+    radial-gradient(620px 520px at 10% 92%, rgba(60, 92, 82, 0.12), transparent 58%);
+}
+
+/* 朱砂印章的呼吸光暈：用獨立光暈層做 opacity/scale 動畫（GPU 合成，
+   不會逼 SVG 濾鏡每幀重算），避免在印章本體上動畫 drop-shadow 造成卡頓 */
+@keyframes auraPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+.animate-aura {
+  animation: auraPulse 3.6s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
 body {
   font-family: 'Noto Serif SC', serif;
   background-color: #1c1c1a;

@@ -143,7 +143,7 @@ function GameHeader({
             clickCount > 0 ? `点击 ${5 - clickCount} 次进入调试模式` : undefined
           }
         >
-          云灵修仙
+          凡人修仙编年史
         </h1>
         <div className="flex items-center gap-2">
           <span

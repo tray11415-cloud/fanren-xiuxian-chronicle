@@ -12,6 +12,8 @@ node_modules
 *.tar.gz
 dist
 dist-ssr
+_electron_stage
+_electron_out
 .partykit
 .vercel
 *.local

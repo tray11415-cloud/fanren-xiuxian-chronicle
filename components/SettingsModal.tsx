@@ -10,10 +10,10 @@ import {
   RotateCcw,
   FolderOpen,
   Keyboard,
-  MessageCircle,
 } from 'lucide-react';
 import { Modal } from './common';
 import { GameSettings } from '../types';
+import { readLang, writeLang, LangMode } from '../fanren/i18n/hanConvert';
 import dayjs from 'dayjs';
 import { showError, showSuccess, showInfo, showConfirm } from '../utils/toastUtils';
 import { STORAGE_KEYS } from '../constants/storageKeys';
@@ -326,27 +326,13 @@ const SettingsModal: React.FC<Props> = ({
               </div>
               <div>
                 <label className="block text-sm text-stone-400 mb-2">
-                  游戏难度（仅查看）
+                  生死規則
                 </label>
                 <div className="w-full bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-200">
-                  {settings.difficulty === 'easy' && (
-                    <span className="text-green-400 font-semibold">
-                      简单模式 - 死亡无惩罚
-                    </span>
-                  )}
-                  {settings.difficulty === 'normal' && (
-                    <span className="text-yellow-400 font-semibold">
-                      普通模式 - 死亡掉落部分属性和装备
-                    </span>
-                  )}
-                  {settings.difficulty === 'hard' && (
-                    <span className="text-red-400 font-semibold">
-                      困难模式 - 死亡清除存档
-                    </span>
-                  )}
+                  <span className="text-red-300 font-semibold">永久死亡 — 一世仙途，身死則道消</span>
                 </div>
                 <p className="text-xs text-stone-500 mt-1">
-                  难度模式在游戏开始时选择，无法更改
+                  本作主角壽元有盡、身死則終局，無復活、無轉世讀檔；唯留編年史供後人觀覽。
                 </p>
               </div>
             </div>
@@ -444,24 +430,29 @@ const SettingsModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* 语言设置 */}
+          {/* 语言设置：繁體 / 简体（顯示層由 OpenCC 統一，切換後重載套用） */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Globe size={20} className="text-stone-400" />
-              <h3 className="font-bold">语言</h3>
+              <h3 className="font-bold">語言 / 语言</h3>
             </div>
             <select
-              value={settings.language}
-              onChange={(e) =>
-                onUpdateSettings({
-                  language: e.target.value as GameSettings['language']
-                })
-              }
+              value={readLang()}
+              onChange={(e) => {
+                const lang = e.target.value as LangMode;
+                writeLang(lang); // 寫入專屬語言鍵（與存檔 autosave 解耦）
+                onUpdateSettings({ language: lang }); // 盡力同步 settings（顯示用）
+                // 重載以乾淨重建畫面，再由顯示層正規化為所選字體
+                setTimeout(() => window.location.reload(), 60);
+              }}
               className="w-full bg-stone-900 border border-stone-700 rounded px-3 py-2 text-stone-200"
             >
-              <option value="zh">中文</option>
-              <option value="en">English</option>
+              <option value="traditional">繁體中文</option>
+              <option value="simplified">简体中文</option>
             </select>
+            <p className="text-xs text-stone-500 mt-2">
+              全遊戲文案以繁體為本；選簡體時由系統自動轉換。切換後將重新載入。
+            </p>
           </div>
 
           {/* 快捷键 */}
@@ -484,43 +475,27 @@ const SettingsModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* 用户反馈交流群 */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <MessageCircle size={20} className="text-stone-400" />
-              <h3 className="font-bold">用户反馈交流群</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="bg-stone-900/50 border border-stone-700 rounded p-4 flex flex-col items-center">
-                <img
-                  src="/assets/images/group.jpg"
-                  alt="云灵修仙-用户反馈交流群"
-                  className="w-full max-w-xs rounded-lg shadow-lg"
-                />
-                <p className="text-xs text-stone-400 mt-3 text-center">
-                  扫码加入微信群，反馈建议、交流心得
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 关于 */}
+          {/* 关于 / 致謝原作 */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Github size={20} className="text-stone-400" />
-              <h3 className="font-bold">关于</h3>
+              <h3 className="font-bold">關於</h3>
             </div>
             <div className="space-y-3">
               <div className="bg-stone-900/50 border border-stone-700 rounded px-4 py-3">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm text-stone-400">游戏版本</span>
+                  <span className="text-sm text-stone-400">遊戲版本</span>
                   <span className="text-sm font-mono text-mystic-gold">
                     v{import.meta.env.VITE_APP_VERSION || '-'}
                   </span>
                 </div>
                 <div className="text-xs text-stone-500">
-                  最后更新: 2026-01-07
+                  《凡人修仙編年史》— 以《凡人修仙傳》為骨架重構的文字修仙遊戲
                 </div>
+              </div>
+              <div className="bg-stone-900/50 border border-stone-700 rounded px-4 py-3 text-xs text-stone-400 leading-relaxed">
+                本作為開源文字修仙遊戲《雲靈修仙》的二次創作改版，沿用其後端遊戲引擎；
+                前端、世界觀與劇情皆已依《凡人修仙傳》重構。謹此致謝原作者 JeasonLoop。
               </div>
               <a
                 href="https://github.com/JeasonLoop/react-xiuxian-game"
@@ -529,7 +504,7 @@ const SettingsModal: React.FC<Props> = ({
                 className="flex items-center gap-2 w-full bg-stone-700 hover:bg-stone-600 text-stone-200 border border-stone-600 rounded px-4 py-2 transition-colors"
               >
                 <Github size={16} />
-                <span>GitHub 仓库</span>
+                <span>原作《雲靈修仙》· JeasonLoop/react-xiuxian-game</span>
                 <span className="ml-auto text-xs text-stone-400">↗</span>
               </a>
               <button
@@ -537,11 +512,8 @@ const SettingsModal: React.FC<Props> = ({
                 className="flex items-center gap-2 w-full bg-stone-700 hover:bg-stone-600 text-stone-200 border border-stone-600 rounded px-4 py-2 transition-colors text-left"
               >
                 <Save size={16} />
-                <span>查看更新日志</span>
+                <span>查看更新日誌</span>
               </button>
-              <p className="text-xs text-stone-500">
-                一款文字修仙小游戏，欢迎 Star 和 Fork！
-              </p>
             </div>
           </div>
         </div>

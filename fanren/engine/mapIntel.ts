@@ -3,9 +3,41 @@ import { WORLD_MAP } from '../data/worldMap';
 import type { WorldMapNode } from '../types';
 
 const ID2NAME: Record<string, string> = {};
+const NAME2NODE: Record<string, WorldMapNode> = {};
 const HAS_CHILD: Record<string, boolean> = {};
-for (const n of WORLD_MAP) ID2NAME[n.id] = n.name;
+for (const n of WORLD_MAP) { ID2NAME[n.id] = n.name; NAME2NODE[n.name] = n; }
 for (const n of WORLD_MAP) if (n.parentId) HAS_CHILD[n.parentId] = true;
+
+/** 模糊定位地圖節點：先精確名稱、再 id、最後包含關係。 */
+export function findMapNode(name: string): WorldMapNode | undefined {
+  if (!name) return undefined;
+  if (NAME2NODE[name]) return NAME2NODE[name];
+  const byId = WORLD_MAP.find((n) => n.id === name);
+  if (byId) return byId;
+  return WORLD_MAP.find((n) => n.name.includes(name) || name.includes(n.name));
+}
+
+/** 某地點的相鄰地點（雙向解析連結為中文名）。 */
+export function adjacentPlaces(name: string): string[] {
+  const node = findMapNode(name);
+  const out = new Set<string>();
+  if (node) for (const c of node.connections || []) out.add(ID2NAME[c] || c);
+  const myId = node?.id;
+  const myName = node?.name || name;
+  for (const n of WORLD_MAP) {
+    if (!n.connections) continue;
+    if (n.connections.some((c) => c === myId || (ID2NAME[c] || c) === myName)) out.add(n.name);
+  }
+  out.delete(name);
+  out.delete(myName);
+  return Array.from(out);
+}
+
+/** 某地點由哪些勢力控制（含上層大區的勢力）。 */
+export function factionsOfPlace(name: string): string[] {
+  const node = findMapNode(name);
+  return node?.factions || [];
+}
 
 /** 是否為「具體地點」（葉節點：底下沒有更細的子地點）。界/大陸/國家等容器節點為 false。 */
 export function isConcretePlace(node: WorldMapNode): boolean {

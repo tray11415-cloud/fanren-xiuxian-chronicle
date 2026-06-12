@@ -54,7 +54,7 @@ export const INITIAL_ITEMS: Item[] = [
     id: 'cloth-robe',
     name: '粗布道袍',
     type: ItemType.Armor,
-    description: '云灵宗外门弟子制式道袍，虽然材质普通，但经过特殊处理，具有一定的防护能力，是初入宗门的弟子常用的护身衣物。',
+    description: '青云宗外门弟子制式道袍，虽然材质普通，但经过特殊处理，具有一定的防护能力，是初入宗门的弟子常用的护身衣物。',
     quantity: 1,
     rarity: '普通',
     level: 0,

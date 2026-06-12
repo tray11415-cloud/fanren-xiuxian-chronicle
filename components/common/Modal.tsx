@@ -164,6 +164,7 @@ const Modal: React.FC<ModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
+      data-hans-src=""
     >
       <div
         className={`

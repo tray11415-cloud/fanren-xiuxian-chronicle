@@ -61,6 +61,17 @@ export const CANON_EVENTS: CanonEventSource[] = [
         description: '在余子童元神受創後現身談判，嘗試獲取其修仙知識或功法殘片',
         minRealm: '炼气期',
       },
+      {
+        id: 'E002-I03',
+        description: '趁墨大夫暴斃、眾人未及反應，搶先翻找神手谷密室，奪取那只神秘小綠瓶',
+        minRealm: '炼气期',
+        reward: {
+          items: [{ name: '神秘小綠瓶', type: '法寶', rarity: '传说', quantity: 1 }],
+          relationship: -15,
+          flag: 'grabbed_green_bottle',
+          note: '你趁亂搶得那只神秘小綠瓶——傳說中能催熟靈藥的至寶。然此舉徹底開罪韓立，因果就此種下，這條命運之路再難回頭。',
+        },
+      },
     ],
     spoilerLevel: 1,
   },
@@ -226,7 +237,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E008',
     title: '天羅魔道六宗入侵越國：黑煞教教主（越皇）揭穿',
-    chapterAnchor: 260,
+    chapterAnchor: 310,
     locationId: '黃楓谷',
     involvedNpcIds: ['韓立', '王蟬', '雷萬鶴', '李化元'],
     summary:
@@ -258,7 +269,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E009',
     title: '六派金蟬脫殼：古傳送陣撤離越國',
-    chapterAnchor: 295,
+    chapterAnchor: 345,
     locationId: '黃楓谷',
     involvedNpcIds: ['韓立', '令狐老祖', '王蟬', '李化元', '南宮婉'],
     summary:
@@ -374,13 +385,13 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E013',
     title: '落雲宗試劍大會：三派禁地靈眼之樹爭奪',
-    chapterAnchor: 520,
+    chapterAnchor: 627,
     locationId: '落雲宗',
     involvedNpcIds: ['韓立', '慕沛靈', '銀月'],
     summary:
       '天南溪國落雲宗舉辦試劍大會，三大門派弟子相互競技。大會背後，三派禁地中的「靈眼之樹」成為真正的爭奪焦點，韓立以元嬰修士實力隱藏入局。玉如意器靈銀月在此期間與韓立的羈絆加深，慕沛靈嘗試突破元嬰。',
     consequences: [
-      '落雲宗、古劍門、御靈宗三派禁地秘境開放',
+      '落雲宗、古劍門、百巧院三派禁地秘境開放',
       '靈眼之樹歸屬確定，影響天南靈藥資源分配',
       '韓立與慕沛靈的元嬰突破問題浮上檯面',
     ],
@@ -401,7 +412,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E014',
     title: '天南九國盟大戰：慕蘭聖禽降臨與十場生死賭戰',
-    chapterAnchor: 580,
+    chapterAnchor: 760,
     locationId: '天南',
     involvedNpcIds: ['韓立', '南宮婉', '魏無涯', '令狐老祖'],
     summary:
@@ -433,7 +444,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E015',
     title: '大衍神君最後傳道：大衍訣後層與高階傀儡術',
-    chapterAnchor: 620,
+    chapterAnchor: 960,
     locationId: '亂星海',
     involvedNpcIds: ['韓立', '大衍神君'],
     summary:
@@ -455,7 +466,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E016',
     title: '鎮魔塔出世：八靈尺等上古通天靈寶現世大戰',
-    chapterAnchor: 660,
+    chapterAnchor: 1035,
     locationId: '大晉',
     involvedNpcIds: ['韓立', '乾老魔'],
     summary:
@@ -482,7 +493,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E017',
     title: '韓立元嬰中期突破：靈緲園閉關',
-    chapterAnchor: 700,
+    chapterAnchor: 870,
     locationId: '亂星海',
     involvedNpcIds: ['韓立', '魏無涯', '金老怪'],
     summary:
@@ -508,7 +519,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E018',
     title: '亂星海終決戰：星宮對逆星盟，凌玉靈境界揭曉',
-    chapterAnchor: 760,
+    chapterAnchor: 1230,
     locationId: '亂星海',
     involvedNpcIds: ['韓立', '凌玉靈', '萬三谷', '六道極聖'],
     summary:
@@ -534,17 +545,16 @@ export const CANON_EVENTS: CanonEventSource[] = [
   },
   {
     id: 'E019',
-    title: '韓立突破化神初期：南宮婉成為道侶',
-    chapterAnchor: 800,
-    locationId: '落雲宗',
-    involvedNpcIds: ['韓立', '南宮婉', '銀月'],
+    title: '韓立進階化神：擒精火破二妖、亂星海閉關成化神',
+    chapterAnchor: 1258,
+    locationId: '亂星海',
+    involvedNpcIds: ['韓立'],
     summary:
-      '韓立在落雲宗突破化神初期，天象大作，震動整個天南修仙界。南宮婉多年來受到的心術困擾被破解後，正式成為韓立道侶，落雲宗晉升天南超級大宗。銀月器靈也在此階段解開更多封印。',
+      '韓立於亂星海內海擒精火、破二妖補足化神契機，閉死關衝擊化神瓶頸——人界靈氣難承化神之軀，閉關進益銳減，化神不成則永困元嬰、坐看壽盡。歷盡艱辛，元嬰化神、神念成軀，終成人界鳳毛麟角的化神修士，距飛升僅一步之遙。',
     consequences: [
-      '韓立成為天南第一化神修士',
-      '落雲宗成為天南第一大宗門',
-      '南宮婉韓立道侶關係確立',
-      '天南修仙格局徹底改變，正道各派向落雲宗靠攏',
+      '韓立突破化神初期，神念成軀、初通大神通',
+      '化神大圓滿在即，飛升抉擇（正規飛靈臺 vs 偷渡空間節點）逼近',
+      '南宮婉仍受封魂咒冰封，韓立攜其元嬰續尋解咒之法',
     ],
     interventions: [
       {
@@ -554,7 +564,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
       },
       {
         id: 'E019-I02',
-        description: '捲入掩月宗或化意門因韓立突破化神而引發的後續事件',
+        description: '趁韓立閉關化神、無暇外顧，謀奪其在亂星海的洞府資源',
         minRealm: '化神期',
       },
     ],
@@ -565,36 +575,53 @@ export const CANON_EVENTS: CanonEventSource[] = [
   // 卷八　化神渡劫與靈界飛升
   // ──────────────────────────────────────────────
   {
-    id: 'E020',
-    title: '化神大天劫：法力全失，金剛訣肉身重建',
-    chapterAnchor: 840,
-    locationId: '人界邊界',
-    involvedNpcIds: ['韓立'],
+    id: 'E020-A',
+    title: '互下禁制・偷渡空間節點：韓立與冰鳳強闖界面',
+    chapterAnchor: 1264,
+    locationId: '亂星海',
+    involvedNpcIds: ['韓立', '冰鳳'],
     summary:
-      '韓立在人界邊界渡化神大天劫，歷劫後法力全失，以金剛訣體修路線從頭重建法力。此為凡人少年至化神強者的完整弧線象徵性句點，亦是靈界旅程的起點。',
+      '化神大圓滿的韓立捨棄正規飛靈臺（循正途者須蘊養化身、受三百年驅役），與同欲飛升的冰鳳結盟——二人互下禁制、生死相約，共擔界面之險，遁入一處隱秘的空間節點。節點末段空間風暴一波接一波肆虐、隔界之力足以壓滅元嬰：韓立護身寶物毀去十之八九、連八靈尺都葬送其中，全憑化靈符與木生珠不滅之體死中求活。最終一場意外使他與冰鳳被迫分開，他獨自穿出亂流、墜入一處陌生界面——人界篇就此終結，靈界旅程開啟。',
     consequences: [
-      '韓立化神期修為基礎牢固，潛力進一步提升',
-      '金剛訣肉身修煉為日後靈界體修路線奠基',
-      '靈界邊界各方勢力注意到天劫異象',
+      '韓立成功偷渡空間節點、脫離人界，但與冰鳳被迫分離、互下的禁制就此成為隱患',
+      '八靈尺等護身至寶盡毀於節點，僅化靈符、木生珠保命',
+      '墜入靈界邊陲陌生界面（煉虛期序章）——此後為測試版品質保證邊界之外',
     ],
     interventions: [
       {
-        id: 'E020-I01',
-        description: '目睹化神大天劫全程，在劫雷過後搶先接觸韓立以建立關係',
-        minRealm: '化神期',
-      },
-      {
-        id: 'E020-I02',
-        description: '捲入靈界邊界各方勢力因天劫引發的搶奪節點事件',
+        id: 'E020A-I01',
+        description: '在空間節點開啟前介入，搶奪節點線索或與冰鳳結盟之機',
         minRealm: '化神期',
       },
     ],
     spoilerLevel: 2,
   },
   {
+    id: 'E020',
+    title: '初入靈界：荒漠脫困、元嬰虛化煉體重生',
+    chapterAnchor: 1280,
+    locationId: '風元大陸',
+    involvedNpcIds: ['韓立'],
+    summary:
+      '韓立墜入靈界邊陲一處七日同天的炎熱荒漠，與冰鳳互下的禁制餘力在體內亂竄、不斷摧毀經脈。情急之下他以元嬰虛化之法，忍痛驅出所有寶物、自散元嬰，將龐大精元灌注全身強化修復，代價是百餘年內法力全失、神念盡廢，外人神識掃過只當其為凡人。憑木生珠不滅之體，三月後禁制餘力散盡、經脈漸復——這也成了他日後在靈界以體修路線重起爐灶的起點。',
+    consequences: [
+      '韓立化身潛伏靈界荒漠，法力盡失、自凡人之軀重修',
+      '木生珠不滅之體與元嬰虛化之法，是其死中求生的關鍵',
+      '靈界與人界法則迥異，舊有勢力資源幾乎清零',
+    ],
+    interventions: [
+      {
+        id: 'E020-I01',
+        description: '作為靈界荒漠的低階修士／部族，撞見虛弱的韓立並選擇相助或圖謀',
+        minRealm: '化神期',
+      },
+    ],
+    spoilerLevel: 3,
+  },
+  {
     id: 'E021',
     title: '韓立飛升靈界：天淵城首日',
-    chapterAnchor: 880,
+    chapterAnchor: 1300,
     locationId: '天淵城',
     involvedNpcIds: ['韓立'],
     summary:
@@ -620,15 +647,15 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E022',
     title: '天淵城人妖聯盟：百族大戰危機爆發',
-    chapterAnchor: 950,
+    chapterAnchor: 1360,
     locationId: '天淵城',
     involvedNpcIds: ['韓立', '天淵城諸長老', '木族', '妖族'],
     summary:
-      '靈界天淵城人族與妖族聯盟面臨木族、其他百族勢力聯合進攻的危機。天淵城諸長老啟動玄天斬靈劍等鎮城古寶，韓立以煉虛期修為迅速成為聯盟主力。百族大戰持續數十年，正式成為靈界歷史的重大轉折。',
+      '靈界天淵城人族與妖族聯盟面臨木族、其他百族勢力聯合進攻的危機。天淵城諸長老調度鎮城戰力佈防，韓立以化神修為入選戍邊，赴蠻荒前線執行哨探與截擊任務。百族大戰持續數十年，正式成為靈界歷史的重大轉折。',
     consequences: [
       '天淵城人妖聯盟確立，多族格局重組',
-      '玄天斬靈劍等靈界古寶現世',
-      '韓立在靈界確立地位，突破合體期的條件逐漸成熟',
+      '韓立投身蠻荒戰線，捲入木族與諸族紛爭',
+      '韓立在靈界確立地位，突破煉虛的契機逐漸成熟',
     ],
     interventions: [
       {
@@ -652,7 +679,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E023',
     title: '玄天斬靈劍出世：靈界古寶引發的群雄競奪',
-    chapterAnchor: 1000,
+    chapterAnchor: 1545,
     locationId: '天淵城',
     involvedNpcIds: ['韓立', '天淵城諸長老'],
     summary:
@@ -674,7 +701,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E024',
     title: '韓立突破合體期：靈界地位鞏固',
-    chapterAnchor: 1060,
+    chapterAnchor: 1770,
     locationId: '天淵城',
     involvedNpcIds: ['韓立'],
     summary:
@@ -700,7 +727,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E025',
     title: '靈界正魔格局：魔界通道隱患浮現',
-    chapterAnchor: 1120,
+    chapterAnchor: 1835,
     locationId: '天淵城',
     involvedNpcIds: ['韓立', '天淵城諸長老'],
     summary:
@@ -727,7 +754,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E026',
     title: '韓立突破大乘期：靈界最頂端修士誕生',
-    chapterAnchor: 1200,
+    chapterAnchor: 2185,
     locationId: '天淵城',
     involvedNpcIds: ['韓立'],
     summary:
@@ -749,11 +776,11 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E027',
     title: '魔界大軍入侵：靈界三界之戰爆發',
-    chapterAnchor: 1280,
+    chapterAnchor: 1875,
     locationId: '天淵城',
     involvedNpcIds: ['韓立', '天淵城諸長老'],
     summary:
-      '魔界大軍正式突破通道，入侵靈界。靈界人族、妖族、仙使軍等多方聯軍迎戰。韓立以大乘期修為成為守衛靈界的核心戰力。三界之戰規模超過百族大戰，是靈界歷史上最大規模的戰爭。',
+      '魔界大軍正式突破通道，入侵靈界。靈界人族、妖族、仙使軍等多方聯軍迎戰。韓立以合體期修為成為守衛靈界的核心戰力之一。三界之戰規模超過百族大戰，是靈界歷史上最大規模的戰爭。',
     consequences: [
       '靈界邊境多個城市失守',
       '魔界通道被暫時封閉，付出巨大代價',
@@ -777,11 +804,11 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E028',
     title: '魔界之戰終結：魔界通道封印',
-    chapterAnchor: 1340,
+    chapterAnchor: 2170,
     locationId: '天淵城',
     involvedNpcIds: ['韓立', '天淵城諸長老'],
     summary:
-      '韓立率領靈界聯軍對魔界通道發動最終封印行動，以大乘後期修為加持封印陣法，成功將魔界通道永久閉合。此役為靈界三界之戰畫上句點，亦是韓立飛升仙界前的最後大戰。',
+      '韓立率靈界聯軍與魔族決戰，木族聖樹隕落、魔界之戰落幕，魔界通道在多方合力下封閉。此役為靈界三界之戰畫上句點，韓立以合體後期修為立下首功，距離大乘僅一步之遙。',
     consequences: [
       '魔界通道永久封印，靈界暫時安全',
       '韓立業力圓滿，飛升仙界條件具足',
@@ -808,7 +835,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E029',
     title: '韓立渡大乘天劫：飛升仙界',
-    chapterAnchor: 1400,
+    chapterAnchor: 2440,
     locationId: '天淵城',
     involvedNpcIds: ['韓立', '南宮婉'],
     summary:
@@ -839,11 +866,11 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E030',
     title: '韓立結丹期突破：青元劍訣與孤星劍成形',
-    chapterAnchor: 320,
-    locationId: '黃楓谷',
-    involvedNpcIds: ['韓立', '李化元', '陳巧倩'],
+    chapterAnchor: 400,
+    locationId: '亂星海',
+    involvedNpcIds: ['韓立'],
     summary:
-      '韓立在黃楓谷完成結丹期突破，以青元劍訣為基礎，十二柄孤星劍正式成形。李化元提供功法指導，陳巧倩見證此歷史時刻。韓立至此躋身越國中層修士之列，首次具備對抗元嬰修士的間接手段。',
+      '韓立避禍亂星海、隱於外海島嶼苦修，於此完成結丹期突破——青元劍訣根基早成於黃楓谷築基之時，至此凝金丹、十二柄孤星劍正式成形。韓立躋身結丹修士之列，先天真火進為三昧真火，始具蘊養本命法寶之能。',
     consequences: [
       '韓立進入結丹期，孤星劍成為主戰陣法',
       '李化元師徒關係進一步加深',
@@ -861,7 +888,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E031',
     title: '天南初立足：辛如音的傳送陣委託線',
-    chapterAnchor: 302,
+    chapterAnchor: 358,
     locationId: '元武國',
     involvedNpcIds: ['韓立', '辛如音'],
     summary:
@@ -904,7 +931,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E033',
     title: '李化元隕落：天南九國盟戰前的師徒永別',
-    chapterAnchor: 555,
+    chapterAnchor: 700,
     locationId: '天南',
     involvedNpcIds: ['韓立', '李化元'],
     summary:
@@ -926,7 +953,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E034',
     title: '廣靈道果服食：韓立修煉效率躍升',
-    chapterAnchor: 1060,
+    chapterAnchor: 1815,
     locationId: '天淵城',
     involvedNpcIds: ['韓立'],
     summary:
@@ -947,7 +974,7 @@ export const CANON_EVENTS: CanonEventSource[] = [
   {
     id: 'E035',
     title: '韓立首次元嬰期：身份在天南的公開',
-    chapterAnchor: 470,
+    chapterAnchor: 639,
     locationId: '天南',
     involvedNpcIds: ['韓立', '南宮婉', '魏無涯'],
     summary:

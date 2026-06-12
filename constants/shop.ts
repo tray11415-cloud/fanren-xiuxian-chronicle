@@ -191,9 +191,9 @@ export const SHOPS: Shop[] = [
       },
       {
         id: 'shop-armor-2',
-        name: '云灵道袍',
+        name: '青云道袍',
         type: ItemType.Armor,
-        description: '云灵宗内门弟子道袍，防御力不俗。',
+        description: '青云宗内门弟子道袍，防御力不俗。',
         rarity: '稀有',
         price: 600,
         sellPrice: 180,

@@ -1,4 +1,5 @@
 import React from 'react';
+import { SealBadge, Wordmark } from './Brand';
 
 interface Props {
   onCanon: () => void;
@@ -7,20 +8,24 @@ interface Props {
 
 const ModeChooser: React.FC<Props> = ({ onCanon, onClassic }) => {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-b from-black via-zinc-950 to-zinc-900 px-4 text-zinc-100">
+    <div className="h-screen w-full overflow-y-auto ink-wash px-4 text-zinc-100">
+      <div className="flex min-h-full items-center justify-center py-8">
       <div className="w-full max-w-2xl">
-        <h1 className="mb-2 text-center text-3xl font-bold text-amber-300">修仙文字遊戲</h1>
-        <p className="mb-8 text-center text-sm text-zinc-400">選擇你的修仙方式</p>
+        <div className="mb-8 flex flex-col items-center text-center animate-fade-in">
+          <SealBadge size={84} />
+          <Wordmark className="mt-4" titleClassName="text-3xl sm:text-4xl" sub="一介凡人的修真編年史" />
+          <p className="mt-3 text-sm text-[#8aa89b]">擇徑而行 · 你的仙途自此分流</p>
+        </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <button
             onClick={onCanon}
-            className="group rounded-2xl border border-amber-700/50 bg-gradient-to-b from-amber-950/40 to-zinc-900 p-6 text-left transition hover:border-amber-400 hover:shadow-lg hover:shadow-amber-900/30"
+            className="group rounded-2xl border border-[#3f6e5c] bg-gradient-to-b from-[#13352b]/60 to-zinc-900 p-6 text-left transition hover:border-[#74b69b] hover:shadow-lg hover:shadow-emerald-900/30"
           >
-            <div className="mb-2 text-xl font-bold text-amber-300">凡人 · 編年史模式</div>
+            <div className="mb-2 text-xl font-bold text-[#9fdcc4]">凡人 · 編年史模式</div>
             <div className="text-sm text-zinc-300">
               以《凡人修仙傳》正史為骨架的文字冒險。自定義金手指、動態回合、世界隨時間自然演化、可改寫他人命運。輸入文字驅動你的仙途。
             </div>
-            <div className="mt-3 text-xs text-amber-400/70">★ 全新主玩法</div>
+            <div className="mt-3 text-xs text-[#74b69b]/80">★ 全新主玩法</div>
           </button>
           <button
             onClick={onClassic}
@@ -33,6 +38,7 @@ const ModeChooser: React.FC<Props> = ({ onCanon, onClassic }) => {
             <div className="mt-3 text-xs text-zinc-500">既有玩法</div>
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

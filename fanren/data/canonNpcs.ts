@@ -21,51 +21,1795 @@ export const CANON_NPCS: CanonNpcSource[] = [
   "chronicle": [
    {
     "fromChapter": 1,
-    "toChapter": 99,
-    "locationId": "七玄門",
-    "realm": "長春功第八層（法力深厚）",
+    "toChapter": 5,
+    "locationId": "彩霞山",
+    "realm": "凡人（未修煉的農家少年）",
     "status": "alive",
-    "activity": "以驅物術奪劍符、火彈術烧殺金光上人及野狼帮全員，完勝死鬥後與七玄門秘密交易，隨即永離彩霞山，回鄉探望"
+    "activity": "由三叔自山邊小村帶往青牛鎮、彩霞山，參加七玄門炼骨崖入門考核；力竭未登頂但獲記名弟子身份，被供奉墨大夫帶入神手谷。"
+   },
+   {
+    "fromChapter": 6,
+    "toChapter": 8,
+    "locationId": "七玄門",
+    "realm": "凡人（初習長春功，體內僅一縷寒氣）",
+    "status": "alive",
+    "activity": "在神手谷隨墨大夫學採藥煉藥與醫術，苦修無名口訣（長春功）半年生出奇異寒氣，獲認親傳弟子並通過轉正考核。"
+   },
+   {
+    "fromChapter": 9,
+    "toChapter": 14,
+    "locationId": "七玄門",
+    "realm": "煉氣期（長春功第一層）",
+    "status": "alive",
+    "activity": "藥力輔助下突破長春功第一層（經脈受內傷）；山路踢得砸不開的神秘綠瓶，秘藏皮袋，晴夜見其吸光點、第八日開瓶得一滴翠綠液體。"
+   },
+   {
+    "fromChapter": 15,
+    "toChapter": 21,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第三層初階）",
+    "status": "alive",
+    "activity": "四年後長春功停滯於第三層初階，墨大夫獨自下山采藥；出谷結識金冬寶得門內情報、聞厲飛雨傳奇，溪邊救厲飛雨並識破抽髓丸換得人情。"
+   },
+   {
+    "fromChapter": 22,
+    "toChapter": 26,
+    "locationId": "七玄門",
+    "realm": "煉氣期（長春功第三層頂峰）",
+    "status": "alive",
+    "activity": "夜遭心魔入侵、憑平安符化解並衝至第三層頂峰，重拾綠瓶；試藥兔爆斃確認綠液催化威力，摸清七日一滴、催出百年至千年藥性、離瓶一刻鐘即消的規律。"
+   },
+   {
+    "fromChapter": 27,
+    "toChapter": 30,
+    "locationId": "七玄門",
+    "realm": "煉氣期（長春功第四層）",
+    "status": "alive",
+    "activity": "趁墨大夫未歸秘密催生藥材、煉成黃龍丹等四種靈藥，服丹突破長春功第四層、五感大進；隱瞞突破應付把脈，最終被歸來的墨居仁攤牌制伏、得知靈根與長春功真目的。"
+   },
+   {
+    "fromChapter": 31,
+    "toChapter": 41,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第四至五層）",
+    "status": "alive",
+    "activity": "被尸蟲丸要挾後暗中圖強：與厲飛雨私下交易、默記七十四本眨眼劍譜、偵知野狼幫奸細並轉交厲飛雨，訂製短劍鐵鈴後留書出谷。"
+   },
+   {
+    "fromChapter": 42,
+    "toChapter": 43,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第五至六層）",
+    "status": "alive",
+    "activity": "在荊棘山溝閉關約四個月，識破雲翅鳥監視，苦練羅煙步、斂息功、偽匿術、軟骨功，並靠靈藥將長春功衝破第六層，備齊暗器待約攤牌。"
+   },
+   {
+    "fromChapter": 44,
+    "toChapter": 51,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第六層）",
+    "status": "alive",
+    "activity": "如約返谷取解藥後與墨大夫翻臉血鬥：破膛一劍、羅煙步避魔銀手、纏香絲毒計刺頸，連環反擊終仍被刀槍不入的鐵奴制服擒拿。"
+   },
+   {
+    "fromChapter": 52,
+    "toChapter": 60,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第六層）",
+    "status": "alive",
+    "activity": "墨大夫以七鬼噬魂大法獲法力、定神符制身，押入奪舍石屋施術；韓立卻在神識夢戰中吞墨大夫元神、重創余子童，醒後識破全局並以毒液加玉帶短劍反殺余子童。"
+   },
+   {
+    "fromChapter": 61,
+    "toChapter": 64,
+    "locationId": "七玄門",
+    "realm": "煉氣期（長春功第六層頂峰）",
+    "status": "alive",
+    "activity": "於神手谷石屋以七毒水加陽光滅余子童元神，讀墨大夫遺書接受護妻女娶女兒換暖陽寶玉的死後交易，以引魂鐘收服張鐵屍殼曲魂"
+   },
+   {
+    "fromChapter": 65,
+    "toChapter": 74,
+    "locationId": "七玄門",
+    "realm": "煉氣期（長春功第六層→第七層）",
+    "status": "alive",
+    "activity": "偽書留守神手谷以神秘小瓶催生藥材行醫成韓神醫，自學掌握火彈術天眼術御風訣並融合罗煙步，以清靈散金針救治李長老，勸厲飛雨散功被拒"
+   },
+   {
+    "fromChapter": 75,
+    "toChapter": 90,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第八層，法力超越昔日余子童肉身）",
+    "status": "alive",
+    "activity": "突破第八層創火彈術手持火球法武並用戰法，落沙坡伏擊後與厲飛雨換裝混入攻山潛入落日峰，公開御風訣身法簽死契入血斗，天眼術看穿金光上人並悟驅物術驅劍萌生奪劍之念"
+   },
+   {
+    "fromChapter": 91,
+    "toChapter": 94,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第八層）",
+    "status": "alive",
+    "activity": "於落日峰死鬥場以驅物術奪金光上人劍符灰芒，再以火彈術配御風訣焚殺金光上人及賈天龍等野狼帮全體人馬，完勝死鬥。"
+   },
+   {
+    "fromChapter": 95,
+    "toChapter": 96,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第八層）",
+    "status": "alive",
+    "activity": "混入人流隱匿下峰回神手谷，閉門謝客以驅物術精研劍符灰芒實戰，摸清其耗能、範圍、次數三大缺陷，並約厲飛雨次日會面。"
+   },
+   {
+    "fromChapter": 97,
+    "toChapter": 97,
+    "locationId": "彩霞山",
+    "realm": "煉氣期（長春功第八層）",
+    "status": "alive",
+    "activity": "提前潛入王絕楚臥室，以天眼術震懾先發制人，揭破高層殺己密謀，宣布永離彩霞山並達成養精丹秘密交易。"
+   },
+   {
+    "fromChapter": 98,
+    "toChapter": 99,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層）",
+    "status": "alive",
+    "activity": "留延壽秘藥別厲飛雨後，攜曲魂、雲翅鳥乘馬車東行五日返故鄉小村，遠觀小妹韓四丫出嫁與父母至親，轉身永別踏上修仙路。"
+   },
+   {
+    "fromChapter": 100,
+    "toChapter": 103,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層，身懷陰寒之毒）",
+    "status": "alive",
+    "activity": "歷時三月跋涉抵嘉元城，黑水巷遭劫殺反殺黑熊一夥，以腐心丸收服孫二狗為線人"
+   },
+   {
+    "fromChapter": 104,
+    "toChapter": 107,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層，陰毒約兩月將爆發）",
+    "status": "alive",
+    "activity": "駐匯源客棧研讀墨大夫遺書、聽取孫二狗情報，於香家酒樓監視墨府，遇藍衣修仙者並偵知吳劍鳴假冒弟子"
+   },
+   {
+    "fromChapter": 108,
+    "toChapter": 114,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層，身懷陰寒之毒）",
+    "status": "alive",
+    "activity": "夜潛墨府竊聽內情，投紋龍戒以關門弟子身份登門，與四位夫人周旋並在墨府後宅住下觀察虛實"
+   },
+   {
+    "fromChapter": 115,
+    "toChapter": 118,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層，身懷陰寒之毒）",
+    "status": "alive",
+    "activity": "與縞素設局的諸夫人攤牌，以火彈術立威、清靈散破千人醉，坦陳墨大夫死因後談成「誅一霸換寶玉」的框架"
+   },
+   {
+    "fromChapter": 119,
+    "toChapter": 125,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層，身懷陰寒之毒）",
+    "status": "alive",
+    "activity": "獲神仙大會線索，助孫二狗奪四平幫（瀟湘院毒殺沈重山等），與嚴氏締約定殺歐陽飛天，定位太南谷並安排嘉元城後路"
+   },
+   {
+    "fromChapter": 126,
+    "toChapter": 126,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層，陰毒已徹底清除）",
+    "status": "alive",
+    "activity": "奔襲獨霸山莊以劍符斬歐陽飛天，換得暖陽寶玉，南下途中拔毒半月根除陰毒，抵太南山結識萬小山"
+   },
+   {
+    "fromChapter": 127,
+    "toChapter": 129,
+    "locationId": "越國",
+    "realm": "煉氣期（長春功第八層）",
+    "status": "alive",
+    "activity": "從萬小山處習得境界靈根門派等修仙常識，經通音符開陣入太南谷，參加太南小會、初識青顏真人並觀察修仙界"
+   },
+   {
+    "fromChapter": 130,
+    "toChapter": 137,
+    "locationId": "天南",
+    "realm": "煉氣期（長春功第八層頂峰）",
+    "status": "alive",
+    "activity": "抵太南谷入夥松紋道士散修團，於交易廣場以黃龍丹金髓丸換飛行符、咒訣殘本、符紙、長春功全本、金竺筆與七星草種子，認識升仙大會制度與燕家兄妹。"
+   },
+   {
+    "fromChapter": 138,
+    "toChapter": 141,
+    "locationId": "天南",
+    "realm": "煉氣期（長春功第九層）",
+    "status": "alive",
+    "activity": "苦修十餘日突破長春功第九層，以飛行符換隱形法寶殘片，並由《青溪筆錄》確認手中令牌為黃楓谷所發升仙令、決定改持令拜師。"
+   },
+   {
+    "fromChapter": 142,
+    "toChapter": 151,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第九層）",
+    "status": "alive",
+    "activity": "出谷遭松紋道士手下襲殺、以符寶劍光斬殺黃衣人與大漢，持升仙令拜入黃楓谷成執事弟子，靈根測為四屬性缺金偽靈根，委曲放棄築基丹換得百藥園職位並埋殘片藏神秘小瓶。"
+   },
+   {
+    "fromChapter": 152,
+    "toChapter": 159,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "兩年內藉神秘小瓶催熟藥草交差、服丹突破長春功十一層，赴岳麓殿抄錄築基丹定顏丹配方、購銀絲鼎、得知地肺之火可代先天真火，立志尋訪玉髓芝紫猴花天靈果三種天地主藥。"
+   },
+   {
+    "fromChapter": 160,
+    "toChapter": 160,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "於傳功閣向吳風問明血禁試煉內情（七派每五年入禁地、煉氣期方可入內、存活率不足四分之一、半年後開試煉），返百藥園反覆權衡參戰利害"
+   },
+   {
+    "fromChapter": 161,
+    "toChapter": 164,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "往岳麓殿確認情報後決意參戰，學斂氣術、秘密培植兩株千年黃精芝備戰；持令牌喬裝赴坊市，於萬寶樓以兩株千年黃精芝換得金蚨子母刃、玄鐵飛天盾、天雷子、金光磚符寶，並弄"
+   },
+   {
+    "fromChapter": 165,
+    "toChapter": 170,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "返途夜宿石洞，竊聽陸師兄欲姦殺陳師妹奪丹，惡鬥三場以撤罩省力、吞草、中階靈石耗死陸師兄，奪兩枚築基丹，符寶報廢"
+   },
+   {
+    "fromChapter": 171,
+    "toChapter": 171,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "毀屍滅跡、為陳師妹解毒後棄之，返百藥園閉關三日驅丹田異物，套問出築基丹直接吞服之法，又聞新難題"
+   },
+   {
+    "fromChapter": 172,
+    "toChapter": 179,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "決意參加血色試煉、以龍鱗果搪塞王師叔完成報名，受馬師伯贈丹，隨李師祖騎銀甲角蟒赴荒山集合，旁觀三方立賭後與七大派一同破風刃大陣入禁地。"
+   },
+   {
+    "fromChapter": 180,
+    "toChapter": 185,
+    "locationId": "血色禁地",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "傳送至烏龍潭，目睹靈獸山驅獸誘殺後繞路，撿得透明絲線，在一線天以土牢術、絲線、金光磚連殺嚴某與絡腮鬍子，第一日大清洗中於樹上恢復法力。"
+   },
+   {
+    "fromChapter": 186,
+    "toChapter": 190,
+    "locationId": "血色禁地",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "出手救黃衫師姐、青索困多寶女，遭黃雀封嶽橫殺，最終以青蛟旗惑敵、引爆天雷子化封嶽為飛灰，拾得多寶女法器與封嶽踏雲靴、小刀符寶。"
+   },
+   {
+    "fromChapter": 191,
+    "toChapter": 196,
+    "locationId": "血色禁地",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "進中心區避飛蛇、與鐘吾互換情報玉簡後樹洞休眠至第三日清晨；待月陽寶珠驅散環形山大霧後入山，制定專採未熟靈藥幼苗、以小綠瓶日後催熟的避鋒採藥策略。"
+   },
+   {
+    "fromChapter": 197,
+    "toChapter": 201,
+    "locationId": "越京",
+    "realm": "煉氣期（長春功第十一層）",
+    "status": "alive",
+    "activity": "在環形山以倒插子刃暗算上階巨蜈蚣、採紫猴花幼苗並割背殼，連採多處幼苗，最後趕至小石殿出手救靈獸山少女，與巨劍門武痴言某正面開戰，弧段於戰鬥中截止。"
+   },
+   {
+    "fromChapter": 202,
+    "toChapter": 207,
+    "locationId": "血色禁地",
+    "realm": "煉氣期（十一層）",
+    "status": "alive",
+    "activity": "血色試煉禁地第三至四日：滅口菡雲芝、殺巨劍門大漢採大量靈藥，潛入地下沼澤觀戰並合力屠墨蛟，獲整套蛟材與淫囊袋"
+   },
+   {
+    "fromChapter": 208,
+    "toChapter": 209,
+    "locationId": "血色禁地",
+    "realm": "煉氣期（十三層，南宮婉素女輪迴功渡力暫升）",
+    "status": "alive",
+    "activity": "因墨蛟淫囊袋催情與南宮婉合體，得其渡力法力暫升十三層，二人聯手打通地道脫困，金光磚符寶耗盡成廢"
+   },
+   {
+    "fromChapter": 210,
+    "toChapter": 214,
+    "locationId": "黃楓谷",
+    "realm": "煉氣期（十一層）",
+    "status": "alive",
+    "activity": "出禁地後上交靈藥助黃楓谷賭局、被李化元收為記名弟子僅得一粒築基丹，整理戰利品並進駐岳麓殿地火屋準備煉丹"
+   },
+   {
+    "fromChapter": 215,
+    "toChapter": 218,
+    "locationId": "黃楓谷",
+    "realm": "築基期（初期，青元劍訣第四層）",
+    "status": "alive",
+    "activity": "地火屋閉關近一年：半年煉出二十餘顆築基丹、連服八粒昏迷中築基成功，吸納殘餘藥力意外修成青元劍訣第四層獲劍芒護盾"
+   },
+   {
+    "fromChapter": 219,
+    "toChapter": 221,
+    "locationId": "黃楓谷",
+    "realm": "築基期（初期）",
+    "status": "alive",
+    "activity": "議事殿完成筑基登記領中階靈石與迷蹤旗，租雙瞳鼠在太岳山脈西北部尋得含靈眼之泉的天然岩洞，以銀輝劍開鑿為個人洞府"
+   },
+   {
+    "fromChapter": 222,
+    "toChapter": 228,
+    "locationId": "天星城",
+    "realm": "築基期（初期）",
+    "status": "alive",
+    "activity": "赴元武國天星宗坊市，秘店競賣會以千年紫桂花換顛倒五行陣殘品並結交齊雲霄，委託徐老以墨蛟材料煉出神風舟、青火瘴等頂階法器"
+   },
+   {
+    "fromChapter": 229,
+    "toChapter": 231,
+    "locationId": "天星城",
+    "realm": "築基期（初期）",
+    "status": "alive",
+    "activity": "歸途目睹千竹教黃龍傀儡大軍圍殺林師兄遂遁走，返洞府布好顛倒五行阵；林師兄誤闖中毒身亡、元神奪舍被韓立擒住，千竹教隨即圍攻洞府"
+   },
+   {
+    "fromChapter": 232,
+    "toChapter": 237,
+    "locationId": "黃楓谷",
+    "realm": "築基期（初期）",
+    "status": "alive",
+    "activity": "在太岳山脈洞府以顛倒五行陣捏碎林師兄元神，受雷萬鶴解圍，以靈草換得兩張古丹方，並從遺體玉簡獲大衍訣四層與傀儡真解。"
+   },
+   {
+    "fromChapter": 238,
+    "toChapter": 241,
+    "locationId": "黃楓谷",
+    "realm": "築基期（初期）",
+    "status": "alive",
+    "activity": "赴綠波洞正式拜師李化元為第八弟子，入藏書室以先天真火融銀色書頁，獲青元劍訣全套、三轉重元功及青竹蜂雲劍煉製法。"
+   },
+   {
+    "fromChapter": 242,
+    "toChapter": 243,
+    "locationId": "黃楓谷",
+    "realm": "築基期（初期，接近築基中期，差一層窗紙）",
+    "status": "alive",
+    "activity": "返洞府閉關四年，主修青元劍訣兼修制符達初上階，以煉氣散催功法力近築基中期，第四年丹藥因抗藥性失效，被李化元傳音召出關。"
+   },
+   {
+    "fromChapter": 244,
+    "toChapter": 246,
+    "locationId": "黃楓谷",
+    "realm": "築基期（初期，接近築基中期）",
+    "status": "alive",
+    "activity": "在綠波洞應對紅拂仙姑為董萱兒求雙修之事，委婉婉拒，由李化元改派其陪董萱兒南下赴燕家奪寶大會，遂啟程出發。"
+   },
+   {
+    "fromChapter": 247,
+    "toChapter": 261,
+    "locationId": "越京",
+    "realm": "築基期（初期，接近築基中期）",
+    "status": "alive",
+    "activity": "抵蔺州燕翎堡參加奪寶大會，目睹鬼靈門連勝、救助舊識墨彩環母女、得知魔道六宗五天後入侵的機密，識破鬼靈門陰火大陣血祭陷阱，弧末遭少主王蟬血雲遁術追殺苦戰脫身。"
+   },
+   {
+    "fromChapter": 262,
+    "toChapter": 271,
+    "locationId": "越國",
+    "realm": "築基期（初期）",
+    "status": "alive",
+    "activity": "靠青火瘴脫身王蟬追殺，被宣樂征召守靈石礦，修大衍訣、研傀儡術、煉一級二級傀儡；礦破遁入地下鐘乳洞，斬宣樂、耗死血蜘蛛、奪大挪移令與古傳送陣圖。"
+   },
+   {
+    "fromChapter": 272,
+    "toChapter": 273,
+    "locationId": "越國",
+    "realm": "築基期（中期）",
+    "status": "alive",
+    "activity": "閉關練成大衍訣第一層、青元劍訣第五層突破築基中期；派駐越國與車騎國交界的金鼓原前線一年，連殺十餘名魔道築基修士，於交易所購龍吟草、古丹方、聚靈丹藥材，巧遇陳巧倩"
+   },
+   {
+    "fromChapter": 274,
+    "toChapter": 278,
+    "locationId": "天南",
+    "realm": "築基期（中期）",
+    "status": "alive",
+    "activity": "拜見李化元受命赴越京護秦家；繞道元武國赴齊雲霄之約，歸還雲霄心得換改良陣旗，救辛如音並以八百年靈草委托其修復古傳送陣，訂半年之約。"
+   },
+   {
+    "fromChapter": 279,
+    "toChapter": 291,
+    "locationId": "越京",
+    "realm": "築基期（中期）",
+    "status": "alive",
+    "activity": "化名秦家偏支後人潛入越都秦宅充任護衛，與墨鳳舞相認並允諾誅五色門報仇；偵知散修失蹤黑幕而不介入；赴馨王宴警覺總管與小王爺的危險氣息、神識反制萧振，後門逼問封河澗"
+   },
+   {
+    "fromChapter": 292,
+    "toChapter": 296,
+    "locationId": "越京",
+    "realm": "筑基期（中期）",
+    "status": "alive",
+    "activity": "在越京以靈壓震懾萧姓祖孫並打追蹤標記，潛入馨王府以弄焰訣換黃龍丹、委吳老道監視，赴約得無名敛氣古書並一夜練成敛氣口訣大成，引介萧女拜師。"
+   },
+   {
+    "fromChapter": 297,
+    "toChapter": 305,
+    "locationId": "越京",
+    "realm": "筑基期（中期）",
+    "status": "alive",
+    "activity": "察覺紫光感應珠裂知吳老道遇害，赴城外丘陵以傀儡術生擒蒙山五友，驅毒解言咒並暗埋無常丹禁制，入住秦宅清音院摸清黑煞教，識破內應五妹以無常丹禁制將其毒殺。"
+   },
+   {
+    "fromChapter": 306,
+    "toChapter": 311,
+    "locationId": "越京",
+    "realm": "筑基期（中期）",
+    "status": "alive",
+    "activity": "夜潛馨王府撲空後追至破廟血戰，以多件頂階法器、遮天鐘、青元玉尺符寶逼退妖化鐵羅並生擒斷腿小王爺與斷臂王總管，連夜審訊查明黑煞教主李破雲藏身皇宮假山、皇帝成傀儡。"
+   },
+   {
+    "fromChapter": 312,
+    "toChapter": 316,
+    "locationId": "越京",
+    "realm": "筑基期（中期）",
+    "status": "alive",
+    "activity": "冷戰半月後迎黃楓谷援兵（劉靖、宋蒙、鍾衛娘、武炫）及陳巧倩等辉明門下援軍，獨入皇宮御花園竹林秘布齊雲霄所贈顛倒五行陣作保命後手，武炫失蹤後眾人定計兵分兩路闖宮。"
+   },
+   {
+    "fromChapter": 317,
+    "toChapter": 321,
+    "locationId": "越京",
+    "realm": "筑基期（中期）",
+    "status": "alive",
+    "activity": "夜闖皇宮以紫光球破冰妖四象陣，與舊識青紋以巨劍術死鬥幾乎破其青木真罩，逼出四大血侍合聚妖化；冰妖半妖化隱身掏心殺死師姐雪虹後，韓立救下王師兄並與隱形冰妖展開無形"
+   },
+   {
+    "fromChapter": 322,
+    "toChapter": 330,
+    "locationId": "越京",
+    "realm": "築基期（築基中期）",
+    "status": "alive",
+    "activity": "在越京剿滅黑煞教：斬冰妖、目睹劉靖被越皇殺害，以天雷子滅化身、顛倒五行陣困殺越皇，搜得血凝五行丹與功法玉簡。"
+   },
+   {
+    "fromChapter": 331,
+    "toChapter": 332,
+    "locationId": "越京",
+    "realm": "築基期（築基中期）",
+    "status": "alive",
+    "activity": "接李化元手令需赴邊界大營、秦宅任務取消；與同門分散歸程，白菊山送別將嫁秦家的陳巧倩後獨自展開私人行程。"
+   },
+   {
+    "fromChapter": 333,
+    "toChapter": 344,
+    "locationId": "越國",
+    "realm": "築基期（築基中期）",
+    "status": "alive",
+    "activity": "繞道嘉元城：為孫二狗解毒締契、暗植鑽心蟲於五色門主復仇、贈通靈玉予纓寧，再以引魂鐘逼供並擊殺御靈宗曲魂、滅金背妖螂。"
+   },
+   {
+    "fromChapter": 345,
+    "toChapter": 347,
+    "locationId": "黃楓谷",
+    "realm": "築基期（築基中期）",
+    "status": "alive",
+    "activity": "得奇蟲玉簡與綠煌劍後返黃楓谷；驚龍鐘八十一響、令狐老祖宣告七派大敗與靈獸山叛變，韓立毀洞府隨黃師叔精英隊撤離越國。"
+   },
+   {
+    "fromChapter": 348,
+    "toChapter": 351,
+    "locationId": "越國",
+    "realm": "築基期（築基中期）",
+    "status": "alive",
+    "activity": "撤退途中遭紅粉骷髏夫婦天火伏擊，韓立以青火瘴脫隊獨遁元武國；瞬殺付家二修士，得知齊雲霄已死、辛如音守寡贈典，諾結丹後滅付家。"
    },
    {
     "fromChapter": 352,
-    "toChapter": 363,
+    "toChapter": 358,
     "locationId": "天南",
-    "realm": "築基中期→煉氣三四層（被南宮屏輪迴真訣吸走真元後大降）",
+    "realm": "築基期（中期）",
     "status": "alive",
-    "activity": "承諾向付家報仇、購得紅線遁光針和真元丹丹方、修復古傳送陣、誤救南宮屏後修為大損、最終以大挪移令傳送離"
+    "activity": "在元武國活動：竹屋為辛如音把脈承諾滅付家、取古傳送陣玉簡與陣旗陣盤，天星宗坊市委煉器並以定顏丹換紅線遁光針真元丹方，白池山打探越國局勢，定意修復古陣。"
+   },
+   {
+    "fromChapter": 359,
+    "toChapter": 360,
+    "locationId": "越國",
+    "realm": "築基期（中期）",
+    "status": "alive",
+    "activity": "潛回越國靈礦地下以幻形陣旗顛倒五行陣護住古傳送陣修復七日材料耗盡；夜遇被王蟬田姓男子董萱兒追殺的蒙面女修，誤認南宮婉而從林中飛出劫走，以匆促幻陣困住王蟬與田姓男"
+   },
+   {
+    "fromChapter": 361,
+    "toChapter": 363,
+    "locationId": "越國",
+    "realm": "煉氣期（三四層）",
+    "status": "alive",
+    "activity": "第361章先虛晃一招甩脫董萱兒、以陷地符藏身脫追；再為蒙面女子把脈遭輪迴真訣吸盡真元，修為於本章末自築基中期暴跌煉氣三四層；醒後知救錯人乃南宮屏，取靈石和元玉補"
+   },
+   {
+    "fromChapter": 364,
+    "toChapter": 367,
+    "locationId": "亂星海",
+    "realm": "炼气期（傳送後修為大損）",
+    "status": "alive",
+    "activity": "用大挪移令傳送至亂星海西南角孤島，乘神風舟登顧東主巨舟，憑王長青翻譯了解當地制度，應允代顧家斗法以換靈石與保人定居"
+   },
+   {
+    "fromChapter": 368,
+    "toChapter": 372,
+    "locationId": "亂星海",
+    "realm": "炼气期（恢復至五層）",
+    "status": "alive",
+    "activity": "木屋閉關恢復至炼气期五層，於東石城斗法獨得大島行商資格，赴登仙閣辦定居並約五年再賽，捨青雲山選靈氣稀薄的小寰島為私人修煉地"
+   },
+   {
+    "fromChapter": 373,
+    "toChapter": 374,
+    "locationId": "亂星海",
+    "realm": "筑基期（重進→頂峰／假丹境界，大衍訣第二層、身外化身、三轉重元功第一轉）",
+    "status": "alive",
+    "activity": "在小寰山建真假雙洞府布三套大陣，閉關廿載：恢復炼气九層後服三筑基丹重進筑基期、六年修成大衍訣第二層、祭煉身外化身、完成三轉重元功第一轉至筑基頂峰"
+   },
+   {
+    "fromChapter": 375,
+    "toChapter": 378,
+    "locationId": "亂星海",
+    "realm": "筑基期（頂峰／假丹境界，三轉重元功第一轉）",
+    "status": "alive",
+    "activity": "已完成三轉重元功第一轉、青元劍訣第六層、法力達筑基頂峰；出關赴魁星城天都街採購雪靈水天火液，得知降塵丹，應六連殿之約出海"
+   },
+   {
+    "fromChapter": 379,
+    "toChapter": 385,
+    "locationId": "亂星海",
+    "realm": "筑基期（頂峰／假丹境界）",
+    "status": "alive",
+    "activity": "隨六連殿六人圍捕嬰鯉獸，遭烏丑奪丹、長老滅口而逃；以碧水青甲陣斬殺結丹古長老，奪降塵丹五粒、混元缽等戰利品，潛海半月避追"
+   },
+   {
+    "fromChapter": 386,
+    "toChapter": 388,
+    "locationId": "亂星海",
+    "realm": "筑基期（頂峰／假丹境界，首次結丹失敗）",
+    "status": "alive",
+    "activity": "在海猿島閉關四年，輔助曲魂服血凝五行丹凝成煞丹（結丹初期），己身結丹失敗；返小寰島收穫噬金蟲，命曲魂斬殺執法修士後逃離西南海"
+   },
+   {
+    "fromChapter": 389,
+    "toChapter": 393,
+    "locationId": "天星城",
+    "realm": "筑基期（頂峰／假丹境界）",
+    "status": "alive",
+    "activity": "經邊界坊市了解星宮格局後抵天星城，租聖山三十九層洞府，培育噬金蟲、升血玉蜘蛛、造二百傀儡，最終由星空殿傳送陣赴外星海凝翠島獵妖"
+   },
+   {
+    "fromChapter": 394,
+    "toChapter": 397,
+    "locationId": "亂星海",
+    "realm": "築基期（後期，多次結丹未果）",
+    "status": "alive",
+    "activity": "在凝翠島購海域圖後獨自出海，於紅瑚島等珊瑚島群布三陣、以霓裳草誘殺五級妖獸五年，積數百妖丹後返天星城煉丹。"
+   },
+   {
+    "fromChapter": 398,
+    "toChapter": 398,
+    "locationId": "天星城",
+    "realm": "築基期（後期·三轉重元功二轉、大衍訣第三層）→結丹期（初期·金丹大成）",
+    "status": "alive",
+    "activity": "入洞府密室苦修三轉重元功與大衍訣，閉關六十年衝擊金丹，於第398章密室出關金丹大成、晉入結丹期。"
+   },
+   {
+    "fromChapter": 399,
+    "toChapter": 408,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期·金丹大成）",
+    "status": "alive",
+    "activity": "出關後與妙音門范靜梅交易、得天雷竹線索，赴荒島奪貨遭極陰島圈套，以蛛網紫焰纏天都屍脫困，潛伏荒島地下一月。"
+   },
+   {
+    "fromChapter": 409,
+    "toChapter": 415,
+    "locationId": "天星城",
+    "realm": "結丹期（初期·妙音門名義長老）",
+    "status": "alive",
+    "activity": "返天星城任妙音門名義長老換得天雷竹，催成萬年金雷竹，開青竹小軒入世修心二十餘年，炼成七十二口青竹蜂雲劍收體培煉。"
+   },
+   {
+    "fromChapter": 416,
+    "toChapter": 423,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期·青元劍訣第七層）",
+    "status": "alive",
+    "activity": "隨金青等赴荒島古修士遺址，以北斗兩儀陣破幻陣、與石蝶三月破多層禁制，放噬金虫斬持花籃古寶怪人奪寶，推倒封靈柱探七霞蓮遇黑影。"
+   },
+   {
+    "fromChapter": 424,
+    "toChapter": 429,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "在古修士孤島洞府揭破妖蛇陷阱，同伴胡月石蝶金青接連喪命，與附身曲魂的玄骨上人蕭詧周旋談判，殘圖啟動指向西北後飛離孤島。"
+   },
+   {
+    "fromChapter": 430,
+    "toChapter": 430,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "循殘圖飛往西北途中搭救舊識文樯及其女文思月，以青元劍芒一擊秒殺三名追殺的毒龍會築基修士。"
+   },
+   {
+    "fromChapter": 431,
+    "toChapter": 435,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "持殘圖進入懸浮高空的虛天殿大廳，目睹極陰祖師、萬天明、蠻胡子等正魔群雄雲集，與玄骨上人以九曲靈參為餌結盟，獲悉虛天鼎補天丹等內殿情報。"
+   },
+   {
+    "fromChapter": 436,
+    "toChapter": 445,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "傳送至鬼冤之地第一關，與紫靈仙子、元瑤同組穿越鬼霧、取玉真人辟火寶衣，合力以辟邪神雷誅滅三首虎妖鬼王，通過第一關並認出黑袍女修為舊識元瑤。"
+   },
+   {
+    "fromChapter": 446,
+    "toChapter": 453,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "傳送至蠻荒小型空間，隨玄骨至小石山以四象玄武陣捕住九曲靈參白兔化身，破解玄骨陰魂絲暗算、擊滅其體內鬼魂男子，逼玄骨交出靈參本體，弧末獨對極陰祖師黑雲壓境。"
+   },
+   {
+    "fromChapter": 454,
+    "toChapter": 457,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "於虛天殿外關遭極阴脅迫，被迫拜極阴為記名弟子得玄陰環，捲入血玉蜘蛛取虛天鼎的五份分寶協議。"
+   },
+   {
+    "fromChapter": 458,
+    "toChapter": 466,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "獲白犀佩寒冰珠護身入熔岩路，憑噬金蟲大軍掃滅鐵火蟻穿黑沙漠，救元瑤換得啼魂獸鳴魂珠青火雷，蟻后腹中取煉晶。"
+   },
+   {
+    "fromChapter": 467,
+    "toChapter": 471,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "通熔岩路抵石殿，入寶光閣以噬金蟲化黑甲切斷靈力與空間聯繫，一閣同奪暗紅披風與五色銅環兩件古寶並研究補力。"
+   },
+   {
+    "fromChapter": 472,
+    "toChapter": 473,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "戴極阴所贈婆羅珠手鏈，以大衍訣護心過極妙幻境美色關，識破並飛劍斬殺幻化小妹的白影，抵達內殿巨塔前。"
+   },
+   {
+    "fromChapter": 474,
+    "toChapter": 477,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "隨魔道入內殿迷宮，收集蛮胡子碾碎的狼首蛇衛傀儡殘骸（含兩把變形銅戈），於寒驪台後方青石夾層暗取一個陳舊卷軸。"
+   },
+   {
+    "fromChapter": 478,
+    "toChapter": 483,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "目睹萬天明金絲蠶取鼎失敗、私留三廢金絲蠶，奉命放血玉蜘蛛受狂暴之術提鼎，正魔大戰中退後觀戰待玄骨絲網罩火狼。"
+   },
+   {
+    "fromChapter": 484,
+    "toChapter": 495,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "在虛天殿內殿五層高台爭奪古寶，收玉如意，聯玄骨拉取虛天鼎成功，遭玄骨翻臉死鬥、致其修羅聖火反噬身亡，收乾藍冰珠、滅其殘魄，循畫軸逃離五層。"
+   },
+   {
+    "fromChapter": 496,
+    "toChapter": 499,
+    "locationId": "虛天殿",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "傳送至內殿二層靈眼之泉密室遇元瑶，合作破陣取養魂木根須與萬年靈乳，被傳送出虛天殿至海面，分頭離去後研究虛天鼎與玉如意、清點所得。"
+   },
+   {
+    "fromChapter": 500,
+    "toChapter": 504,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "得悉逆星盟攻打天星城，靈乳催速趕赴南明島補給；逢逆星盟攻陷南明島，以妙音門腰牌過盤查，擊殺兩名逆星盟修士、繳獲法寶並救下星宮執法凌玉靈。"
+   },
+   {
+    "fromChapter": 505,
+    "toChapter": 513,
+    "locationId": "天星城",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "由凌玉靈作保入天星城，接受陣前斬敵的傳送條件後另設巧計：偷聽走私把柄、以胡月飛刀賄賂守陣修士、偽裝曲姓散修混入易敬七人隊伍，傳送至外星海奇淵島黑石城，定下潛修方"
    },
    {
     "fromChapter": 514,
+    "toChapter": 516,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "隨許雲遊奇渊島黑石城拍賣會、寸金閣問千葉露換記載玉簡並購玛瑙獸獨角，識破隨行者後獨自北飛十餘日再西進，覓得隱秘的霧海孤島決意建洞府。"
+   },
+   {
+    "fromChapter": 517,
+    "toChapter": 519,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "在霧海孤島建洞府布多套霧陣、整頓蟲室靈獸與九曲靈參；研究玉簡推得五色圓珠即補天丹，以陰氣啟玄陰經習換形訣等秘術，研究虛天鼎半月無功而擱置。"
+   },
+   {
+    "fromChapter": 520,
+    "toChapter": 523,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "閉關近一年昇煉七十二柄青竹蜂雲劍，破關目睹七級妖龜化形雷劫與八級毒蛟大戰並趁亂逃遁；返洞孵出三色噬金蟲，服六枚五色圓珠改造資質、製養魂木珠串。"
+   },
+   {
+    "fromChapter": 524,
+    "toChapter": 528,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期）",
+    "status": "alive",
+    "activity": "出洞深入海域捕殺妖獸長達七年，積存數百枚六七級妖丹；返途遭秋鸠面等三修士偷窺誤認蟲魔，盤問後判明係碧雲門嫁禍、得知深淵獸潮與外海封閉局勢；背後極陰祖師（烏某）與"
+   },
+   {
+    "fromChapter": 529,
+    "toChapter": 532,
+    "locationId": "亂星海",
+    "realm": "結丹期（初期→中期）",
+    "status": "alive",
+    "activity": "回洞煉丹室一閉三年將丹術提升至傳說中煉丹大師以上；接著入閉關室苦修青元劍訣第八層長達十五六年，終由結丹初期突破結丹中期；期間傀儡救下誤闖的青靈門公孫杏一行，公孫"
+   },
+   {
+    "fromChapter": 533,
+    "toChapter": 540,
+    "locationId": "亂星海",
+    "realm": "結丹期（中期）",
+    "status": "alive",
+    "activity": "贈纏玉訣等寶留書放公孫杏自由、棄霧海洞府；又閉關二十餘年修第九層遇結丹後期瓶頸，出關經黃明礼引路赴秘市，易容厲先生重創雲天啸帶走文思月、奪古銅片，安頓文思月後取"
+   },
+   {
+    "fromChapter": 541,
+    "toChapter": 543,
+    "locationId": "亂星海",
+    "realm": "結丹期（中期）",
+    "status": "alive",
+    "activity": "研究古銅片確認為妖修功法無法修煉、確認服五色圓珠後資質近三靈根；赴奇渊裂風獸巢守候數月後潛入山洞採得黑色伴妖草，被九級妖修風希俘入水下洞府逼飲碧焰酒，等待突破結"
+   },
+   {
+    "fromChapter": 544,
+    "toChapter": 544,
+    "locationId": "亂星海",
+    "realm": "結丹期（中期→後期，本窗突破）",
+    "status": "alive",
+    "activity": "於風希珊瑚壁石室煉化碧焰酒，因乾藍冰珠腹中異動以酒包珠化危，一驚之下意外突破結丹後期大成，可操二十四柄飛劍。"
+   },
+   {
+    "fromChapter": 545,
+    "toChapter": 548,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "被囚煉器室，以木靈力供風希、毒蛟、巨龜煉製雷鵬骨翅所成的風雷翅，歷時六個多月，被種風靈勁受制，暗中籌劃反撲。"
+   },
+   {
+    "fromChapter": 549,
+    "toChapter": 552,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "以稀釋萬年靈液暗藏秘藥毒倒三妖，噬金蟲群啃殺毒蛟收其妖魂，踢龜妖與風希入地火池，奪未成形風雷翅破洞逃遁。"
+   },
+   {
+    "fromChapter": 553,
+    "toChapter": 556,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "荒島以辟邪神雷穩翅認主、掌握雷遁術擺脫風希；轉赴雙峰島妙音門，被範夫人辨氣識破，定下除雲天嘯換傳送陣之約。"
+   },
+   {
+    "fromChapter": 557,
+    "toChapter": 560,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "清剿傳送陣看守、誘殺雲天嘯，與來襲的妙鶴真人激戰且真容暴露，趁裂風本體追至之際搶先傳送回內海皇明島。"
+   },
+   {
+    "fromChapter": 561,
+    "toChapter": 566,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "落點神鷲堂集結點被誤認執法使，反水斬丁老者、骷髅頭、惡漢救下元瑤，互贈靈液丹藥陣法，應允護元瑤施還魂術。"
+   },
+   {
+    "fromChapter": 567,
+    "toChapter": 573,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "於玄陰小島護元瑤施還魂術，以巨猿傀儡驚退諸修、斬隱匿修士，與逆星盟少主溫天仁爆發激戰，陰魔斬斷臂、辟邪神雷滅真魔，戰至銀鐘扣下。"
+   },
+   {
+    "fromChapter": 574,
+    "toChapter": 576,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期）",
+    "status": "alive",
+    "activity": "在亂星海鬼霧小島與逆星盟少主溫天仁激戰，以辟邪神雷滅其真魔化身，被八門金光鏡的金光神焰困住，靠萬年靈液耗對，直至鬼霧突至封禁全島法力。"
+   },
+   {
+    "fromChapter": 577,
+    "toChapter": 591,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期，法力全失）",
+    "status": "alive",
+    "activity": "被黑色閃電傳送入陰冥之地，法力盡失，與梅凝在高牆村落腳；折臂並暗殺封天極、背下元嬰心得與妖族文字石碑、得通靈之氣短暫復力取出啼魂獸、接下天符門降靈符骨盒。"
+   },
+   {
+    "fromChapter": 592,
+    "toChapter": 594,
+    "locationId": "亂星海",
+    "realm": "結丹期（後期，法力全失）",
+    "status": "alive",
+    "activity": "帶梅凝至紅土村確認其兄遇難，以啼魂獸蒐集百餘塊阴冥兽晶並使其進化成銀猿，攀登暴風山，於迷霧中穿喉斬殺溫天仁、繳獲四象蟠龍帶，與重逢的紫靈仙子三人結伴。"
+   },
+   {
+    "fromChapter": 595,
     "toChapter": 595,
     "locationId": "亂星海",
-    "realm": "結丹後期",
+    "realm": "結丹期（後期）",
     "status": "alive",
-    "activity": "以辟邪神雷、萬年靈液、啜魂獸及羅煙步等手段與溫天仁鬥法並耗對，被困陰冥之地後靠通靈之氣短暫回復法力，"
+    "activity": "於暴風山巔指揮銀猿與十口飛劍力戰上千飛行阴兽，待空間裂縫開啟、法力恢復，展風雷翅以雷遁挾紫靈、梅凝二女衝破回吸之力，脫離陰冥之地降落外界死寂海面。"
+   },
+   {
+    "fromChapter": 596,
+    "toChapter": 598,
+    "locationId": "溪國",
+    "realm": "結丹期（後期，大圓滿邊緣，丹藥失效）",
+    "status": "alive",
+    "activity": "與紫靈、梅凝南下抵溪國閩州，坦承天南出身，婉拒納梅凝為妾並贈妖丹，定下潛入雲夢山宗門靈脈苦修以衝假嬰之計。"
+   },
+   {
+    "fromChapter": 599,
+    "toChapter": 606,
+    "locationId": "落雲宗",
+    "realm": "結丹期（後期，偽裝煉氣十層）",
+    "status": "alive",
+    "activity": "斂息偽裝過問心術入落雲宗天泉峰，歸慕沛靈門下掌藥園，後山秘辟洞府布拘靈陣，習得血影遁、煉化邪氣與鳴魂珠，並結交奎焕赴綠蹤沼澤捕雪雲狐。"
+   },
+   {
+    "fromChapter": 607,
+    "toChapter": 616,
+    "locationId": "落雲宗",
+    "realm": "結丹期（後期，偽裝煉氣十層）",
+    "status": "alive",
+    "activity": "追雪雲狐入青金石密室，識破黑衣少婦尸魈騙局、收金符玉盒得靈眼之玉；玉如意銀狼奪舍靈狐，與銀月狼族殘魂達成入劍為器靈換自由的契約。"
+   },
+   {
+    "fromChapter": 617,
+    "toChapter": 625,
+    "locationId": "天南",
+    "realm": "結丹期（後期，偽裝煉氣十層，藉靈眼之玉苦修假嬰中）",
+    "status": "alive",
+    "activity": "點化銀月入青竹蜂雲劍，得知半年後試劍大會獎品明清靈水與定靈丹，藏拙過宗內選拔入選二十四席；啼魂獸與噬金蟲俱進化完成。"
+   },
+   {
+    "fromChapter": 626,
+    "toChapter": 636,
+    "locationId": "雲夢山",
+    "realm": "結丹期（假嬰前夕、對外偽裝煉氣期）",
+    "status": "alive",
+    "activity": "受宋師祖通明靈犀探心，以製符師身份參加三派試劍故取第九名，入三派禁地後趁正魔奪醇液混戰，以銀月替死、土遁巧取靈眼之樹靈根與定靈丹、明清靈水丹方，全身而退。"
+   },
+   {
+    "fromChapter": 637,
+    "toChapter": 638,
+    "locationId": "落雲宗",
+    "realm": "結丹期（假嬰／結丹大圓滿、結嬰中）",
+    "status": "alive",
+    "activity": "返小石山洞府移植靈眼之樹靈根與九曲靈參，抽參液催熟煉成九曲靈參丹，青元劍訣第九層大圓滿入假嬰；服定靈丹開始結嬰，引發方圓百里五色靈光天兆。"
+   },
+   {
+    "fromChapter": 639,
+    "toChapter": 647,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "結嬰成功進入元嬰初期，加入落雲宗任太上長老、子母峰開府移樹，收慕沛靈為妾立三十年之約備顛鳳培元功，解讀大庚劍陣、初煉乾藍冰焰、初洗明清靈眼，隨後孤身啟程赴元武國"
+   },
+   {
+    "fromChapter": 648,
+    "toChapter": 655,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "偽裝散修潛入元武國，誅彭易雙凶並以辟邪神雷金網生擒至木靈嬰封入玉盒；於付天化壽誕之日隱身入付家堡，以噬金蟲飛劍與銀月滅盡付家嫡系及魔焰門兩護法，赴辛如音故居祭奠"
+   },
+   {
+    "fromChapter": 656,
+    "toChapter": 657,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "返元武國辛如音後人處了卻承諾、取得藏有玄牡化嬰大法的青色玉簡，以夢引術封婦人記憶後離去。"
+   },
+   {
+    "fromChapter": 658,
+    "toChapter": 659,
+    "locationId": "黃楓谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "返越國太岳山脈舊洞府收走靈眼之泉，誅殺撞見的鬼靈門弟子於洪一行、搜魂得知董璇兒曾尋己。"
+   },
+   {
+    "fromChapter": 660,
+    "toChapter": 663,
+    "locationId": "青牛鎮",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "重遊青牛鎮春香酒樓、潛入五里溝韓家宗祠認親祭祖，留噬金靈劍與精氣玉佩鎮族、贈丹後了卻塵緣飄然而去。"
+   },
+   {
+    "fromChapter": 664,
+    "toChapter": 668,
+    "locationId": "越國",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "經嘉元城後察覺御靈宗追蹤者，折返以風雷翅追剿碎魂門人與御靈宗修士，放走貌似小妹的菡雲芝、生擒柳玉。"
+   },
+   {
+    "fromChapter": 669,
+    "toChapter": 672,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "攜柳玉返溪國落雲宗，套出五行靈嬰祕法、收柳玉為記名弟子改名柳眉，催熟六翼霜蚣得紫色魔火與蟲甲術，深研玄牡化嬰大法。"
+   },
+   {
+    "fromChapter": 673,
+    "toChapter": 676,
+    "locationId": "天南",
+    "realm": "元嬰期（初期，神識達元嬰中期水準）",
+    "status": "alive",
+    "activity": "閉關逾一年後，與呂長老、侍妾慕沛靈赴虞國交易會，途遇南陇侯強行交易，以神識化形與其神識比試打成平手。"
+   },
+   {
+    "fromChapter": 677,
+    "toChapter": 685,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "抵阗天城重逢火龍童子、赴晶龍閣換寶會換得赤精芝與六傀儡及上古傀儡術，認孫火為孫二狗後裔，第四日赴南陇侯密約。"
+   },
+   {
+    "fromChapter": 686,
+    "toChapter": 690,
+    "locationId": "闐天城",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "於闐天城密會受南陇侯之邀結奪寶之盟，發心魔誓後赴慕蘭，過黃土荒地以明清靈目看穿隱形法士並破陣脫困。"
+   },
+   {
+    "fromChapter": 691,
+    "toChapter": 696,
+    "locationId": "慕蘭草原",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "被穆上師駕御風車單獨追殺，以青竹蜂雲劍、銀鐘、乾藍冰焰激戰，冰封其肉身奪得千重峰與御風車，再赴約合會逼退追兵。"
+   },
+   {
+    "fromChapter": 697,
+    "toChapter": 706,
+    "locationId": "慕蘭草原",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "破太妙神禁入玉璣閣瓜分蒼坤遺寶，玉璣閣火併中冰封尤姓修士（致其形神俱滅）、陰魔斬重創王蝉後遁出，混出草原開四玉盒得望月訣與紫雲兜。"
+   },
+   {
+    "fromChapter": 707,
+    "toChapter": 711,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "出草原救下雷萬鶴、聶盈等舊人並嚇退覃上師，驚聞恩師李化元隕落、師門凋零，得知南宮婉將與魏離辰雙修大典，定折中三策決意阻婚。"
+   },
+   {
+    "fromChapter": 712,
+    "toChapter": 715,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "施換形訣喬裝管事袁坤潛入北凉國玲瓏山掩月宗，送匣引入南宮婉洞府相認情定，得知困心術真相，與南宮婉商議盜令牌脫身之策。"
+   },
+   {
+    "fromChapter": 716,
+    "toChapter": 721,
+    "locationId": "掩月宗",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "在南宮婉洞府設伏，與南宮婉聯手以辟邪神雷克血魔劍、輪回神光迷暈師姐，擒掩月宗大長老，奪兩儀環陽環與血魔劍，銷令牌後分手返闗天城。"
+   },
+   {
+    "fromChapter": 722,
+    "toChapter": 728,
+    "locationId": "闐天城",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "返闗天城與慕沛靈重逢（她已築基中期），會白書君、赴殿議聽軍情，拒回黃枫谷但以三寶換相助三次，玉和軒密會南陇侯璇璣子知兩儀環用途，領命赴黃龍山。"
+   },
+   {
+    "fromChapter": 729,
+    "toChapter": 731,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "抵黃龍山守千音幻化陣，認出故人墨玉珠之女李纓寧並贈丹藥噬金蟲球，於靜室鞏固紫羅極火，確認其威力強過乾藍冰焰。"
+   },
+   {
+    "fromChapter": 732,
+    "toChapter": 745,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "黃龍山守陣大戰：辟邪神雷瞬滅天哭先生、乾藍冰焰滅谷雙蒲附靈蛇怪，與乐上師激戰七番，以紫羅極火抗青銅油燈、被白蓮重創吐血，終藉銀月紫鎲兜奪走青銅油燈。"
    },
    {
     "fromChapter": 746,
-    "toChapter": 795,
+    "toChapter": 747,
     "locationId": "天南",
-    "realm": "元嬰初期（降靈符附體後暫達元嬰初期頂階）",
+    "realm": "元嬰期（初期，元氣大損）",
     "status": "alive",
-    "activity": "以降靈符、大庚劍陣、啼魂獸等手段左右邊界大戰，奪取元明古燈、斬殺阴罗宗長老，並著手煉製第二元嬰與天絕"
+    "activity": "雷遁帶銀月脫離仲神師，三施血影遁甩脫神識鎖定後潛入虞國山腹閉關靜養近半年，期間聲名大起。"
+   },
+   {
+    "fromChapter": 748,
+    "toChapter": 753,
+    "locationId": "天南",
+    "realm": "元嬰期（初期，元氣全復）",
+    "status": "alive",
+    "activity": "出關回歸天一城，化解南宮婉婚約、提庚精參戰條件，並與紫靈梅凝宋姓女子定議日後共入坠魔谷取靈燭果煉造化丹。"
+   },
+   {
+    "fromChapter": 754,
+    "toChapter": 763,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "靜室驅除青竹蜂雲劍青焰、煉成無名雷珠，出席頂層會議換得五塊庚精與玄天仙藤根莖，連夜煉降靈符四度失敗。"
+   },
+   {
+    "fromChapter": 764,
+    "toChapter": 775,
+    "locationId": "天南",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "御風車赴邊界大營，途遇萧翠儿贈寶；賭戰中以無名雷珠破血羅罩救人、聯銀月斃大上師肉身，纏鬥第四神師田鍾，戰至聖禽降世困魔大陣未決。"
+   },
+   {
+    "fromChapter": 776,
+    "toChapter": 783,
+    "locationId": "慕蘭草原",
+    "realm": "元嬰期（初期，776章降靈符附體暫達元嬰初期頂階，效用退去後復歸初期）",
+    "status": "alive",
+    "activity": "於天南慕蘭邊界大戰祭降靈符斬天虎、放啼魂獸吞銅甲煉屍、辟邪神雷滅黑袍女、聲東擊西奪元明古燈致聖禽自爆，逼成兩岸罷戰議和。"
+   },
+   {
+    "fromChapter": 784,
+    "toChapter": 792,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "返宗驚見南宮婉中封魂咒冰封，閉關以庚精煉成大庚劍陣，赴天柱山傳送荒島，以劍陣與啼魂獸斬殺阴罗宗長老、搜魂得火蟾解咒之法，立極西墜魔谷救婉之策。"
+   },
+   {
+    "fromChapter": 793,
+    "toChapter": 795,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（初期，開始修煉第二元嬰、至木靈嬰同化中）",
+    "status": "alive",
+    "activity": "以玄牡化嬰大法侵佔至木靈嬰種下第二元嬰，赴山腹以啼魂獸吞尸魈元神開煉天絕魔屍，諸事了結後帶銀月與慕沛靈乘御風車悄然啟程赴極西之地。"
+   },
+   {
+    "fromChapter": 796,
+    "toChapter": 801,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "從極西之地歸來，於葉樺城與紫靈、宋師侄重聚定下入谷尋靈燭果之計，與竹筒中大衍神君交涉得大衍訣第五層與傀儡術，途中解圍陳巧天聞陳巧倩終身未嫁。"
+   },
+   {
+    "fromChapter": 802,
+    "toChapter": 806,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "在萬嶺山臨時洞府閉關數月煉成三十餘具結丹級傀儡，出洞與南陇侯、鲁卫英訂三方分寶協議，谷外群修雲集後不顧魏無涯勸阻持墜魔令登單向傳送陣入谷。"
+   },
+   {
+    "fromChapter": 807,
+    "toChapter": 813,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "傳入外谷以明清靈眼破隱形裂縫西行與南陇侯、鲁卫英會合，破苍坤幻術入內谷通道，聯手傀儡飛劍法寶斬殺三首乌蛇古獸，以兩儀環護身穿越北極元光通道進入內谷。"
+   },
+   {
+    "fromChapter": 814,
+    "toChapter": 820,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "暗驅噬金蟲蒐集石壁罡銀沙礦脈，依苍坤路線圖穿越內谷，以碧鳩毒巨猿傀儡引開萬年紫紋蝎，佈水屬性法陣誘伏火蟾，以青竹蜂雲劍附冰焰辟邪神雷斬首破不滅之體取得火蟾妖丹。"
+   },
+   {
+    "fromChapter": 821,
+    "toChapter": 825,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "在古修遺骸分得紫色古鏡、靈料與七焰扇通天靈寶玉簡並暗取青蠶袍，激將大衍神君研究七焰扇仿製後取妖丹告辭，發現青蠶袍夾層墜魔谷地圖標記暫收待後再探。"
+   },
+   {
+    "fromChapter": 826,
+    "toChapter": 827,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "尚在內谷活動；此時南龍侯、魯衛英在另處密室破血咒之門、磨小須彌金剛陣，韓立尚未與紫靈會合。"
+   },
+   {
+    "fromChapter": 828,
+    "toChapter": 835,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "收回罡銀沙結晶、與紫靈會合，以神識化千追蹤鬼靈門、削峰布幻，斬殺綠洲黑白古獸取妖丹，並摘取靈燭果三枚。"
+   },
+   {
+    "fromChapter": 836,
+    "toChapter": 840,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期，接近中期）",
+    "status": "alive",
+    "activity": "於丘陵密室閉關煉製造化丹並服用，墜入幻境得高層天地領悟，悟冰焰收放與壓縮雷球新法，生服剩餘靈燭果，修為大進。"
+   },
+   {
+    "fromChapter": 841,
+    "toChapter": 852,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期，接近中期）",
+    "status": "alive",
+    "activity": "出關後援救令狐老祖與掩月宗大長老，與古魔分魂反覆鬥法，動用辟邪神雷、紫羅天火、傀儡群、大庚劍陣與血魔劍，並引魔入劍陣。"
+   },
+   {
+    "fromChapter": 853,
+    "toChapter": 855,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期頂階，借降靈符瞬達後回落初期）",
+    "status": "alive",
+    "activity": "以降靈符借毒蛟魂力催修為至元嬰初期頂階，血劍蓄芒決殺魔魂；遭空間裂縫捲入靈缈園殘骸，目睹銀焰焚魔，回收遺宝並探得紫色漿果靈草。"
+   },
+   {
+    "fromChapter": 856,
+    "toChapter": 857,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（初期）",
+    "status": "alive",
+    "activity": "困於坠魔谷內靈缈園殘骸空間，辨認上古靈藥備煉絳雲丹，尋得空間薄弱光點，定下苦修突破元嬰中期再斬障壁的計畫。"
+   },
+   {
+    "fromChapter": 858,
+    "toChapter": 858,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "苦修二十七年突破元嬰中期，以血魔劍配特殊符箓斬破空間薄弱點，破空而出落入東裕國寧州靈麟山靈泉儀式現場。"
+   },
+   {
+    "fromChapter": 859,
+    "toChapter": 861,
+    "locationId": "天南",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "向靈麟山三族打聽古魔分魂與無邊海大漩渦情報、贈斷金戈離去，回確認天絕魔尸困坠魔谷，重返落雲宗與程師兄吕洛重逢。"
+   },
+   {
+    "fromChapter": 862,
+    "toChapter": 865,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "餵火蟾獸妖丹解南宮婉封魂咒、與慕沛靈定顛鳳培元功之約、收百巧院請函與煉傀儡材料，得知兩口飛劍下落不明。"
+   },
+   {
+    "fromChapter": 866,
+    "toChapter": 870,
+    "locationId": "雲夢山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "赴百巧院觀乾坤塔認主禮、識破明馨媚術、應至陽上人之邀赴七靈島，並鬥勝古劍門金老怪，確立落雲宗為雲夢山第一宗。"
+   },
+   {
+    "fromChapter": 871,
+    "toChapter": 872,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "閉關炼化最後一縷乾藍冰焰、參悟通寶訣第一層將虛天鼎封印入體培炼，並煉成元嬰級上古傀儡一只。"
+   },
+   {
+    "fromChapter": 873,
+    "toChapter": 878,
+    "locationId": "溪國",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "赴七靈島會三大修士、得知封印大陣危機與太真門秘史，獨潛魔氣深淵布置修復阵盤，收石碑殘片與四枚魔髓鑽、以魔氣修強阴羅幡，獲賜靈鰲島。"
+   },
+   {
+    "fromChapter": 879,
+    "toChapter": 879,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（中期，第二元嬰大成）",
+    "status": "alive",
+    "activity": "閉關四年煉成黑綠色第二元嬰（玄化嬰大法、玄陰大法通玄變化之功），安排護宗後事，與銀月離開天南赴大晋。"
+   },
+   {
+    "fromChapter": 880,
+    "toChapter": 885,
+    "locationId": "慕蘭草原",
+    "realm": "築基期（中期，五鬼鎖神大法封印下；本相元嬰中期）",
+    "status": "alive",
+    "activity": "因催育噬金蟲撞見突兀長老遭追殺重傷、煞氣反噬，施五鬼鎖神大法封印修為偽裝寒仙師混入蒼鷺部車隊，炼成噬金蟲魔蟲妖尸，弧末遇猿鷲襲擊。"
    },
    {
     "fromChapter": 886,
+    "toChapter": 900,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，被五鬼鎖神大法封印外顯築基中期）",
+    "status": "alive",
+    "activity": "喬裝突兀仙師「寒某」隨車隊穿越天澜草原，秒殺馮枕得密窟鑰匙、全滅九仙宮八修奪金焰石，後被天澜聖殿三人一獸追殺、以雙鼎吞聖鼎收聖獸後血影遁脫身。"
+   },
+   {
+    "fromChapter": 901,
+    "toChapter": 902,
+    "locationId": "大晉",
+    "realm": "煉氣期（血影遁過度耗損致自元嬰中期狂跌至炼氣期）",
+    "status": "alive",
+    "activity": "以假死術封冰沉天水河漂流一年餘入晉，於辽州舜江被曹家官船救起；修為跌至炼氣期，暫棲船上養傷並以指點曹夢容換取大晉修仙界情報。"
+   },
+   {
+    "fromChapter": 903,
+    "toChapter": 915,
+    "locationId": "大晉",
+    "realm": "築基期（自炼氣期恢復）",
+    "status": "alive",
+    "activity": "茅屋養傷八九月復至筑基期、敗馬玉林後離曹家；赴關寧府參王大會撿漏晶化妖丹、得金剛舍利，控孔斗取密窟地圖，入雪陵山脈冯家密窟取明王訣與舍利子，攜寶離開時遭山崩異變"
+   },
+   {
+    "fromChapter": 916,
+    "toChapter": 920,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，法力被封僅築基期可用）",
+    "status": "alive",
+    "activity": "雪嶺山脈被捲入炫烨王與方尖山二妖之爭，以雷遁、冰焰、金網斬殺元嬰中期青袍老者，逼退二妖，向炫烨王索得非本命天尸珠後遁走萬里。"
+   },
+   {
+    "fromChapter": 921,
+    "toChapter": 921,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，法力被封僅築基期可用）",
+    "status": "alive",
+    "activity": "荒山洞府閉關收寶：煉靈液為天尸珠去毒，以紫罗天火培煉雪晶珠納入丹田，啼魂獸以萬年尸焰完成金剛罩最後祭煉。"
+   },
+   {
+    "fromChapter": 922,
+    "toChapter": 930,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，明王訣第一層，法力仍被封）",
+    "status": "alive",
+    "activity": "修成明王訣第一層後，以甘家暗子與嚴先生為引混入玉田山，被華蓮仙姑納入皇清觀煉器殿，向韋老學煉器、探葉家奪寶陰謀，弧末嚴先生病故後悄然失蹤。"
+   },
+   {
+    "fromChapter": 931,
+    "toChapter": 934,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，明王訣第二層修煉中，法力仍被封）",
+    "status": "alive",
+    "activity": "一年多以多重化身在大晉南部搜集三焰扇材料，赴陇州天岳山脈以霓裳草誘妖，奪昊陽鸟五根火翎、收服七級土甲龍，全身而退並嫁禍魔木宗馬某。"
+   },
+   {
+    "fromChapter": 935,
+    "toChapter": 938,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，明王訣第二層修煉中，法力仍被封）",
+    "status": "alive",
+    "activity": "晋京途中重逢曹夢容等故人，感應本命青竹蜂雲劍落古魔之手而押後復仇；抵晋京誅馮掌柜與孔家伏兵，以梦引术探得炫烨王三尸出山困關寧三家的後續。"
+   },
+   {
+    "fromChapter": 939,
+    "toChapter": 945,
+    "locationId": "晉京",
+    "realm": "元嬰期（中期，明王訣第二層修煉中，法力仍被封）",
+    "status": "alive",
+    "activity": "於晋西坊市天機閣以赤精芝換雷靈晶、珍稀材料換天機府、參觀芥子空間，得引薦地下交易會大賺靈石；宝光殿前以厲飛雨假名化解天澜聖女林銀屏之危，並計取其貼身玉佩煉感應珠"
+   },
+   {
+    "fromChapter": 946,
+    "toChapter": 959,
+    "locationId": "晉京",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "在晉京坊市殺肖老兒奪寒髓、得回陽真水配方，於大拍賣會與地下交易會以魔髓鑽、靈石蒐集墨金五行玉玉橡膠庚精等傀儡材料，避開阴罗宗與林銀屏，遭古魔分魂伏擊靠血影遁脫逃"
+   },
+   {
+    "fromChapter": 960,
+    "toChapter": 966,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "赴華雲州天符門歸還降靈符骨片、研習制符典籍並重遇向之禮，以客卿長老震懾煞陽宗換得化靈符，再入南海門屠蛟大會以庚精飛劍斬殺八級赤火蛟、奪蛟屍妖丹封蛟魂。"
+   },
+   {
+    "fromChapter": 967,
+    "toChapter": 972,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "在外海無名荒島閉關一年多煉成人形高階傀儡，大衍神君裂魂入傀儡並坐化留下大衍寶經，韓立攜傀儡赴苦竹島以雷火弓威壓換得烏鳳翎三根，又以寒髓誘降土甲龍為靈獸。"
+   },
+   {
+    "fromChapter": 973,
     "toChapter": 975,
     "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "南下南疆雙蝎山贈王姓女修變異鐵尾蝎、以聚靈法陣收五瓶天雷備三焰扇靈料，與富姓長老白瑶怡元姓大漢常芷芳會合，得知培嬰丹配方唯缺陰芝馬血肉主材料。"
+   },
+   {
+    "fromChapter": 976,
+    "toChapter": 977,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "於萬毒谷外應富成之邀結盟下陰陽窟捕陰芝馬煉培嬰丹，冥河之頁鬼頭遇體內異物潰散，以口頭承諾代血誓，被富成暗中標記。"
+   },
+   {
+    "fromChapter": 978,
+    "toChapter": 978,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "獨赴銀蛟山火脈秘境，耗數月於地下火山裂縫煉成至寶級三焰扇，並順帶以八級赤火蛟精魂煉成降靈符，戰力大增。"
+   },
+   {
+    "fromChapter": 979,
+    "toChapter": 985,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "靠紫幽珠神光抵禦驚魄陰風入陰陽窟搜索，與白瑤怡同組斬孽猿、辨炼魂陣，於風穴取三塊黑晶，再以啼魂獸吞滅三具尸煞幹尸。"
+   },
+   {
+    "fromChapter": 986,
+    "toChapter": 993,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "獨力力戰高階炼尸銀翅夜叉，貼降靈符催法力至中期頂峰、晶化飛針毀邪月幻鏡、三焰扇火鳳掃滅其數千年煞魂絲，激戰中與夜叉同被傳送大陣捲走。"
+   },
+   {
+    "fromChapter": 994,
+    "toChapter": 997,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "傳入昆吾山腹，趁亂滅尸狼擒陰芝馬（夜叉脫禁遁走奪走晶化飛針），救出富成白瑤怡開爐煉丹，獲富成主動相贈三粒培嬰丹。"
+   },
+   {
+    "fromChapter": 998,
+    "toChapter": 1005,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "隱匿上行藉土甲龍取晶碑、以五色珠破上古禁制脫困，於石亭與乾老魔不期而遇逼問封魂咒解法未果，遭花天奇打斷後隨各方暫時聯手深入昆吾山。"
+   },
+   {
+    "fromChapter": 1006,
+    "toChapter": 1011,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "隨多方修士闖入昆吾山封印，以明清靈目破紫薇七星陣，獨闖鑄靈堂以三焰扇與六翼霜蚣寒氣打開化靈殿萬年火鼎。"
+   },
+   {
+    "fromChapter": 1012,
+    "toChapter": 1021,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，銀月甦醒）",
+    "status": "alive",
+    "activity": "得太陰真火與古火鼎、銀月甦醒；以三焰扇震散天澜圍堵，發降靈符硬抗金磁靈木重壓，穿北極元光逼近昆吾殿供桌寶物。"
+   },
+   {
+    "fromChapter": 1022,
+    "toChapter": 1027,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "在供桌奪寶混戰中搶得木牌與書卷，以兩儀陽環操控北極元光降伏十級玄岩龜圭靈為靈獸，吞本命元牌定主僕並布陣埋伏乾老魔。"
+   },
+   {
+    "fromChapter": 1028,
+    "toChapter": 1032,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "與圭靈聯手破五子同心魔合體，以魔髓飛刀碎血魔珠、虛天鼎擒乾老魔元嬰抽魂滅殺，金剛罩封五子魔，得儲物袋與兩杆阴罗幡。"
+   },
+   {
+    "fromChapter": 1033,
+    "toChapter": 1035,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "滅阴罗宗黑衫長老得第三杆阴罗幡，落入塌陷鎮魔塔擋四散真人血刀、六層救白瑤怡，至第八層見八靈尺現世與銀月另一半精魂召喚。"
+   },
+   {
+    "fromChapter": 1036,
+    "toChapter": 1047,
+    "locationId": "昆吾山",
     "realm": "元嬰中期",
     "status": "alive",
-    "activity": "本弧完成傀儡材料蒐集、煉成人形傀儡、滅殺赤火蛟、收降土甲龍、獲得化靈符與大衍寶經，並赴南疆雙蝎山收取"
+    "activity": "進鎮魔塔第八層，聯手眾修破石傀儡陣；以失神刺＋魔髓鑽飛刀斬殺糾纏多年的雙首四臂天南古魔，並從遺寶中奪回兩口失散的青竹蜂雲劍。"
+   },
+   {
+    "fromChapter": 1048,
+    "toChapter": 1054,
+    "locationId": "昆吾山",
+    "realm": "元嬰中期",
+    "status": "alive",
+    "activity": "黑風旗封閉空間後與尸熊夜叉混戰，以叱念真雷種制徐仙師與林銀屏元嬰，逼徐仙師交出噬金蟲催熟秘訣，隨空間碎裂被傳入第九層。"
+   },
+   {
+    "fromChapter": 1055,
+    "toChapter": 1065,
+    "locationId": "昆吾山",
+    "realm": "元嬰中期",
+    "status": "alive",
+    "activity": "在第九層祭壇以三焰扇助玄青子平山印、七妙真人赤鳴鼓三寶聯手壓制古魔；化靈符替身保命，暗令噬金蟲咬斷石柱斷魔氣，逼退元刹本體神念，續戰三頭六臂魔物。"
+   },
+   {
+    "fromChapter": 1066,
+    "toChapter": 1074,
+    "locationId": "昆吾山",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "於鎮魔塔第九層與元刹聖祖分身、珈輪戰魔死戰，以虛天鼎擋裂縫生還，激天晶碑重封魔氣，助銀月靈魂吞噬滅分神，收黑風旗殘骸與八靈尺，封靈大法封小瓶記憶後被逆星盤傳送出"
+   },
+   {
+    "fromChapter": 1075,
+    "toChapter": 1079,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，炼化培嬰丹後元嬰增半寸）",
+    "status": "alive",
+    "activity": "傳送落中婁府後北赴霜郡雪連峰，驅李家佈白霧幻阵與六翼霜蚣，閉關十餘年炼化培嬰丹（元嬰增半寸、再無瓶頸），重祭青竹蜂雲劍、默記八靈尺通寶訣、收服五子同心魔、初炼太"
+   },
+   {
+    "fromChapter": 1080,
+    "toChapter": 1095,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期，炼化培嬰丹後元嬰增半寸）",
+    "status": "alive",
+    "activity": "入北冥島小極宮，以四條件換寒骊上人協助，藏經閣閱覽，入冰海採玄冰花炼玄冰丹、擊殺二妖救白瑶怡，會合五寒焰修士入虛靈殿玄玉洞布陣協助寒骊衝擊化神，暗以太陰真火吸玄"
+   },
+   {
+    "fromChapter": 1096,
+    "toChapter": 1102,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "在小極宮虛靈殿地下玄玉洞，與龍夫人、摩鳩、欧阳、白夢馨輪流以五色寒焰替寒骊上人洗髓，並以明清靈目全程觀摩寒骊衝擊化神期（最終功虧一簣）。"
+   },
+   {
+    "fromChapter": 1103,
+    "toChapter": 1113,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "寒骊反目索虛天鼎，韓立於玄玉洞連斬白夢馨、欧阳、摩鳩、龍夫人四人並封寒骊元嬰入碧綠禁瓶，以沉水取兩千餘塊萬年玄玉、搜魂得太陽精火與出口情報。"
+   },
+   {
+    "fromChapter": 1114,
+    "toChapter": 1120,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "以乾蓝鼎開玄玉洞入虛靈殿，穿越各殿沿途斬殺八九級妖兽，在主殿入口被萬妖幡攝入、與車老妖幼童化身激鬥，兩度以破界符脫困、鎖定傳送高台。"
+   },
+   {
+    "fromChapter": 1121,
+    "toChapter": 1124,
+    "locationId": "大晉",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "在主殿目睹冰凤凤離冰焰壓制宫主、得知冰凤自壓境界之秘，與宫主及黃泉鬼母暫盟對抗二妖，最終虛天鼎自啟單向上古傳送陣、青光幕護身被傳出虛靈殿，進入第七卷。"
+   },
+   {
+    "fromChapter": 1125,
+    "toChapter": 1127,
+    "locationId": "虛天殿",
+    "realm": "元嬰期（中期）",
+    "status": "alive",
+    "activity": "傳送陣誤啟重返虛天殿，與十級冰鳳同困巨塔；聯手探查寒驪台控制法陣未果，遂入第二層靈眼之泉密室閉關。"
+   },
+   {
+    "fromChapter": 1128,
+    "toChapter": 1129,
+    "locationId": "虛天殿",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "靈眼之泉潛修八十年，先推中期巔峰再幾乎無礙突破元嬰後期；合力驅動法陣將虛天殿移出虛空降臨乱星海並傳送出殿，冰鳳殲混老魔後離去。"
+   },
+   {
+    "fromChapter": 1130,
+    "toChapter": 1139,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "走訪苦門島黃沙門換情報與高階靈石；天星城遇凌玉靈、與溫青試探各退一步獲客卿令牌；重逢文思月，為田琴兒驅毒並贈《陣法要訣》紫陰丸，約魁星島重會。"
+   },
+   {
+    "fromChapter": 1140,
+    "toChapter": 1145,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "海上目睹靈界巨禽跨界攻鬼霧並擒獲青色靈翎；雷空島坊市購高階靈石、布噬金蟲暗線，夜間設伏截殺妙鶴真人與黃昆，搜魂得極陰祖師駐碧靈島。"
+   },
+   {
+    "fromChapter": 1146,
+    "toChapter": 1154,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "潛入亂星海外星海碧靈島石峰借陰煞血尸入禁，以乾藍冰焰冰封擒殺極陰祖師了結宿怨、得托天魔功口訣；趁海族金蛟王奪島之亂劫得極品靈石，全身遁離。"
+   },
+   {
+    "fromChapter": 1155,
+    "toChapter": 1159,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "在碧靈島外海脫離金蛟王、保住木屬性極品靈石，返回銀鯊島，與天星雙聖於無名珊瑚島談判，以三次援手換突破化神玉簡與三塊半截萬里符。"
+   },
+   {
+    "fromChapter": 1160,
+    "toChapter": 1166,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "在魔湖島滅殺金花老祖、放六翼霜蚣追殺蛮師三弟子，潛入魔湖底洞府取得庚精與金闕玉書銀蝌文殘頁，並與虛天鼎中天澜聖獸達成合作之約。"
+   },
+   {
+    "fromChapter": 1167,
+    "toChapter": 1171,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "重臨小寰島、於奎星島收田琴兒，傳送回天南越國礦脈殺魔焰門、盤問近百年大事毀傳送陣，再赴元武國逼退化羽門、推斷田琴兒為辛如音轉世。"
+   },
+   {
+    "fromChapter": 1172,
+    "toChapter": 1178,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "回落雲宗禁地與南宮婉相會、重布陣法，正式收田琴兒為徒，以氣息全無壓服古劍門百巧院，並於元嬰後期大典密殿中一人擊敗魏無涯、合歡老魔聯手。"
+   },
+   {
+    "fromChapter": 1179,
+    "toChapter": 1184,
+    "locationId": "墜魔谷",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "於子母峰閉關重祭七十二口青竹蜂雲劍、改煉風雷翅、凝練火靈絲與修煉破滅法目，得三女失蹤訊後赴墜魔谷以血月覓靈解救慕沛靈三女，迫退第二元嬰。"
    },
    {
     "fromChapter": 1185,
+    "toChapter": 1190,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期，天南第一修士）",
+    "status": "alive",
+    "activity": "重返七靈島確認第二元嬰夺舍魔屍，入萬丈魔淵以三焰扇逼出之，配玄罡天煞陣與虛天鼎收押，返子母峰處置門下並以秘術抹其神識、附人形傀儡"
+   },
+   {
+    "fromChapter": 1191,
+    "toChapter": 1196,
+    "locationId": "溪國",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "攜天澜聖獸赴溪國荒原護渡十一波化形雷劫，斬變異獨角蚯得吸靈金角、以三器盛取帝流漿；天澜化形傳化界珠、木生珠、金剛訣等天機並改造疾風九變"
+   },
+   {
+    "fromChapter": 1197,
+    "toChapter": 1201,
+    "locationId": "雲夢山",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "於落雲宗舉行與南宮婉萬修大典雙修，會燕如嫣（鬼靈門）受贈血肢丹血魂鐲木靈珠並允調停、察合歡老魔暗謀，定木生珠轉化之策，並為菡雲芝敘舊、董萱兒神念解心魔"
+   },
+   {
+    "fromChapter": 1202,
+    "toChapter": 1202,
+    "locationId": "雲夢山",
+    "realm": "元嬰期（後期，閉關精進）",
+    "status": "alive",
+    "activity": "閉生死關逾百年：修成大衍訣末層、明王訣第三層、疾風九變，煉木生珠入體與毒鉤火龍柱法寶，六翼霜蚣升七級，收徒石堅賜大衍宝經"
+   },
+   {
+    "fromChapter": 1203,
     "toChapter": 1214,
     "locationId": "亂星海",
-    "realm": "元嬰後期（弧初）→元嬰後期大成接近（閉關後）",
+    "realm": "元嬰期（後期大成接近）",
     "status": "alive",
-    "activity": "本弧完成收嬰、護天澜渡劫、舉行雙修大典、閉關逾百年修成大衍訣末層與木生珠，最後赴亂星海助星宮。"
+    "activity": "出關得凌玉靈萬里符再赴亂星海，破陣救白水劍宗、入天星城以傀儡密殺仇人西門長老、得元磁神光，星宮大戰中隨萬天明遁遠海單戰，目睹其六極真魔功真身現身"
+   },
+   {
+    "fromChapter": 1215,
+    "toChapter": 1218,
+    "locationId": "天星城",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "於星宮終戰識破六道極聖真身，以三焰扇、虛天鼎、魔髓飛刀、人形傀儡諸寶斬滅其兩隻附體聖魔與元嬰，使六道形神俱滅，收繳儲物袋及囚有女修元嬰的綠色小瓶。"
+   },
+   {
+    "fromChapter": 1219,
+    "toChapter": 1223,
+    "locationId": "天星城",
+    "realm": "元嬰期（後期）",
+    "status": "alive",
+    "activity": "聽天澜童子講靈界五行合一、丹靈根、器靈根、小天劫；放出綠瓶中女修元嬰（溫夫人），溫夫人確認大仇得報後兵解自盡；破風火天絕大陣、斬蓝氏雙魔瓦解逆星盟；探元磁山五行"
+   },
+   {
+    "fromChapter": 1224,
+    "toChapter": 1224,
+    "locationId": "落雲宗",
+    "realm": "元嬰期（後期巔峰）",
+    "status": "alive",
+    "activity": "返回天南子母峰閉關五十餘年修成青元劍訣末層與寒焰五魔（晉入後期巔峰），中途與南宮婉出遊半年，最終於子母峰衝擊化神，靈雲爆裂功虧一簣。"
+   },
+   {
+    "fromChapter": 1225,
+    "toChapter": 1231,
+    "locationId": "天南",
+    "realm": "元嬰期（後期巔峰）",
+    "status": "alive",
+    "activity": "化神失敗後告別南宮婉再度遠遊，取道慕蘭草原赴大晉，尋天機殿求芥子空間秘術；以切磋勝雷音宗元智和尚，迫天機阁主粲苦交出芥子空間煉製秘術玉簡。"
+   },
+   {
+    "fromChapter": 1232,
+    "toChapter": 1238,
+    "locationId": "大晉",
+    "realm": "元嬰期（後期巔峰）",
+    "status": "alive",
+    "activity": "截殺阴罗宗宗主搜魂、奪第二顆滅仙珠，潛入阴罗宗灭杀七八名元嬰長老；誤殺風老怪後代遭追逐月餘，經向之禮調停，以空間節點資料與三方達成合作協議。"
+   },
+   {
+    "fromChapter": 1239,
+    "toChapter": 1244,
+    "locationId": "天南",
+    "realm": "元嬰期（後期巔峰）",
+    "status": "alive",
+    "activity": "隨向之禮、風老怪赴魔陀山見呼慶雷，宴上驚見舊識紫靈被強擄為侍妾，遂以寒髓換取呼慶雷解除紫靈禁制，並答應硬接呼慶雷一擊，殿外對峙決鬥在即。"
+   },
+   {
+    "fromChapter": 1245,
+    "toChapter": 1247,
+    "locationId": "大晉",
+    "realm": "元嬰期（後期大成）",
+    "status": "alive",
+    "activity": "在魔陀山魔宮接呼老魔一擊之約救出紫靈；偕紫靈遊歷數月情緣終結、紫靈離去，心境平復後獨赴大晉火獄禁地尋太陽精火。"
+   },
+   {
+    "fromChapter": 1248,
+    "toChapter": 1250,
+    "locationId": "大晉",
+    "realm": "元嬰期（後期大成）",
+    "status": "alive",
+    "activity": "深入火獄雾海，以太陰火鳥克火煞靈、死火山口布乾蓝冰焰法陣，誘銀翅小馬入陣，施驚神刺與五色寒焰將太陽精火捕入虛天鼎。"
+   },
+   {
+    "fromChapter": 1251,
+    "toChapter": 1256,
+    "locationId": "亂星海",
+    "realm": "元嬰期（後期大成）",
+    "status": "alive",
+    "activity": "回落雲宗以回陽水復活玄天仙藤並秘密守護，赴星宮以赤魂幡收元磁山、託凌玉靈查金蛟王，於乱星海荒島設伏擊殺金蛟王與風希，獲妖丹、淬骨訣、龍鱗果移植秘術。"
+   },
+   {
+    "fromChapter": 1257,
+    "toChapter": 1257,
+    "locationId": "墜魔谷",
+    "realm": "化神期（初期，新晉）",
+    "status": "alive",
+    "activity": "於坠魔谷芥子空間閉關三百年，修元磁神光大成、煉化元磁山，服三顆魔元丹突破化神初期；出關探望南宮婉，得知慕沛靈閉關突破元嬰時心魔反噬陨落。"
+   },
+   {
+    "fromChapter": 1258,
+    "toChapter": 1262,
+    "locationId": "天南",
+    "realm": "化神期（初期頂峰）",
+    "status": "alive",
+    "activity": "借绛云丹百餘年修至化神初期頂峰、青元劍訣大圓滿，命石堅奪千竹教；赴五龍海尋得空間節點小島，召田琴兒加強封印、與冰凤議定互下死禁聯手，七十年遊歷人界蒐羅金烁環等防"
+   },
+   {
+    "fromChapter": 1263,
+    "toChapter": 1265,
+    "locationId": "天南",
+    "realm": "化神期（初期頂峰）",
+    "status": "alive",
+    "activity": "回五龍海與南宮婉重逢、田琴兒龍吟之體解除，獲贈六丁天甲符、速返坠魔谷取玄天仙藤靈花靈果；最終與冰凤互下死禁、收回第二元嬰，乘洞天舟覆元磁山灰霞進入空間節點飛昇靈"
+   },
+   {
+    "fromChapter": 1266,
+    "toChapter": 1295,
+    "locationId": "風元大陸",
+    "realm": "化神期（法力全失，以金剛訣肉身代替；弧末金剛訣第七層瓶頸）",
+    "status": "alive",
+    "activity": "法力全失後以金剛訣自救，弧內突破第四層、借九玄明玉潭突破第六層，最終修至第七層瓶頸；以灵具師身份隱居"
+   },
+   {
+    "fromChapter": 1296,
+    "toChapter": 1325,
+    "locationId": "天淵城",
+    "realm": "開始：煉體士（金剛訣第七層接近大成，法力枯竭）；結束：化神初期（元嬰重凝、金剛訣大成、法力恢復）",
+    "status": "alive",
+    "activity": "吞噬噬炎獲噬靈天火與暫時火靈力，奪得神血，在山腹閉關百餘年突破，渡過兩色雷劫後入天淵城擔任青冥衛，並"
    },
    {
     "fromChapter": 1326,
@@ -76,12 +1820,68 @@ export const CANON_NPCS: CanonNpcSource[] = [
     "activity": "參加飛升修士聚會、婉拒萱姓仙子聯手邀請、修煉梵聖真魔功呈現法體雙修異象、等待噬金蟲催熟完成後接下神秘"
    },
    {
+    "fromChapter": 1358,
+    "toChapter": 1417,
+    "locationId": "天淵城",
+    "realm": "化神中期（苦修中，三次衝關未果）",
+    "status": "alive",
+    "activity": "本弧核心行動：偷取真靈之血、擊退銀階木靈、重煉風雷翅、參與真蟾獵殺行動、逃脫夜叉王、在黑冥半島苦修約"
+   },
+   {
+    "fromChapter": 1418,
+    "toChapter": 1447,
+    "locationId": "天鵬聖城",
+    "realm": "化神後期（本弧突破）",
+    "status": "alive",
+    "activity": "以人族身份潛入天鵬聖城，被迫成為天鵬第三聖子，炼化鯤鵬真血及紅雲舍利後突破化神後期，意外獲驚蟄訣，帶"
+   },
+   {
+    "fromChapter": 1448,
+    "toChapter": 1477,
+    "locationId": "天淵城",
+    "realm": "化神後期（高階靈將）",
+    "status": "alive",
+    "activity": "擊殺多名強敵，被四大妖王認定為辟邪神雷持有者而強行軟禁；渡過第二次小天劫，修成五色孔雀變身術，煉成甲"
+   },
+   {
     "fromChapter": 1478,
     "toChapter": 1507,
     "locationId": "冥河之地",
     "realm": "化神期（靈將，神通可比煉虛級）",
     "status": "alive",
     "activity": "被四大妖王脅迫進入冥河之地，以祭雷術破冥河禁制充當工具；識破攝魂珠控制，將計就計，以諸多符箓、噬金蟲"
+   },
+   {
+    "fromChapter": 1508,
+    "toChapter": 1567,
+    "locationId": "天淵城",
+    "realm": "煉虛期（剛突破）",
+    "status": "alive",
+    "activity": "從血色光陣逃脫，在火陽族療傷後斬殺乌罗王族，又滅殺雙頭怪蛾與變異海獸，修復傳送陣抵達雷鳴大陸，接受玉"
+   },
+   {
+    "fromChapter": 1568,
+    "toChapter": 1597,
+    "locationId": "雲城",
+    "realm": "煉虛初期",
+    "status": "alive",
+    "activity": "逃離綠光城後大戰合體初階圖老者，以春黎劍陣和元氣之劍逼退對方，入住雲城，購入天外魔甲，認主通靈傀儡「"
+   },
+   {
+    "fromChapter": 1598,
+    "toChapter": 1627,
+    "locationId": "廣寒界",
+    "realm": "煉虛初期（修煉中）",
+    "status": "alive",
+    "activity": "易容後出入四族拍賣會，拍得瑕疵琉璃天火液；受段天刃與彩流罂邀請加入廣寒界禁制破解計畫；以元磁神光、春"
+   },
+   {
+    "fromChapter": 1628,
+    "toChapter": 1657,
+    "locationId": "天淵城",
+    "realm": "煉虛後期",
+    "status": "alive",
+    "activity": "以三元斬、辟邪神雷祭雷術、春黎劍陣、玄天果實等手段斬殺聖階魔猿與鐵翅魔化身，並巧獲芝仙，收穫豐厚後成"
    },
    {
     "fromChapter": 1658,
@@ -92,12 +1892,68 @@ export const CANON_NPCS: CanonNpcSource[] = [
     "activity": "本弧中從魔金山脈逃出後，相繼提煉山岳巨猿真靈之血、確認玄天殘刃可用、得到璃水珠、研讀元合五極山煉製法"
    },
    {
+    "fromChapter": 1688,
+    "toChapter": 1717,
+    "locationId": "天淵城",
+    "realm": "煉虛後期（接近合體）",
+    "status": "alive",
+    "activity": "全弧主導戰局，以元磁神山、梵聖法相金身、玄天殘刃、噬金蟲、風雷翅、惊蛰訣山嶽巨猿等多種底牌展示驚人戰"
+   },
+   {
+    "fromChapter": 1718,
+    "toChapter": 1754,
+    "locationId": "廣寒界",
+    "realm": "煉虛後期頂峰（九階，廣寒界後進階）",
+    "status": "alive",
+    "activity": "從廣寒界歸來後修為大進；與翁姓青年立心魔誓約、完成靈藥交易、誅殺血影，最終啟動超級傳送陣離開雷鳴大陸"
+   },
+   {
+    "fromChapter": 1755,
+    "toChapter": 1784,
+    "locationId": "天淵城",
+    "realm": "煉虛後期→合體初期",
+    "status": "alive",
+    "activity": "歷百年歸途返回天淵城，修煉煉神術第一層大成後成功突破合體，婉拒天淵城及谷家邀請，轉交冰魄仙子血魂，歸"
+   },
+   {
     "fromChapter": 1785,
     "toChapter": 1844,
     "locationId": "魔界",
     "realm": "合體初期",
     "status": "alive",
     "activity": "以陰鳳草換得齊天鑼與聚靈樁、以玄光刃三換一得淨明丹與金篆卷軸及冰鳳；真靈大典上以梵聖法相金身震懾四方"
+   },
+   {
+    "fromChapter": 1845,
+    "toChapter": 1874,
+    "locationId": "地淵",
+    "realm": "合體中期",
+    "status": "alive",
+    "activity": "完成萬毒混元身七層大成、進階合體中期、再入地淵取傳送坐標、殺滅鱼店主、目送啼魂飛升、從青元子和虛靈手"
+   },
+   {
+    "fromChapter": 1875,
+    "toChapter": 2024,
+    "locationId": "魔界",
+    "realm": "合體後期",
+    "status": "alive",
+    "activity": "本弧突破合體後期，祭煉天戈符，強行施展涅盤聖體二涅變身斃殺匈姓魔尊，以噬金蟲合力吞滅血光聖祖化身，後"
+   },
+   {
+    "fromChapter": 2025,
+    "toChapter": 2084,
+    "locationId": "幻夜城",
+    "realm": "合體後期",
+    "status": "alive",
+    "activity": "以魔尊身份潛伏幻夜城，協助白家驅魔、煉化異魔金提升法力、購得魔晶傀儡秘術，後率眾穿越幻啸沙漠，以洞漩"
+   },
+   {
+    "fromChapter": 2085,
+    "toChapter": 2144,
+    "locationId": "魔界",
+    "realm": "合體後期（接近後期巔峰）",
+    "status": "alive",
+    "activity": "訂契約招募蟹道人，大鬧魔界後喬裝入藍瀑城，得大五行真光、血牙米、異魔金晶珠；重逢紫靈並知曉魔界大劫；"
    },
    {
     "fromChapter": 2145,
@@ -108,12 +1964,68 @@ export const CANON_NPCS: CanonNpcSource[] = [
     "activity": "本弧從魔界強行突破通道返回靈界，修煉神念秘術、涅盤聖體第二階，守住二號陣眼，先後擊殺多名圣祖化身。"
    },
    {
+    "fromChapter": 2175,
+    "toChapter": 2175,
+    "locationId": "魔界",
+    "realm": "合體後期",
+    "status": "alive",
+    "activity": "得知木族聖樹被毀及大長老隕落後，帶人族修士從二號陣眼撤退朝木棉城方向離去，以免被木界大陣自爆波及。"
+   },
+   {
+    "fromChapter": 2176,
+    "toChapter": 2205,
+    "locationId": "靈界",
+    "realm": "合體後期大圓滿→大乘期",
+    "status": "alive",
+    "activity": "本弧完成百脈煉寶訣大成、煉神術第二層大成、元合五極山第三座、修成多種神通，最終成功渡過五行之劫、真雷"
+   },
+   {
+    "fromChapter": 2206,
+    "toChapter": 2235,
+    "locationId": "魔界",
+    "realm": "大乘期",
+    "status": "alive",
+    "activity": "主持大乘慶典、重創黑梟王、入魔界解圍黑葫城、於始印之地地宮首用祭雷術及玄天斬靈劍斬殺人面蟲並聯手奇襲"
+   },
+   {
     "fromChapter": 2236,
     "toChapter": 2295,
     "locationId": "靈界",
     "realm": "大乘期",
-    "status": "dead",
+    "status": "alive",
     "activity": "主導尋找小靈界入口、潛入靈族、與靈王談判、率眾進入小修羅界斬殺修羅蛛；以玄天斬靈劍、涅槃聖體、梵聖金"
+   },
+   {
+    "fromChapter": 2296,
+    "toChapter": 2325,
+    "locationId": "青元宮",
+    "realm": "大乘期",
+    "status": "alive",
+    "activity": "本弧在小修羅界取得山海珠洞天至寶、煉化玄武真血修成惊蟄訣第七種變身、收空魚族為附庸、建立元合島青元宮"
+   },
+   {
+    "fromChapter": 2326,
+    "toChapter": 2420,
+    "locationId": "靈界",
+    "realm": "大乘期",
+    "status": "alive",
+    "activity": "接受守護兩儀微塵陣陣眼任務，暗中命噬金蟲王刻靈紋以保全自身，遠觀戰場發現六翼旁有面貌酷似自己的白袍男"
+   },
+   {
+    "fromChapter": 2421,
+    "toChapter": 2450,
+    "locationId": "無涯海",
+    "realm": "大乘期（本弧末期接近飛昇之劫）",
+    "status": "alive",
+    "activity": "本弧斬殺真仙馬良、收服魔光與火須子、收回掌天瓶瓶靈、赴龍島得廣靈道果、分魂下界取北極元晶，最終備齊飛"
+   },
+   {
+    "fromChapter": 2451,
+    "toChapter": 2454,
+    "locationId": "北寒仙域",
+    "realm": "真仙境（剛飛升，仙元力尚未完全轉化）；番外回憶段為元嬰期後期",
+    "status": "dead",
+    "activity": "飛升北寒仙域，接受高升邀請暫赴石矶殿；另在回憶線中元嬰期獨闖千竹教聖堂，以養魂木換取大衍訣後三層。"
    }
   ]
  },

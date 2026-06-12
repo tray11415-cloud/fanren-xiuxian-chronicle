@@ -22,7 +22,7 @@ export interface SectInfo {
 export const SECTS: SectInfo[] = [
   {
     id: 'sect-cloud',
-    name: '云灵宗',
+    name: '青云宗',
     description: '正道大宗，门风清正，适合大部分修士。',
     reqRealm: RealmType.QiRefining,
     grade: '玄',

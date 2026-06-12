@@ -1,13 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { usePlayer, useLogs } from '../../store/gameStore';
+import { usePlayer, useLogs, useGameStore } from '../../store/gameStore';
 import { useUIStore } from '../../store/uiStore';
 import { useWorldStore } from '../worldStore';
 import ChroniclePanel from './ChroniclePanel';
 import CreatePanel from './CreatePanel';
-import MapPanel from './MapPanel';
+import WorldMapView from './WorldMapView';
+import BaiYiPanel from './BaiYiPanel';
+import AbodePanel from './AbodePanel';
+import MarketPanel from './MarketPanel';
+import CodexPanel from './CodexPanel';
+import SectPanel from './SectPanel';
+import AiSettingsPanel from './AiSettingsPanel';
+import CanonCharacterPanel from './CanonCharacterPanel';
+import { BrandLockup } from './Brand';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
 import { getRegion } from '../engine/canonLoader';
+import { canonRealmDisplay } from '../engine/realm';
+import { lingMaiOf } from '../engine/lingMai';
+import { hasMarketAt } from '../engine/mapGate';
 
 const logColor: Record<string, string> = {
   normal: 'text-zinc-300',
@@ -19,19 +30,17 @@ const logColor: Record<string, string> = {
 const QUICK = [
   { label: '閉關修煉十年', text: '閉關修煉十年' },
   { label: '外出歷練', text: '外出歷練查探一番' },
-  { label: '查看天下動向', text: '查看天下動向與四周' },
+  { label: '查看四周有誰', text: '查看四周有哪些人物可結交' },
   { label: '回憶往事', text: '回憶我過去發生過什麼' },
   { label: '動用金手指', text: '發動我的金手指' },
 ];
 
 // 系統工具列：開啟既有功能模態框（背包/角色/煉丹/洞府…）
 const SYSTEM_TABS: { key: string; label: string; icon: string }[] = [
-  { key: 'isCharacterOpen', label: '角色', icon: '👤' },
+  // 「角色」改用 canon 專屬面板 CanonCharacterPanel（對應創角的天命/靈根/稟性/戰力），不再走舊引擎 CharacterModal。
   { key: 'isInventoryOpen', label: '背包', icon: '🎒' },
-  { key: 'isCultivationOpen', label: '功法', icon: '📖' },
-  { key: 'isAlchemyOpen', label: '煉丹', icon: '⚗️' },
-  { key: 'isGrottoOpen', label: '洞府', icon: '🏔️' },
-  { key: 'isSectOpen', label: '宗門', icon: '🏛️' },
+  // 功法（具名功法/神通）與煉丹（丹道百藝）已統一收於上方 🛠️ 百藝（fanren BaiYiPanel）；
+  // 宗門→⛩️宗門、洞府→🏔️洞府。經典 SectModal/GrottoModal/ShopModal/CultivationModal/CraftingModal 在 canon 模式皆已抑制，避免雙系統突兀。
   { key: 'isPetOpen', label: '靈寵', icon: '🐉' },
   { key: 'isRealmOpen', label: '境界', icon: '🌌' },
   { key: 'isAchievementOpen', label: '成就', icon: '🏆' },
@@ -46,17 +55,30 @@ const CanonView: React.FC = () => {
   const submitAction = useWorldStore((s) => s.submitAction);
   const resolveChoice = useWorldStore((s) => s.resolveChoice);
   const onKill = useWorldStore((s) => s.onKill);
+  const attemptBreakthrough = useWorldStore((s) => s.attemptBreakthrough);
   const setModal = useUIStore((s) => s.setModal);
   const [input, setInput] = useState('');
   const [showChronicle, setShowChronicle] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [showBaiYi, setShowBaiYi] = useState(false);
+  const [showAbode, setShowAbode] = useState(false);
+  const [showMarket, setShowMarket] = useState(false);
+  const [showCodex, setShowCodex] = useState(false);
+  const [showSect, setShowSect] = useState(false);
+  const [showAi, setShowAi] = useState(false);
+  const [showCharacter, setShowCharacter] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const pendingChoice = world.pendingChoice;
+  const storyLock = !!pendingChoice; // 進入劇情（待抉擇）時，限制功能與行動
+  const gate = storyLock ? ' opacity-40' : ''; // 劇情中行動類按鈕灰化
 
   const reminders = useMemo(() => buildReminders(world), [world]);
   const region = getRegion(world.currentLocationId);
+  const lingMai = useMemo(() => lingMaiOf(world.currentLocationId), [world.currentLocationId]);
+  const atMarket = useMemo(() => hasMarketAt(world.currentLocationId), [world.currentLocationId]);
+  const lmColor = lingMai.grade <= 1 ? 'text-zinc-500' : lingMai.grade === 2 ? 'text-teal-300/80' : lingMai.grade <= 4 ? 'text-emerald-300' : 'text-amber-300';
 
   useEffect(() => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -86,48 +108,55 @@ const CanonView: React.FC = () => {
 
   return (
     <>
-    <div className="min-h-screen w-full bg-gradient-to-b from-black via-zinc-950 to-zinc-900 text-zinc-100">
+    <div className="h-screen w-full overflow-y-auto ink-wash text-zinc-100">
       <div className="mx-auto max-w-6xl px-3 py-4">
+        {/* 品牌頁首 */}
+        <div className="mb-3 flex items-center justify-between border-b border-[#3f5a50]/30 pb-2">
+          <BrandLockup sealSize={30} titleClassName="text-base sm:text-lg" sub={false} />
+          <span className="text-[10px] tracking-[0.25em] text-[#7c9d8f]/60">墨青朱印</span>
+        </div>
+
         {/* 頂部狀態列 */}
         <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-amber-900/40 bg-zinc-900/70 px-4 py-2 text-sm">
           <span className="font-semibold text-amber-300">{player.name}</span>
-          <span className="text-zinc-300">{player.realm}{player.realmLevel}層</span>
+          <span className="text-zinc-300">{canonRealmDisplay(world, player.realm, player.realmLevel)}</span>
           <span className="text-amber-200/80">{formatTime(world.clock)}</span>
           <span className="text-zinc-400">📍 {region?.name || world.currentLocationId}</span>
+          <span className={lmColor} title={lingMai.desc}>⛰ 靈脈・{lingMai.name}</span>
           <span className="text-emerald-300/90">壽元 {Math.floor(player.lifespan)}/{player.maxLifespan}</span>
           <span className="ml-auto text-zinc-400">靈石 {player.spiritStones}</span>
         </div>
 
-        {/* 系統工具列：開啟既有功能（背包/角色/煉丹/洞府/宗門…） */}
+        {storyLock && (
+          <div className="mb-2 rounded-lg border border-amber-700/50 bg-amber-950/30 px-3 py-1.5 text-xs text-amber-200">⚔ 劇情進行中——你正身處事中，須先就下方做出抉擇，無暇分心他顧（行動與多數功能暫時封閉）。</div>
+        )}
+        {/* 系統工具列：開啟既有功能（劇情中行動類功能停用，史冊/萬物譜唯讀可閱） */}
         <div className="mb-3 flex flex-wrap gap-1.5">
-          <button
-            onClick={() => setShowChronicle(true)}
-            className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400"
-          >
-            📜 史冊
-          </button>
-          <button
-            onClick={() => setShowCreate(true)}
-            className="rounded-lg border border-rose-700/60 bg-rose-950/30 px-2.5 py-1 text-xs text-rose-200 transition hover:border-rose-400"
-          >
-            ✦ 自創
-          </button>
-          <button
-            onClick={() => setShowMap(true)}
-            className="rounded-lg border border-emerald-700/60 bg-emerald-950/30 px-2.5 py-1 text-xs text-emerald-200 transition hover:border-emerald-400"
-          >
-            🗺️ 地圖
-          </button>
+          <button onClick={() => setShowCharacter(true)} className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400">👤 角色</button>
+          <button onClick={() => setShowChronicle(true)} className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400">📜 史冊</button>
+          <button disabled={storyLock} onClick={() => setShowCreate(true)} className={`rounded-lg border border-rose-700/60 bg-rose-950/30 px-2.5 py-1 text-xs text-rose-200 transition hover:border-rose-400${gate}`}>✦ 自創</button>
+          <button disabled={storyLock} onClick={() => setShowMap(true)} className={`rounded-lg border border-emerald-700/60 bg-emerald-950/30 px-2.5 py-1 text-xs text-emerald-200 transition hover:border-emerald-400${gate}`}>🗺️ 地圖</button>
+          <button disabled={storyLock} onClick={() => setShowBaiYi(true)} className={`rounded-lg border border-teal-700/60 bg-teal-950/30 px-2.5 py-1 text-xs text-teal-200 transition hover:border-teal-400${gate}`}>🛠️ 百藝・功法</button>
+          <button disabled={storyLock} onClick={() => setShowAbode(true)} className={`rounded-lg border border-stone-600/60 bg-stone-900/40 px-2.5 py-1 text-xs text-stone-200 transition hover:border-stone-400${gate}`}>🏔️ 洞府</button>
+          <button disabled={storyLock} title={atMarket ? '' : '此處無坊市，須往城鎮坊市或修仙宗門所在'} onClick={() => { if (atMarket) setShowMarket(true); else useGameStore.getState().addLog(`此處（${region?.name || world.currentLocationId}）荒僻無市，修士交易須往城鎮坊市、或修仙宗門所在——可開地圖尋一處坊市前往。`, 'normal'); }} className={`rounded-lg border px-2.5 py-1 text-xs transition ${atMarket ? 'border-yellow-700/60 bg-yellow-950/20 text-yellow-200 hover:border-yellow-400' : 'border-zinc-800 bg-zinc-900/40 text-zinc-500'}${gate}`}>💰 坊市{atMarket ? '' : '（無）'}</button>
+          <button disabled={storyLock} onClick={() => setShowSect(true)} className={`rounded-lg border border-indigo-700/60 bg-indigo-950/20 px-2.5 py-1 text-xs text-indigo-200 transition hover:border-indigo-400${gate}`}>⛩️ 宗門</button>
+          <button onClick={() => setShowCodex(true)} className="rounded-lg border border-teal-700/60 bg-teal-950/20 px-2.5 py-1 text-xs text-teal-200 transition hover:border-teal-400">📖 萬物譜</button>
+          <button onClick={() => setShowAi(true)} title="填入你自己的 API 金鑰，啟用 AI 敘事（不填則用內建模板）" className="rounded-lg border border-sky-700/60 bg-sky-950/20 px-2.5 py-1 text-xs text-sky-200 transition hover:border-sky-400">🔑 AI 設定</button>
           {SYSTEM_TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setModal(t.key as any, true)}
-              className="rounded-lg border border-zinc-700 bg-zinc-800/60 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-500 hover:text-amber-200"
-            >
-              {t.icon} {t.label}
-            </button>
+            <button key={t.key} disabled={storyLock} onClick={() => setModal(t.key as any, true)} className={`rounded-lg border border-zinc-700 bg-zinc-800/60 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-500 hover:text-amber-200${gate}`}>{t.icon} {t.label}</button>
           ))}
         </div>
+
+        {/* 隊伍（含劇情組隊／分贓公帳） */}
+        {world.party && world.party.members.length > 0 && (
+          <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-[#3f6e5c]/60 bg-emerald-950/20 px-3 py-2 text-sm">
+            <span className="font-semibold text-[#9fdcc4]">🤝 隊伍</span>
+            <span className="text-zinc-300">{world.party.members.map((m) => m.name).join('、')}</span>
+            {world.party.storyTitle && <span className="rounded border border-amber-700/50 px-1.5 text-[11px] text-amber-200">劇情：{world.party.storyTitle}</span>}
+            {world.party.lootPool.length > 0 && <span className="text-[11px] text-cyan-300/80">公帳 {world.party.lootPool.reduce((s, l) => s + l.quantity, 0)} 件待分</span>}
+            <button disabled={busy} onClick={() => submit('解散隊伍並分贓')} className="ml-auto rounded-lg border border-zinc-600 px-2 py-0.5 text-xs text-zinc-300 transition hover:border-rose-400 disabled:opacity-50">解散・分贓</button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
           {/* 左：敘事 + 輸入 */}
@@ -184,7 +213,7 @@ const CanonView: React.FC = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') submit(input); }}
                 disabled={busy || !!pendingChoice}
-                placeholder={pendingChoice ? '請先就上方正史節點做出抉擇……' : '輸入你的行動……（例：前往黃楓谷拜師 / 用背包中的丹藥修煉 / 與南宮婉結交 / 出手攻擊邪修）'}
+                placeholder={pendingChoice ? '請先就上方正史節點做出抉擇……' : '輸入你的行動……（例：前往黃楓谷拜師 / 招攬厲飛雨同行 / 以神識傳音給南宮婉：速離此地 / 出手攻擊邪修）'}
                 className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm outline-none focus:border-amber-500 disabled:opacity-50"
               />
               <button
@@ -207,7 +236,15 @@ const CanonView: React.FC = () => {
               <div className="h-2 w-full overflow-hidden rounded bg-zinc-800">
                 <div className="h-full bg-gradient-to-r from-amber-600 to-amber-400" style={{ width: `${expPct}%` }} />
               </div>
-              {expPct >= 100 && <div className="mt-1 text-xs text-amber-300">修為已滿，可尋機突破境界。</div>}
+              {expPct >= 100 && (
+                <button
+                  disabled={busy}
+                  onClick={() => attemptBreakthrough()}
+                  className="mt-2 w-full rounded-lg border border-amber-600/60 bg-amber-950/40 py-1.5 text-xs font-semibold text-amber-200 transition hover:border-amber-400 disabled:opacity-50"
+                >
+                  ⚡ 修為圓滿・衝擊瓶頸（突破／渡劫）
+                </button>
+              )}
             </div>
 
             {/* 金手指 */}
@@ -236,7 +273,7 @@ const CanonView: React.FC = () => {
               <div className="space-y-1.5 text-xs text-zinc-300">
                 {reminders.map((r, i) => (
                   <div key={i} className="flex gap-1.5">
-                    <span>{r.kind === 'opportunity' ? '✦' : r.kind === 'npc_nearby' ? '👤' : r.kind === 'danger' ? '⚠' : r.kind === 'world_event' ? '🌐' : '·'}</span>
+                    <span>{r.kind === 'opportunity' ? '✦' : r.kind === 'npc_nearby' ? '👤' : r.kind === 'danger' ? '⚠' : r.kind === 'world_event' ? '🌐' : r.kind === 'sect' ? '⛩️' : '·'}</span>
                     <span>{r.text}</span>
                   </div>
                 ))}
@@ -252,7 +289,14 @@ const CanonView: React.FC = () => {
     </div>
     {showChronicle && <ChroniclePanel world={world} player={player} onClose={() => setShowChronicle(false)} />}
     {showCreate && <CreatePanel onClose={() => setShowCreate(false)} />}
-    {showMap && <MapPanel onClose={() => setShowMap(false)} onTravel={(nm) => submitAction(`前往${nm}`)} />}
+    {showMap && <WorldMapView onClose={() => setShowMap(false)} onTravel={(nm) => submitAction(`前往${nm}`)} />}
+    {showBaiYi && <BaiYiPanel world={world} player={player} busy={busy} onClose={() => setShowBaiYi(false)} onAction={(t) => submitAction(t)} />}
+    {showAbode && <AbodePanel world={world} player={player} busy={busy} onClose={() => setShowAbode(false)} />}
+    {showMarket && <MarketPanel world={world} player={player} busy={busy} onClose={() => setShowMarket(false)} />}
+    {showCodex && <CodexPanel world={world} onClose={() => setShowCodex(false)} />}
+    {showSect && <SectPanel world={world} player={player} busy={busy} onClose={() => setShowSect(false)} />}
+    {showAi && <AiSettingsPanel onClose={() => setShowAi(false)} />}
+    {showCharacter && <CanonCharacterPanel world={world} player={player} onClose={() => setShowCharacter(false)} />}
     </>
   );
 };

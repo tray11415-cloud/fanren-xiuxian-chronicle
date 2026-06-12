@@ -27,13 +27,13 @@ export const CULTIVATION_ARTS: CultivationArt[] = [
   },
   {
     id: 'art-spirit-cloud',
-    name: '云灵诀',
+    name: '青云诀',
     type: 'mental',
     grade: '黄',
-    description: '云灵宗入门心法，吸纳灵气如云雾缭绕。',
+    description: '青云宗入门心法，吸纳灵气如云雾缭绕。',
     realmRequirement: RealmType.QiRefining,
     cost: 100,
-    sectId: 'sect-cloud', // 云灵宗专属
+    sectId: 'sect-cloud', // 青云宗专属
     effects: { expRate: 0.25, attack: 5 },
   },
   {

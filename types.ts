@@ -247,6 +247,10 @@ export interface PlayerStats {
   unlockedTitles: string[]; // 已解锁的称号ID列表
   attributePoints: number; // 可分配属性点
   luck: number; // 幸运值
+  comprehension?: number; // 悟性（1-100）：影響修煉效率、領悟功法神通、突破成功率
+  daoHeart?: number; // 心性／道心（1-100）：影響走火入魔與心魔抗性、渡劫定力
+  agility?: number; // 速度稟賦（0-100）：旅行腳程加速、逃離追殺成功率（與戰鬥 speed 同源於速度點數）
+  variantRoot?: { type: string; value: number } | null; // 變異靈根（異靈根）：類型＋強度0-100；較五行更純更利、進境尤速，並增益神識/術法
   // 成就系统
   achievements: string[]; // 已完成的成就ID
   // 灵宠系统
@@ -845,8 +849,8 @@ export interface GameSettings {
   musicVolume: number; // 0-100
   autoSave: boolean;
   animationSpeed: 'slow' | 'normal' | 'fast';
-  language: 'zh' | 'en';
-  difficulty: DifficultyMode; // 游戏难度模式
+  language: 'traditional' | 'simplified'; // 顯示語言：繁體 / 簡體（顯示層由 OpenCC 統一）
+  difficulty: DifficultyMode; // 游戏难度模式（編年史採永久死亡，此欄位僅後端相容保留）
   keyboardShortcuts?: Record<string, KeyboardShortcutConfig>; // 自定义快捷键配置，key 为 actionId
 }
 

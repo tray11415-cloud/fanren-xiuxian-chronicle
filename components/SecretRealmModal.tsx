@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { PlayerStats, RealmType, SecretRealm } from '../types';
 import { REALM_ORDER } from '../constants/index';
 import { generateRandomRealms } from '../services/randomService';
+import { generateLocalSecretRealms } from '../fanren/engine/localSecretRealms';
+import { useWorldStore } from '../fanren/worldStore';
 import { Mountain, Gem, Ticket, RefreshCw } from 'lucide-react';
 import { Modal } from './common';
 
@@ -10,6 +12,7 @@ interface Props {
   onClose: () => void;
   player: PlayerStats;
   onEnter: (realm: SecretRealm) => void;
+  canonMode?: boolean;
 }
 
 const SecretRealmModal: React.FC<Props> = ({
@@ -17,13 +20,17 @@ const SecretRealmModal: React.FC<Props> = ({
   onClose,
   player,
   onEnter,
+  canonMode = false,
 }) => {
   const [refreshKey, setRefreshKey] = useState(0);
+  // 編年史模式：秘境須與所在環境相稱（讀當前所在地，生成周邊探索之境）
+  const canonLocationId = useWorldStore((s) => s.world.currentLocationId);
 
-  // 使用 useMemo 生成随机秘境列表，refreshKey 变化时重新生成
+  // 使用 useMemo 生成秘境列表，refreshKey 变化时重新生成
   const availableRealms = useMemo(() => {
+    if (canonMode) return generateLocalSecretRealms(canonLocationId, player.realm, 6);
     return generateRandomRealms(player.realm, 6);
-  }, [player.realm, refreshKey]);
+  }, [player.realm, refreshKey, canonMode, canonLocationId]);
 
   const getRealmIndex = (r: RealmType) => REALM_ORDER.indexOf(r);
 

@@ -1,6 +1,8 @@
 import type { WorldMapNode } from '../types';
-// 由 game_db/game/world_map.json 生成（網路爬取＋本地考據彙整，100 節點）。
-export const WORLD_MAP: WorldMapNode[] = [
+import { WORLD_MAP_CANON } from './worldMapCanon';
+import { WORLD_MAP_IMAGINED } from './worldMapImagined';
+// 由 game_db/game/world_map.json 生成（網路爬取＋本地考據彙整）+ 手補正史子地點/宗門。
+const WORLD_MAP_CORE: WorldMapNode[] = [
  {
   "id": "renJie",
   "name": "人界",
@@ -751,10 +753,15 @@ export const WORLD_MAP: WorldMapNode[] = [
   "name": "虛天殿",
   "tier": "human",
   "parentId": "luanXingHai",
-  "description": "上古蠻荒古修士遺留密殿，每三百年從天外降落一次懸浮千丈高空；殿內有壽元果、虛天鼎、補天丹；第二層密室設靈眼之泉；第五層設寒驪臺。",
+  "description": "上古蠻荒古修士遺留密殿，平時隱於虛空、不落輿圖，每三百年方從天外降落一次、懸浮千丈高空一現；殿內有壽元果、虛天鼎、補天丹；第二層密室設靈眼之泉、第五層設寒驪臺。非持殘圖指引、解去封印者，縱在亂星海亦難覓其門。",
   "factions": [],
   "connections": [],
-  "firstVolume": 4
+  "firstVolume": 4,
+  "access": {
+   "hidden": true,
+   "requiresItem": "虛天殿圖",
+   "requiresFlag": "虛天殿封印解除"
+  }
  },
  {
   "id": "nanMingDao",
@@ -1385,5 +1392,124 @@ export const WORLD_MAP: WorldMapNode[] = [
   ],
   "connections": [],
   "firstVolume": 13
+ },
+ {
+  "id": "luoRiFeng",
+  "name": "落日峰",
+  "tier": "human",
+  "parentId": "qiXuanMen",
+  "description": "七玄門主峰，掌門與諸堂長老所居、藏經閣與護山大陣所在。野狼幫攻山時，門中於此退守死戰；韓立以火彈術殲滅野狼幫聯軍，由此名動鏡州。",
+  "factions": ["七玄門"],
+  "connections": ["qiXuanMen"],
+  "firstVolume": 1
+ },
+ {
+  "id": "shenShouGu",
+  "name": "神手谷",
+  "tier": "human",
+  "parentId": "qiXuanMen",
+  "description": "彩霞山附設山谷，墨大夫（暗中修仙者）居所。韓立於此為藥童啟蒙，得《長春功》、踏上修仙之路。谷中遍植靈藥、設有煉丹石室。",
+  "factions": ["七玄門"],
+  "connections": ["qiXuanMen"],
+  "firstVolume": 1
+ },
+ {
+  "id": "luoShaPo",
+  "name": "落沙坡",
+  "tier": "human",
+  "parentId": "jingZhou",
+  "description": "彩霞山外通往鏡州腹地的險要坡地。七玄門高層曾於此遭野狼幫伏擊，退守落日峰前的關鍵血戰之地。",
+  "factions": ["七玄門", "野狼幫"],
+  "connections": ["qiXuanMen", "qingNiuZhen"],
+  "firstVolume": 1
+ },
+ {
+  "id": "taiYueShanMai",
+  "name": "太岳山脈",
+  "tier": "human",
+  "parentId": "jianZhou",
+  "description": "黃楓谷外圍綿延妖獸山脈，谷中弟子於此獵殺低階妖獸、採集靈藥礦砂，上繳妖丹獸材供丹堂煉藥、煉器堂煉器。深處妖獸兇悍，常有弟子折損。",
+  "factions": ["黃楓谷"],
+  "connections": ["huangFengGu"],
+  "firstVolume": 1
+ },
+ {
+  "id": "huangFengYaoYuan",
+  "name": "黃楓谷靈藥園",
+  "tier": "human",
+  "parentId": "huangFengGu",
+  "description": "黃楓谷立谷之本——谷中守護森嚴的靈藥園，遍植築基所需靈草。外宗與散修常覬覦竊藥，弟子須輪值看守、驅逐潛入者。",
+  "factions": ["黃楓谷"],
+  "connections": ["huangFengGu"],
+  "firstVolume": 1
+ },
+ {
+  "id": "luanMingZong",
+  "name": "鸞鳴宗（鳴鸞峰）",
+  "tier": "human",
+  "parentId": "xiGuo",
+  "description": "溪國頂尖正道宗門、天道盟三大派之一，御劍與丹符兼修。立宗於鳴鸞峰劍殿，劍碑林立，弟子以劍心入道，常與落雲宗、赤蓮宗共擔天道盟防線。",
+  "factions": ["鸞鳴宗", "天道盟"],
+  "connections": ["yunMengShanMai"],
+  "firstVolume": 1
+ },
+ {
+  "id": "guiLingMen",
+  "name": "鬼靈門",
+  "tier": "human",
+  "parentId": "tianLuoGuo",
+  "description": "天羅國魔道六宗之一，擅驅鬼役妖、布設陰火大陣。立壇於幽冥血壇，以攝魂禁制驅策門徒；常佔據各國靈礦、驅役厲鬼開採陰煞靈石。原著碎魂真人一系出於此門。",
+  "factions": ["鬼靈門", "魔道六宗"],
+  "connections": ["tianLuoGuo"],
+  "firstVolume": 1
+ },
+ {
+  "id": "heHuanZong",
+  "name": "合歡宗",
+  "tier": "human",
+  "parentId": "tianLuoGuo",
+  "description": "天羅國魔道六宗之首，行媚術雙修、吸陰奪命之道。宗中設合歡血壇，弟子以歡蠱驗忠順；聖女之命不可違。手段隱秘狠辣，為正道所深惡。",
+  "factions": ["合歡宗", "魔道六宗"],
+  "connections": ["tianLuoGuo"],
+  "firstVolume": 1
+ },
+ {
+  "id": "yuLingZong",
+  "name": "御靈宗",
+  "tier": "human",
+  "parentId": "tianLuoGuo",
+  "description": "天羅國魔道六宗之一，馭靈蟲靈獸、長於隱匿滲透。立宗於百蟲血窟，以認主靈蟲驅策門徒；千年前即於各國暗布眼線，原著靈獸山暗樁即其手筆。",
+  "factions": ["御靈宗", "魔道六宗"],
+  "connections": ["tianLuoGuo"],
+  "firstVolume": 1
+ },
+ {
+  "id": "wanBaoLou",
+  "name": "萬寶樓",
+  "tier": "human",
+  "parentId": "tianXingCheng",
+  "description": "亂星海天星城中最大的拍賣行與交易場，奇珍異寶、功法法器、靈藥丹方無所不售。散修、各派修士匯聚於此，亦是情報與機緣的集散之地。",
+  "factions": [],
+  "connections": ["tianXingCheng"],
+  "firstVolume": 4
  }
+];
+
+// 核心手作節點優先；依序併入 agent 叢集審計的正史地點（canon）與程序化想像地點（imagined），
+// 皆依 id/中文名去重（先到先得，核心覆寫）。
+const _seenId = new Set<string>();
+const _seenName = new Set<string>();
+function _merge(list: WorldMapNode[]): WorldMapNode[] {
+  const kept: WorldMapNode[] = [];
+  for (const n of list) {
+    if (_seenId.has(n.id) || _seenName.has(n.name)) continue;
+    _seenId.add(n.id); _seenName.add(n.name);
+    kept.push(n);
+  }
+  return kept;
+}
+export const WORLD_MAP: WorldMapNode[] = [
+  ..._merge(WORLD_MAP_CORE),
+  ..._merge(WORLD_MAP_CANON),
+  ..._merge(WORLD_MAP_IMAGINED),
 ];

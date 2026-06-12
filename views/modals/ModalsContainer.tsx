@@ -49,6 +49,7 @@ interface ModalsContainerProps {
   settings: GameSettings;
   setItemActionLog?: (log: { text: string; type: string } | null) => void;
   autoAdventure?: boolean; // 是否在自动历练模式下
+  canonMode?: boolean; // 凡人編年史模式：抑制有 fanren 對應面板的經典彈窗（宗門/洞府/坊市），避免雙系統並存
   handlers: {
     // Modal toggles
     setIsInventoryOpen: (open: boolean) => void;
@@ -190,6 +191,7 @@ function ModalsContainer({
   settings,
   setItemActionLog,
   autoAdventure = false,
+  canonMode = false,
   handlers,
 }: ModalsContainerProps) {
   const modals = useModals();
@@ -290,7 +292,7 @@ function ModalsContainer({
         />
       )}
 
-      {modals.isCultivationOpen && (
+      {!canonMode && modals.isCultivationOpen && (
         <CultivationModal
           isOpen={modals.isCultivationOpen}
           onClose={() => handlers.setIsCultivationOpen(false)}
@@ -300,7 +302,7 @@ function ModalsContainer({
         />
       )}
 
-      {modals.isAlchemyOpen && (
+      {!canonMode && modals.isAlchemyOpen && (
         <CraftingModal
           isOpen={modals.isAlchemyOpen}
           onClose={() => handlers.setIsAlchemyOpen(false)}
@@ -326,7 +328,7 @@ function ModalsContainer({
         />
       )}
 
-      {modals.isSectOpen && (
+      {!canonMode && modals.isSectOpen && (
         <SectModal
           isOpen={modals.isSectOpen}
           onClose={() => handlers.setIsSectOpen(false)}
@@ -349,10 +351,11 @@ function ModalsContainer({
           onClose={() => handlers.setIsRealmOpen(false)}
           player={player}
           onEnter={handlers.handleEnterRealm}
+          canonMode={canonMode}
         />
       )}
 
-      {modals.isCharacterOpen && (
+      {!canonMode && modals.isCharacterOpen && (
         <CharacterModal
           isOpen={modals.isCharacterOpen}
           onClose={() => handlers.setIsCharacterOpen(false)}
@@ -420,7 +423,7 @@ function ModalsContainer({
         />
       )}
 
-      {modals.isShopOpen && modalState.currentShop && (
+      {!canonMode && modals.isShopOpen && modalState.currentShop && (
         <ShopModal
           isOpen={modals.isShopOpen}
           onClose={() => {
@@ -447,7 +450,7 @@ function ModalsContainer({
         />
       )}
 
-      {modals.isGrottoOpen && (
+      {!canonMode && modals.isGrottoOpen && (
         <GrottoModal
           isOpen={modals.isGrottoOpen}
           onClose={() => handlers.setIsGrottoOpen(false)}

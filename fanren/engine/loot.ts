@@ -1,5 +1,7 @@
-/** 正史探索掉落：產生符合地域層級／境界的真實物品，落地到背包。 */
+/** 正史探索掉落：由 canonItems（原著寶物庫）產生符合地域層級／境界的真實物品。 */
 import { realmRank } from './canonLoader';
+import { CANON_ITEMS } from '../data/canonItems';
+import type { CanonItem } from '../types';
 
 export interface ItemGrant {
   name: string;
@@ -14,29 +16,48 @@ interface LootDef {
   type: ItemGrant['type'];
   rarity: ItemGrant['rarity'];
   desc: string;
-  minRank: number; // realmRank 下限
+  minRank: number;
 }
 
-// 由低到高的掉落池（名稱取自修仙通用＋原著風味）
-const POOL: LootDef[] = [
-  { name: '黃精草', type: '草药', rarity: '普通', desc: '常見靈草，可入基礎丹方。', minRank: 0 },
-  { name: '凝血草', type: '草药', rarity: '普通', desc: '止血療傷的尋常藥草。', minRank: 0 },
-  { name: '靈晶礦', type: '材料', rarity: '普通', desc: '蘊含微弱靈氣的礦石，煉器常用。', minRank: 0 },
-  { name: '聚氣丹', type: '丹药', rarity: '普通', desc: '輔助煉氣期修煉的入門丹藥。', minRank: 0 },
-  { name: '百年靈乳', type: '草药', rarity: '稀有', desc: '百年方成的靈乳，藥力醇厚。', minRank: 2 },
-  { name: '玄鐵', type: '材料', rarity: '稀有', desc: '煉製法器的上佳材料。', minRank: 2 },
-  { name: '築基靈液', type: '丹药', rarity: '稀有', desc: '助益築基的珍貴靈液。', minRank: 3 },
-  { name: '寒玉髓', type: '材料', rarity: '稀有', desc: '極寒之地所結，煉製冰屬法寶之材。', minRank: 4 },
-  { name: '凝元丹', type: '丹药', rarity: '传说', desc: '結丹期修士夢寐以求的增益靈丹。', minRank: 5 },
-  { name: '千年靈芝', type: '草药', rarity: '传说', desc: '千年靈芝，可遇不可求的煉丹主材。', minRank: 5 },
-  { name: '噬靈金', type: '材料', rarity: '传说', desc: '能吞噬靈氣的奇金，本命法寶之材。', minRank: 7 },
-  { name: '九轉還魂丹', type: '丹药', rarity: '仙品', desc: '傳說中起死回生的仙品神丹。', minRank: 9 },
-];
+function mapType(kind: string): ItemGrant['type'] {
+  if (kind === '丹药') return '丹药';
+  if (kind === '材料') return '材料';
+  if (kind === '灵植') return '草药';
+  return '法宝'; // 法宝/奇物/傀儡/符箓
+}
+function mapRarity(r: string): ItemGrant['rarity'] {
+  if (r === '仙品') return '仙品';
+  if (r === '传说') return '传说';
+  if (r === '稀有') return '稀有';
+  return '普通'; // 普通/精良
+}
+const TIER_RANK: Record<string, number> = { 炼气: 0, 筑基: 2, 金丹: 4, 元婴: 6, 化神: 8, 炼虚以上: 10, 通用: 0 };
 
-/** 依地域層級與玩家境界、氣運擲取探索掉落（0–2 件）。在瀏覽器端，可用 Math.random。 */
-export function rollExploreLoot(tier: string, playerRealm: string, luck: number): ItemGrant[] {
+// 本命至寶/金手指級：不入隨機掉落，僅由正史事件/機緣/煉製取得
+const UNIQUE_BLOCKLIST = new Set([
+  '掌天瓶', '神秘小瓶', '玄天如意刃', '青竹蜂雲劍', '虛天鼎', '噬金蟲', '落寶金錢', '兩儀環', '三焰扇',
+  '元磁神光（元磁神山）', '元磁神光', '元磁山', '乾藍冰焰', '乾藍冰珠', '玄天斬靈劍', '風雷翅', '鬼羅幡', '八靈尺', '玄天果實',
+]);
+
+function isExplorable(i: CanonItem): boolean {
+  if (UNIQUE_BLOCKLIST.has(i.name)) return false;
+  // 仙品法寶過於逆天，不隨機掉
+  if (i.rarity === '仙品' && i.kind === '法宝') return false;
+  return true;
+}
+
+const POOL: LootDef[] = CANON_ITEMS.filter(isExplorable).map((i) => ({
+  name: i.name,
+  type: mapType(i.kind),
+  rarity: mapRarity(i.rarity),
+  desc: i.effect,
+  minRank: TIER_RANK[i.realmTier] ?? 0,
+}));
+
+/** 依地域層級與玩家境界、氣運擲取探索掉落（0–2 件）。 */
+export function rollExploreLoot(_tier: string, playerRealm: string, luck: number): ItemGrant[] {
   const rank = realmRank(playerRealm);
-  const candidates = POOL.filter((d) => d.minRank <= rank + 1); // 允許略高一階的驚喜
+  const candidates = POOL.filter((d) => d.minRank <= rank + 2); // 允許略高一階的驚喜
   if (!candidates.length) return [];
   const out: ItemGrant[] = [];
   const baseChance = 0.55 + Math.min(0.3, (luck || 0) / 200);
@@ -46,19 +67,21 @@ export function rollExploreLoot(tier: string, playerRealm: string, luck: number)
 }
 
 function pick(cands: LootDef[], rank: number): ItemGrant {
-  // 偏向接近玩家境界、偶有高階驚喜
-  const weighted = cands.map((d) => ({ d, w: 1 / (1 + Math.abs(d.minRank - rank)) + (d.rarity === '仙品' ? 0.02 : 0) }));
+  const weighted = cands.map((d) => ({ d, w: 1 / (1 + Math.abs(d.minRank - rank)) + (d.rarity === '仙品' ? 0.01 : 0) }));
   const total = weighted.reduce((s, x) => s + x.w, 0);
   let r = Math.random() * total;
   let chosen = weighted[0].d;
-  for (const x of weighted) { r -= x.w; if (r <= 0) { chosen = x.d; break; } }
+  for (const x of weighted) {
+    r -= x.w;
+    if (r <= 0) { chosen = x.d; break; }
+  }
   return { name: chosen.name, type: chosen.type, rarity: chosen.rarity, quantity: 1, description: chosen.desc };
 }
 
-/** 金手指催熟靈藥（小綠瓶式）→ 產出一株高階靈草。 */
+/** 金手指催熟靈藥（掌天瓶式）→ 產出一株高階原著靈植/靈藥。 */
 export function catalyzeHerb(playerRealm: string, magnitude: number): ItemGrant {
   const rank = realmRank(playerRealm);
-  const herbs = POOL.filter((d) => d.type === '草药' && d.minRank <= rank + 2);
+  const herbs = POOL.filter((d) => d.type === '草药' && d.minRank <= rank + 3);
   const best = herbs.sort((a, b) => b.minRank - a.minRank)[0] || POOL[0];
-  return { name: best.name, type: '草药', rarity: best.rarity, quantity: Math.max(1, Math.round(magnitude / 2)), description: `（催熟而得）${best.desc}` };
+  return { name: best.name, type: '草药', rarity: best.rarity, quantity: Math.max(1, Math.round(magnitude / 2)), description: `（瓶中催熟而得）${best.desc}` };
 }

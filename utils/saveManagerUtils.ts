@@ -14,8 +14,14 @@ import {
  * 确保玩家数据兼容性，填充缺失的字段
  */
 export const ensurePlayerStatsCompatibility = (loadedPlayer: any): PlayerStats => {
+  // 悟性／心性：舊存檔無此欄位時，依角色名雜湊穩定推得（不隨每次載入跳動），落於 40~75。
+  const _nameHash = (() => { const s = String(loadedPlayer?.name || '無名'); let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0); })();
   return {
     ...loadedPlayer,
+    comprehension: loadedPlayer.comprehension ?? (40 + (_nameHash % 36)),
+    daoHeart: loadedPlayer.daoHeart ?? (40 + (((_nameHash >>> 8) % 36))),
+    agility: loadedPlayer.agility ?? 0, // 舊存檔未投速度稟賦 → 無旅行/逃離加成
+    variantRoot: loadedPlayer.variantRoot ?? null, // 舊存檔無變異靈根
     dailyTaskCount:
       loadedPlayer.dailyTaskCount &&
       typeof loadedPlayer.dailyTaskCount === 'object' &&
@@ -107,6 +113,22 @@ export interface SaveData {
   player: PlayerStats;
   logs: LogEntry[];
   timestamp: number;
+  world?: any; // 凡人編年史世界狀態（隨存檔/匯出/匯入一同保存，避免時間線遺失）
+}
+
+// 凡人編年史世界狀態的 localStorage 鍵（與 fanren/worldStore.ts 一致）
+const CANON_WORLD_KEY = 'fanren_world_v1';
+
+/** 讀取當前 canon 世界（僅在 enabled 時回傳，避免污染經典模式存檔）。 */
+function readCanonWorld(): any | undefined {
+  try {
+    const raw = localStorage.getItem(CANON_WORLD_KEY);
+    if (!raw) return undefined;
+    const w = JSON.parse(raw);
+    return w && w.enabled ? w : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -165,6 +187,7 @@ export const saveToSlot = (
       player,
       logs,
       timestamp: Date.now(),
+      world: readCanonWorld(), // 一併保存 canon 世界時間線（僅 canon 模式）
     };
 
     const slotKey = getSlotKey(slotId);
@@ -202,6 +225,10 @@ export const loadFromSlot = (slotId: number): SaveData | null => {
 
     const saveData: SaveData = JSON.parse(saved);
     setCurrentSlotId(slotId);
+    // 同步還原 canon 世界時間線到其 localStorage 鍵（避免 player↔world 失同步）
+    if (saveData.world && saveData.world.enabled) {
+      try { localStorage.setItem(CANON_WORLD_KEY, JSON.stringify(saveData.world)); } catch {}
+    }
     return saveData;
   } catch (error) {
     console.error('加载存档失败:', error);

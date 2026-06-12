@@ -148,7 +148,7 @@ const DROP_ITEMS = [
 
 // 宗门名称和描述绑定池（名称和描述一一对应）
 const SECT_DATA: Array<{ name: string; description: string }> = [
-  { name: '云灵宗', description: '正道大宗，门风清正，适合大部分修士。' },
+  { name: '青云宗', description: '正道大宗，门风清正，适合大部分修士。' },
   { name: '烈阳宗', description: '坐落于火山之上，专修火法，行事霸道。' },
   { name: '万剑门', description: '一剑破万法。门徒皆为剑痴，攻击力极强。' },
   { name: '天音寺', description: '佛门圣地，慈悲为怀，防御力出众。' },

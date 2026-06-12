@@ -6,7 +6,7 @@
  * 如需切换，设置环境变量 VITE_AI_PROVIDER
  */
 
-export type AIProvider = 'siliconflow' | 'glm' | 'custom';
+export type AIProvider = 'siliconflow' | 'glm' | 'openai' | 'custom';
 
 export interface AIConfig {
   provider: AIProvider;
@@ -36,6 +36,11 @@ const AI_PROVIDERS: Record<
     defaultModel: 'glm-4.5v',
     proxyPath: '/api/paas/v4/chat/completions',
   },
+  openai: {
+    defaultUrl: 'https://api.openai.com/v1/chat/completions',
+    defaultModel: 'gpt-4o-mini',
+    proxyPath: '/api/v1/chat/completions',
+  },
   custom: {
     defaultUrl: '',
     defaultModel: '',
@@ -43,19 +48,69 @@ const AI_PROVIDERS: Record<
   },
 };
 
+// ──────────────────────────────────────────────
+// 玩家自填設定（runtime override）：存於 localStorage，疊加於環境變數之上。
+// 用途：分享版（免安裝 exe）不內建任何金鑰；每位玩家於遊戲內「AI 設定」面板填自己的 key，
+// 即時生效、不需重新打包，也不會把金鑰編進分享檔。
+// ──────────────────────────────────────────────
+export const AI_OVERRIDE_KEY = 'fanren_ai_cfg_v1';
+
+export interface AIOverride {
+  provider?: AIProvider;
+  apiKey?: string;
+  apiUrl?: string;
+  model?: string;
+  useProxy?: boolean;
+}
+
+export function getAiOverride(): AIOverride {
+  try {
+    if (typeof localStorage === 'undefined') return {};
+    const raw = localStorage.getItem(AI_OVERRIDE_KEY);
+    return raw ? (JSON.parse(raw) as AIOverride) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function setAiOverride(o: AIOverride): void {
+  try {
+    localStorage.setItem(AI_OVERRIDE_KEY, JSON.stringify(o));
+  } catch {
+    /* localStorage 不可用時靜默 */
+  }
+}
+
+export function clearAiOverride(): void {
+  try {
+    localStorage.removeItem(AI_OVERRIDE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** 供 UI 取得各服務商的預設 URL／模型（顯示為 placeholder）。 */
+export function providerDefaults(provider: AIProvider): { defaultUrl: string; defaultModel: string } {
+  const p = AI_PROVIDERS[provider] || AI_PROVIDERS.siliconflow;
+  return { defaultUrl: p.defaultUrl, defaultModel: p.defaultModel };
+}
+
 /**
- * 获取 AI 配置
+ * 获取 AI 配置（玩家 localStorage 設定 > 環境變數 > 服務商預設）
  */
 export function getAIConfig(): AIConfig {
   const isDev = import.meta.env.DEV;
+  const ov = getAiOverride();
 
-  // 从环境变量获取配置
-  const provider = (import.meta.env.VITE_AI_PROVIDER ||
+  // 优先玩家設定，其次环境变量
+  const provider = (ov.provider ||
+    import.meta.env.VITE_AI_PROVIDER ||
     'siliconflow') as AIProvider;
-  const apiKey = import.meta.env.VITE_AI_KEY || '';
-  const customApiUrl = import.meta.env.VITE_AI_API_URL;
-  const customModel = import.meta.env.VITE_AI_MODEL;
-  const proxyPreference = import.meta.env.VITE_AI_USE_PROXY;
+  const apiKey = (ov.apiKey ?? import.meta.env.VITE_AI_KEY) || '';
+  const customApiUrl = ov.apiUrl || import.meta.env.VITE_AI_API_URL;
+  const customModel = ov.model || import.meta.env.VITE_AI_MODEL;
+  const proxyPreference =
+    ov.useProxy === undefined ? import.meta.env.VITE_AI_USE_PROXY : String(ov.useProxy);
 
   // 获取预设配置
   const providerConfig = AI_PROVIDERS[provider] || AI_PROVIDERS.glm;
@@ -130,6 +185,35 @@ export function validateAIConfig(config: AIConfig): {
   }
 
   return { valid: true };
+}
+
+/** 以一次極小請求測試目前設定是否可用。回傳 { ok, message }。 */
+export async function testAiConnection(): Promise<{ ok: boolean; message: string }> {
+  const cfg = getAIConfig();
+  const v = validateAIConfig(cfg);
+  if (!v.valid) return { ok: false, message: v.error || '設定無效' };
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (cfg.apiKey) headers['Authorization'] = `Bearer ${cfg.apiKey}`;
+    const res = await fetch(cfg.apiUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: cfg.model,
+        messages: [{ role: 'user', content: '回覆「ok」二字即可。' }],
+        max_tokens: 4,
+        stream: false,
+      }),
+    });
+    if (!res.ok) {
+      let detail = '';
+      try { detail = (await res.text()).slice(0, 160); } catch { /* ignore */ }
+      return { ok: false, message: `連線失敗（HTTP ${res.status}）${detail ? '：' + detail : ''}` };
+    }
+    return { ok: true, message: '連線成功，AI 敘事已可使用。' };
+  } catch (e) {
+    return { ok: false, message: '無法連線：' + (e instanceof Error ? e.message : String(e)) };
+  }
 }
 
 /**

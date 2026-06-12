@@ -1,9 +1,21 @@
 import React, { useMemo, useState } from 'react';
-import type { CharacterCreation, GoldenFinger } from '../types';
-import { ORIGINS, SPIRITUAL_ROOT_PROFILES, DAO_HEARTS } from '../data/creationOptions';
+import type { CharacterCreation, GoldenFinger, AttrAllocation } from '../types';
+import { ORIGINS, DAO_HEARTS, FORTUNE_TIERS, getFortune, VARIANT_ROOTS, getVariantRoot } from '../data/creationOptions';
 import { GOLDEN_FINGER_ARCHETYPES } from '../data/goldenFingerArchetypes';
 import { parseGoldenFinger } from '../engine/goldenFinger';
 import { extrapolateMechanicSync } from '../engine/extrapolate';
+import { cultivationMultFromRoots } from '../worldStore';
+import { comprehensionMult } from '../engine/aptitude';
+import { SealMark } from './Brand';
+
+// 屬性標籤配色
+const ATTR_STYLE: Record<string, string> = {
+  金: 'border-amber-500/40 bg-amber-500/10 text-amber-200',
+  木: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
+  水: 'border-sky-500/40 bg-sky-500/10 text-sky-200',
+  火: 'border-rose-500/40 bg-rose-500/10 text-rose-200',
+  土: 'border-yellow-700/40 bg-yellow-700/10 text-yellow-200',
+};
 
 interface Props {
   onComplete: (creation: CharacterCreation) => void;
@@ -17,13 +29,36 @@ const chip = (active: boolean) =>
     active ? 'border-amber-400 bg-amber-500/20 text-amber-100' : 'border-zinc-700 bg-zinc-800/60 text-zinc-300 hover:border-amber-600'
   }`;
 
+const ZERO_ALLOC: AttrAllocation = {
+  roots: { metal: 0, wood: 0, water: 0, fire: 0, earth: 0 },
+  variantType: '', variantValue: 0,
+  comprehension: 0, daoHeart: 0, attack: 0, defense: 0, spirit: 0, physique: 0, speed: 0,
+};
+
+function spentOf(a: AttrAllocation): number {
+  return a.roots.metal + a.roots.wood + a.roots.water + a.roots.fire + a.roots.earth + (a.variantValue || 0)
+    + a.comprehension + a.daoHeart + a.attack + a.defense + a.spirit + a.physique + a.speed;
+}
+
+const ROOT_KEYS: { key: keyof AttrAllocation['roots']; cn: string }[] = [
+  { key: 'metal', cn: '金' }, { key: 'wood', cn: '木' }, { key: 'water', cn: '水' }, { key: 'fire', cn: '火' }, { key: 'earth', cn: '土' },
+];
+const COMBAT_KEYS: { key: 'attack' | 'defense' | 'spirit' | 'physique' | 'speed'; cn: string; hint: string }[] = [
+  { key: 'attack', cn: '攻擊', hint: '近身與法術攻擊' },
+  { key: 'defense', cn: '防禦', hint: '減傷與護體' },
+  { key: 'spirit', cn: '神識', hint: '術法威能・感知（受靈根悟性加成）' },
+  { key: 'physique', cn: '體魄', hint: '氣血上限與肉身強度' },
+  { key: 'speed', cn: '速度', hint: '出手先後・遁速・閃避' },
+];
+
 const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'male' | 'female' | 'unset'>('unset');
   const [age, setAge] = useState(16);
   const [appearance, setAppearance] = useState('');
   const [originId, setOriginId] = useState(ORIGINS[0]?.id || '');
-  const [rootId, setRootId] = useState(SPIRITUAL_ROOT_PROFILES[3]?.id || SPIRITUAL_ROOT_PROFILES[0]?.id || '');
+  const [fortuneId, setFortuneId] = useState('gifted');
+  const [alloc, setAlloc] = useState<AttrAllocation>(ZERO_ALLOC);
   const [daoId, setDaoId] = useState(DAO_HEARTS[0]?.id || '');
   const [gfText, setGfText] = useState('');
   const [abilityText, setAbilityText] = useState('');
@@ -35,14 +70,74 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
   );
 
   const origin = ORIGINS.find((o) => o.id === originId);
-  const root = SPIRITUAL_ROOT_PROFILES.find((r) => r.id === rootId);
+  const fortune = getFortune(fortuneId) || FORTUNE_TIERS[0];
+  const pool = fortune.points;
+  const spent = spentOf(alloc);
+  const remaining = pool - spent;
+
+  // 靈根即時判定與倍率（含變異靈根）
+  const roots = alloc.roots;
+  const variantVal = alloc.variantValue || 0;
+  const rootVals = [roots.metal, roots.wood, roots.water, roots.fire, roots.earth, variantVal];
+  const maxRoot = Math.max(...rootVals);
+  const nonZero = rootVals.filter((v) => v > 5).length;
+  const variantDominant = variantVal > 5 && variantVal >= maxRoot;
+  const rootTierLabel = maxRoot === 0 ? '凡體・無靈根（無法修仙）'
+    : variantDominant && nonZero <= 1 ? `變異靈根・${alloc.variantType}（異靈根，最純最利）`
+    : nonZero <= 1 && maxRoot >= 80 ? '天靈根・單一極純'
+    : nonZero <= 1 ? '單一靈根'
+    : nonZero <= 3 ? `真靈根・${nonZero} 屬`
+    : `偽靈根・${nonZero} 屬混雜`;
+  const cultMult = cultivationMultFromRoots(roots, variantVal);
+  const compF = comprehensionMult(alloc.comprehension);
+
+  const changeFortune = (id: string) => {
+    setFortuneId(id);
+    const np = getFortune(id)?.points ?? 0;
+    if (spentOf(alloc) > np) setAlloc(ZERO_ALLOC); // 點數變少且超支 → 重置重分
+  };
+
+  const adjFlat = (key: 'comprehension' | 'daoHeart' | 'attack' | 'defense' | 'spirit' | 'physique' | 'speed', delta: number) => {
+    setAlloc((a) => {
+      const cur = a[key];
+      const next = Math.max(0, Math.min(100, cur + delta));
+      const rd = next - cur;
+      if (rd > 0 && rd > pool - spentOf(a)) return a;
+      return { ...a, [key]: next };
+    });
+  };
+  const adjRoot = (el: keyof AttrAllocation['roots'], delta: number) => {
+    setAlloc((a) => {
+      const cur = a.roots[el];
+      const next = Math.max(0, Math.min(100, cur + delta));
+      const rd = next - cur;
+      if (rd > 0 && rd > pool - spentOf(a)) return a;
+      return { ...a, roots: { ...a.roots, [el]: next } };
+    });
+  };
+  const setVariant = (type: string) => {
+    setAlloc((a) => {
+      const next = a.variantType === type ? '' : type;
+      return next === '' ? { ...a, variantType: '', variantValue: 0 } : { ...a, variantType: next };
+    });
+  };
+  const adjVariant = (delta: number) => {
+    setAlloc((a) => {
+      if (!a.variantType) return a;
+      const cur = a.variantValue || 0;
+      const next = Math.max(0, Math.min(100, cur + delta));
+      const rd = next - cur;
+      if (rd > 0 && rd > pool - spentOf(a)) return a;
+      return { ...a, variantValue: next };
+    });
+  };
 
   const gfPreview: GoldenFinger | null = useMemo(
     () => (gfText.trim().length >= 4 ? parseGoldenFinger(gfText, name) : null),
     [gfText, name]
   );
 
-  const canStart = name.trim().length >= 1 && !!origin && !!root;
+  const canStart = name.trim().length >= 1 && !!origin && remaining >= 0;
 
   const handleStart = () => {
     if (!canStart) return;
@@ -50,7 +145,8 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
       name: name.trim(),
       appearance: { gender, age, descriptors: [], freeText: appearance.trim() || undefined },
       originId,
-      spiritualRootId: rootId,
+      fortuneId,
+      allocation: alloc,
       daoHeartId: daoId,
       startingArtIds: origin?.startingArtIds || [],
       startingItemRefs: origin?.startingItemRefs || [],
@@ -61,12 +157,33 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
     onComplete(creation);
   };
 
+  // 加減點列
+  const StepRow = ({ cn, value, onMinus, onPlus, colorCls, hint }: { cn: string; value: number; onMinus: (d: number) => void; onPlus: (d: number) => void; colorCls?: string; hint?: string }) => (
+    <div className="flex items-center gap-1.5 py-1">
+      <span className={`w-16 shrink-0 rounded border px-1 text-center text-xs ${colorCls || 'border-zinc-600/40 bg-zinc-700/20 text-zinc-200'}`}>{cn}</span>
+      <button onClick={() => onMinus(100)} disabled={value <= 0} className="rounded border border-zinc-700 px-1 text-[10px] text-zinc-400 disabled:opacity-30" title="清空">清</button>
+      <button onClick={() => onMinus(10)} disabled={value <= 0} className="rounded border border-zinc-700 px-1.5 text-xs text-zinc-300 disabled:opacity-30">−10</button>
+      <button onClick={() => onMinus(1)} disabled={value <= 0} className="rounded border border-zinc-700 px-1.5 text-xs text-zinc-300 disabled:opacity-30">−</button>
+      <div className="relative h-2 flex-1 overflow-hidden rounded bg-zinc-800">
+        <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-700 to-amber-400" style={{ width: `${value}%` }} />
+      </div>
+      <span className="w-8 text-right text-xs text-amber-200">{value}</span>
+      <button onClick={() => onPlus(1)} disabled={remaining <= 0 || value >= 100} className="rounded border border-zinc-700 px-1.5 text-xs text-zinc-300 disabled:opacity-30">＋</button>
+      <button onClick={() => onPlus(10)} disabled={remaining <= 0 || value >= 100} className="rounded border border-zinc-700 px-1.5 text-xs text-zinc-300 disabled:opacity-30">＋10</button>
+      <button onClick={() => onPlus(100)} disabled={remaining <= 0 || value >= 100} className="rounded border border-amber-700/60 px-1 text-[10px] text-amber-300/90 disabled:opacity-30" title="盡量拉滿">滿</button>
+      {hint && <span className="ml-1 hidden w-36 shrink-0 text-[10px] text-zinc-500 lg:block">{hint}</span>}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen w-full overflow-y-auto bg-gradient-to-b from-black via-zinc-950 to-zinc-900 text-zinc-100">
+    <div className="h-screen w-full overflow-y-auto ink-wash text-zinc-100">
       <div className="mx-auto max-w-3xl px-4 py-6">
         <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-amber-300">凡人修仙 · 編年史 — 開局創角</h1>
-          <button onClick={onBack} className="text-sm text-zinc-400 hover:text-amber-300">← 返回</button>
+          <div className="flex items-center gap-3">
+            <SealMark size={40} />
+            <h1 className="brand-serif text-2xl font-bold tracking-wide text-[#9fdcc4]">凡人修仙編年史 · 開局創角</h1>
+          </div>
+          <button onClick={onBack} className="text-sm text-zinc-400 hover:text-[#9fdcc4]">← 返回</button>
         </div>
         <p className="mb-5 text-sm text-zinc-400">
           世界依《凡人修仙傳》正史自然演化。你的每個抉擇都可能改寫某人的命運，但你無法憑空成神——一切力量皆有代價。
@@ -119,18 +236,66 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
             )}
           </div>
 
-          {/* 靈根 */}
+          {/* 天命等級 + 點數分配 */}
           <div className={card}>
-            <div className={label}>靈根資質（決定修煉速度上限）</div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {SPIRITUAL_ROOT_PROFILES.map((r) => (
-                <div key={r.id} className={chip(rootId === r.id)} onClick={() => setRootId(r.id)}>
-                  <div className="font-semibold">{r.name}</div>
-                  <div className="text-xs text-amber-400/80">×{r.cultivationMult.toFixed(1)} 修煉</div>
+            <div className={label}>天命・稟賦（選天命等級得點數，自由分配於靈根/悟性/心性/戰鬥）</div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {FORTUNE_TIERS.map((f) => (
+                <div key={f.id} className={chip(fortuneId === f.id)} onClick={() => changeFortune(f.id)}>
+                  <div className={`text-sm font-semibold ${f.accent}`}>{f.name}</div>
+                  <div className="text-[11px] text-amber-300/80">{f.points} 點</div>
                 </div>
               ))}
             </div>
-            {root && <div className="mt-2 text-xs text-zinc-400">{root.description}</div>}
+            <div className="mt-1.5 text-[11px] text-zinc-500">{fortune.desc}</div>
+
+            {/* 剩餘點數 */}
+            <div className="mt-3 flex items-center justify-between rounded-lg border border-amber-900/40 bg-amber-950/20 px-3 py-1.5">
+              <span className="text-sm text-zinc-300">剩餘點數</span>
+              <span className={`text-lg font-bold ${remaining < 0 ? 'text-rose-400' : 'text-amber-300'}`}>{remaining} <span className="text-xs text-zinc-500">/ {pool}</span></span>
+              <button onClick={() => setAlloc(ZERO_ALLOC)} className="rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-400 hover:border-amber-600">重置</button>
+            </div>
+
+            {/* 五行靈根 */}
+            <div className="mt-3">
+              <div className="mb-1 flex items-baseline justify-between">
+                <span className="text-xs font-semibold text-emerald-300">五行靈根（屬性越少越純，修煉越快）</span>
+                <span className="text-[11px] text-zinc-400">{rootTierLabel}　<span className="text-amber-400/80">修煉 ×{cultMult.toFixed(1)}</span></span>
+              </div>
+              {ROOT_KEYS.map((r) => (
+                <StepRow key={r.key} cn={r.cn} value={roots[r.key]} colorCls={ATTR_STYLE[r.cn]} onMinus={(d) => adjRoot(r.key, -d)} onPlus={(d) => adjRoot(r.key, d)} />
+              ))}
+            </div>
+
+            {/* 變異靈根（異靈根） */}
+            <div className="mt-3">
+              <div className="mb-1 text-xs font-semibold text-violet-300">變異靈根・異靈根（萬中無一，較五行更純更利；擇一加點）</div>
+              <div className="mb-1.5 flex flex-wrap gap-1">
+                <button onClick={() => setVariant('')} className={`rounded border px-2 py-0.5 text-[11px] transition ${!alloc.variantType ? 'border-violet-400 bg-violet-500/20 text-violet-100' : 'border-zinc-700 text-zinc-400 hover:border-violet-600'}`}>無</button>
+                {VARIANT_ROOTS.map((v) => (
+                  <button key={v.type} onClick={() => setVariant(v.type)} title={v.desc} className={`rounded border px-2 py-0.5 text-[11px] transition ${alloc.variantType === v.type ? 'border-violet-400 bg-violet-500/20 text-violet-100' : 'border-zinc-700 text-zinc-300 hover:border-violet-600'}`}>{v.label}</button>
+                ))}
+              </div>
+              {alloc.variantType
+                ? <StepRow cn={getVariantRoot(alloc.variantType)?.label || alloc.variantType} value={alloc.variantValue || 0} colorCls="border-violet-500/40 bg-violet-500/10 text-violet-200" onMinus={(d) => adjVariant(-d)} onPlus={(d) => adjVariant(d)} hint={getVariantRoot(alloc.variantType)?.desc} />
+                : <div className="text-[10px] text-zinc-600">擇一異靈根後可加點。異靈根計入靈根純度，純異靈根進境猶勝天靈根，並增益神識術法。</div>}
+            </div>
+
+            {/* 稟賦 */}
+            <div className="mt-3">
+              <div className="mb-1 text-xs font-semibold text-sky-300">稟賦・悟性與心性（拉滿約 3 倍加成）</div>
+              <StepRow cn="悟性" value={alloc.comprehension} onMinus={(d) => adjFlat('comprehension', -d)} onPlus={(d) => adjFlat('comprehension', d)} hint={`修煉/學習/突破 ×${compF.toFixed(2)}`} />
+              <StepRow cn="心性" value={alloc.daoHeart} onMinus={(d) => adjFlat('daoHeart', -d)} onPlus={(d) => adjFlat('daoHeart', d)} hint="心魔・走火入魔・渡劫定力" />
+            </div>
+
+            {/* 戰鬥五屬 */}
+            <div className="mt-3">
+              <div className="mb-1 text-xs font-semibold text-rose-300">戰鬥屬性（疊加於境界基礎值，拉滿約 3 倍）</div>
+              {COMBAT_KEYS.map((c) => (
+                <StepRow key={c.key} cn={c.cn} value={alloc[c.key]} onMinus={(d) => adjFlat(c.key, -d)} onPlus={(d) => adjFlat(c.key, d)} hint={c.hint} />
+              ))}
+            </div>
+            {maxRoot === 0 && <div className="mt-2 text-[11px] text-rose-300/80">※ 未分配靈根則無法修仙，僅能以凡夫之軀苟活——除非你另有奇遇。</div>}
           </div>
 
           {/* 道心 */}
@@ -217,7 +382,7 @@ const CanonCreation: React.FC<Props> = ({ onComplete, onBack }) => {
               canStart ? 'bg-amber-500 text-black hover:bg-amber-400' : 'cursor-not-allowed bg-zinc-800 text-zinc-500'
             }`}
           >
-            踏入仙途
+            {remaining < 0 ? '點數超支，請重新分配' : '踏入仙途'}
           </button>
         </div>
       </div>

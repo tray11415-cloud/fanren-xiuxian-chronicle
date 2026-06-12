@@ -6,16 +6,15 @@ import React, {
 } from 'react';
 import {
   TribulationState,
-  GameSettings,
 } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
-import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
 // 凡人編年史模式
 import CanonCreation from './fanren/ui/CanonCreation';
 import CanonView from './fanren/ui/CanonView';
-import ModeChooser from './fanren/ui/ModeChooser';
+import CanonGameOver from './fanren/ui/CanonGameOver';
 import { useWorldStore } from './fanren/worldStore';
+import { useHanLocale, readLang } from './fanren/i18n/hanConvert';
 import { buildCanonPlayer } from './fanren/engine/charBuild';
 import type { CharacterCreation } from './fanren/types';
 // canon 模式下複用既有模態框基礎設施
@@ -77,11 +76,13 @@ function App() {
   const player = usePlayer();
   const setPlayer = useGameStore((state) => state.setPlayer);
   const settings = useSettings();
+  // 簡繁雙語：依專屬語言鍵於顯示層將整個畫面正規化為繁體或簡體（OpenCC，離線）。
+  // 用專屬鍵（非 settings.language）以避免經典存檔 autosave 覆蓋語言設定。
+  useHanLocale(readLang());
   const logs = useLogs();
   const setLogs = useGameStore((state) => state.setLogs);
   const saveGame = useGameStore((state) => state.saveGame);
   const loadGame = useGameStore((state) => state.loadGame);
-  const startNewGame = useGameStore((state) => state.startNewGame);
 
   // ========== UI Store 状态（使用拆分后的 hook）==========
   const uiState = useAppUIState();
@@ -151,8 +152,8 @@ function App() {
   const canonWorld = useWorldStore((s) => s.world);
   const initCanonWorld = useWorldStore((s) => s.initCanonWorld);
   const resetCanonWorld = useWorldStore((s) => s.reset);
+  const reloadCanonWorld = useWorldStore((s) => s.reloadFromStorage);
   const [canonCreating, setCanonCreating] = useState(false);
-  const [classicMode, setClassicMode] = useState(false);
 
   const handleCanonComplete = useCallback(
     (creation: CharacterCreation) => {
@@ -161,7 +162,7 @@ function App() {
       setLogs([
         {
           id: `${Date.now()}-canon-1`,
-          text: `【凡人修仙·編年史】${creation.name}的仙途自此開始。${creation.goldenFinger ? `你身懷本命機緣「${creation.goldenFinger.name}」。` : ''}`,
+          text: `【凡人修仙·編年史】${creation.name}的仙途自此開始。${creation.goldenFinger ? `你身懷本命機緣「${creation.goldenFinger.name}」。` : ''}你之天資——悟性 ${newPlayer.comprehension}、心性 ${newPlayer.daoHeart}（悟性影響修煉領悟，心性關乎心魔定力）。`,
           type: 'special',
           timestamp: Date.now(),
         },
@@ -173,6 +174,17 @@ function App() {
     },
     [setPlayer, setLogs, setGameStarted, setHasSave, initCanonWorld]
   );
+
+  // 主角永久死亡後「重啟仙途」：清掉此身與舊存檔，以新角色重新入世（不復活原角色）
+  const handleCanonRestart = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEYS.SAVE);
+    resetCanonWorld();
+    setPlayer(null);
+    setLogs([]);
+    setGameStarted(false);
+    setHasSave(false);
+    setCanonCreating(true);
+  }, [resetCanonWorld, setPlayer, setLogs, setGameStarted, setHasSave]);
 
   // ========== 本地状态 ==========
   const [showWelcome, setShowWelcome] = useState(true);
@@ -464,17 +476,9 @@ function App() {
   useEffect(() => {
     if (hasSave && !player) {
       loadGame();
+      reloadCanonWorld(); // 載入存檔後同步 canon 世界時間線（loadFromSlot 已還原其鍵）
     }
-  }, [hasSave, player, loadGame]);
-
-  // ========== 开始新游戏 ==========
-  const handleStartGame = useCallback((
-    playerName: string,
-    talentId: string,
-    difficulty: GameSettings['difficulty']
-  ) => {
-    startNewGame(playerName, talentId, difficulty);
-  }, [startNewGame]);
+  }, [hasSave, player, loadGame, reloadCanonWorld]);
 
   // ========== 渲染逻辑 ==========
 
@@ -489,6 +493,8 @@ function App() {
           setGameStarted(false);
           setPlayer(null);
           setLogs([]);
+          resetCanonWorld();
+          setCanonCreating(true); // 直接進入編年史創角（已移除經典放置模式）
           setShowWelcome(false);
         }}
         onContinue={() => {
@@ -496,6 +502,11 @@ function App() {
         }}
       />
     );
+  }
+
+  // 凡人編年史模式：主角永久死亡 → 終局畫面（無重生）
+  if (canonWorld.enabled && player && canonWorld.gameOver?.dead) {
+    return <CanonGameOver world={canonWorld} player={player} onRestart={handleCanonRestart} />;
   }
 
   // 凡人編年史模式：遊戲進行中（取代主流程，但複用既有模態框基礎設施）
@@ -509,6 +520,7 @@ function App() {
             settings={settings}
             setItemActionLog={setItemActionLog}
             autoAdventure={autoAdventure}
+            canonMode
             handlers={modalsHandlers as any}
           />
         )}
@@ -531,25 +543,7 @@ function App() {
             player={player}
           />
         )}
-        {isDead && player && (
-          <DeathModal
-            isOpen={isDead}
-            player={player}
-            battleData={deathBattleData}
-            deathReason={deathReason}
-            difficulty={settings.difficulty || 'normal'}
-            onRebirth={handleRebirth}
-            onContinue={
-              settings.difficulty !== 'hard'
-                ? () => {
-                    setIsDead(false);
-                    setDeathBattleData(null);
-                    setDeathReason('');
-                  }
-                : undefined
-            }
-          />
-        )}
+        {/* canon 模式不使用底層重生彈窗：主角死亡為永久終局（見 gameOver 分支） */}
       </>
     );
   }
@@ -564,20 +558,9 @@ function App() {
     return <LoadingScreen />;
   }
 
-  // 开始界面：先選模式
+  // 开始界面：直接進入凡人編年史創角（已移除經典放置模式入口，僅沿用其後端引擎）
   if (!hasSave && (!gameStarted || !player)) {
-    if (!classicMode) {
-      return (
-        <ModeChooser
-          onCanon={() => {
-            resetCanonWorld();
-            setCanonCreating(true);
-          }}
-          onClassic={() => setClassicMode(true)}
-        />
-      );
-    }
-    return <StartScreen onStart={handleStartGame} />;
+    return <CanonCreation onComplete={handleCanonComplete} onBack={() => setShowWelcome(true)} />;
   }
 
   if (!player) {

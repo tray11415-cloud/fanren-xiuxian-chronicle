@@ -27,16 +27,25 @@ const DEFAULT_SETTINGS: GameSettings = {
   musicVolume: 50,
   autoSave: true,
   animationSpeed: 'normal',
-  language: 'zh',
+  language: 'traditional', // 預設繁體（簡體由 OpenCC 於顯示層自動轉換）
   difficulty: 'normal',
 };
+
+// 將舊存檔的語言設定遷移到新制（'zh'/'en' → 'traditional'/'simplified'）
+function normalizeLanguage(v: unknown): GameSettings['language'] {
+  if (v === 'simplified' || v === 'zh-Hans' || v === 'en') return 'simplified'; // 'en' 為已廢棄死選項，視為簡體
+  return 'traditional';
+}
 
 // 加载初始设置
 function loadInitialSettings(): GameSettings {
   try {
     const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
     if (saved) {
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
+      const parsed = JSON.parse(saved);
+      const merged = { ...DEFAULT_SETTINGS, ...parsed } as GameSettings;
+      merged.language = normalizeLanguage(parsed.language);
+      return merged;
     }
   } catch {}
   return DEFAULT_SETTINGS;

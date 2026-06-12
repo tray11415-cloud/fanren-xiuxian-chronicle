@@ -7,21 +7,32 @@ import type {
 } from '../types';
 import { CANON_NPCS } from '../data/canonNpcs';
 import { CANON_EVENTS } from '../data/canonTimeline';
+import { CANON_BEATS } from '../data/canonBeats';
 import { REGIONS } from '../data/regions';
 import { WORLD_MAP } from '../data/worldMap';
 import { chapterToDay } from './clock';
 
-// 境界排序（含原著靈界以上境界，供 minRealm 門檻比較）
-const REALM_ORDER = [
-  '凡人', '炼气期', '煉氣期', '筑基期', '築基期', '金丹期', '结丹期', '結丹期',
-  '元婴期', '元嬰期', '化神期', '合道期', '炼虚期', '煉虛期', '合体期', '合體期',
-  '大乘期', '長生境', '长生境', '渡劫期', '真仙', '真仙境',
-];
+/**
+ * 由任意境界字串穩健解析「大境界」階序（0 煉氣/凡人 … 11 真仙）。供 minRealm 門檻比較。
+ * 由高而低判定，確保：
+ *  - 簡繁變體等價（築/筑、結/结、嬰/婴、煉/炼、虛/虚、體/体）；
+ *  - 含子境界後綴亦可辨（「元嬰中期」「結丹後期」不再漏判為 0）；
+ *  - 偽裝/封印的低階描述不致蓋過本相（「結丹期（偽裝煉氣）」取結丹、「（本相元嬰）」取元嬰）。
+ * 與 engine/realm.ts 的 majorRealmRank 同一階梯，但向上延伸涵蓋靈界以上，且各階間留間隔供未來細分。
+ */
 export function realmRank(realm: string | undefined): number {
-  if (!realm) return 0;
-  for (let i = 0; i < REALM_ORDER.length; i++) {
-    if (realm.includes(REALM_ORDER[i])) return i;
-  }
+  const r = realm || '';
+  if (/真仙|仙界/.test(r)) return 11;
+  if (/渡劫/.test(r)) return 10;
+  if (/大乘|長生|长生|聖祖|圣祖/.test(r)) return 9;
+  if (/合體|合体|合道/.test(r)) return 8;
+  if (/煉虛|炼虚|煉虚|炼虛/.test(r)) return 7;
+  if (/化神/.test(r)) return 6;
+  if (/元嬰|元婴/.test(r)) return 5;
+  if (/結丹|结丹|金丹/.test(r)) return 4;
+  if (/築基|筑基/.test(r)) return 3;
+  if (/煉氣|炼气|煉气|炼氣/.test(r)) return 2;
+  if (/凡人|普通人|未修煉|未修炼/.test(r)) return 1;
   return 0;
 }
 
@@ -52,14 +63,20 @@ for (const n of CANON_NPCS) {
   NPC_MAP[n.name] = n;
 }
 
-// 事件依世界日排序
+// 事件依世界日排序（手工策展大事件 ＋ game_db 逐章節拍；id 衝突時大事件優先）
 export interface ScheduledEvent extends CanonEventSource {
   scheduledDay: number;
 }
-export const SCHEDULED_EVENTS: ScheduledEvent[] = CANON_EVENTS.map((e) => ({
-  ...e,
-  scheduledDay: chapterToDay(e.chapterAnchor),
-})).sort((a, b) => a.scheduledDay - b.scheduledDay);
+const MAJOR_IDS = new Set(CANON_EVENTS.map((e) => e.id));
+export const SCHEDULED_EVENTS: ScheduledEvent[] = [
+  ...CANON_EVENTS.map((e) => ({ ...e, tier: e.tier ?? ('major' as const) })),
+  ...CANON_BEATS.filter((b) => !MAJOR_IDS.has(b.id)),
+]
+  .map((e) => ({
+    ...e,
+    scheduledDay: chapterToDay(e.chapterAnchor),
+  }))
+  .sort((a, b) => a.scheduledDay - b.scheduledDay || a.chapterAnchor - b.chapterAnchor);
 
 export function getRegion(id: string): RegionDef | undefined {
   return REGION_MAP[id];
