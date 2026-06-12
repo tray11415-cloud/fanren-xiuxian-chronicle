@@ -8,22 +8,35 @@
 import type { SectDef, SpiritualRoots } from '../types';
 
 const ATTR: Record<string, string> = { metal: '金', wood: '木', water: '水', fire: '火', earth: '土' };
+export interface VariantRootInput { type: string; value: number }
 
 export interface RootTest {
-  tier: '天靈根' | '真靈根' | '偽靈根' | '無靈根';
+  tier: '異靈根' | '天靈根' | '真靈根' | '偽靈根' | '無靈根';
   attrs: string[];
   reveal: string;
 }
-/** 測靈根：依五行靈根向量推四等（單屬性=天靈根、二三屬性=真靈根、五行混雜=偽靈根）。 */
-export function testSpiritualRoot(roots?: SpiritualRoots): RootTest {
+
+/** 五行靈根或異靈根任一存在，都具備修仙宗門所稱的「靈根」。 */
+export function hasAnySpiritualRoot(roots?: SpiritualRoots, variantRoot?: VariantRootInput | null): boolean {
+  const hasFiveElementRoot = !!roots && Object.values(roots).some((value) => value > 0);
+  return hasFiveElementRoot || (variantRoot?.value || 0) > 0;
+}
+
+/** 測靈根：異靈根獨立計入，不能因五行皆零而誤判為凡體。 */
+export function testSpiritualRoot(roots?: SpiritualRoots, variantRoot?: VariantRootInput | null): RootTest {
   const entries = roots ? (Object.entries(roots) as [string, number][]).filter(([, v]) => v > 0) : [];
+  if (variantRoot && variantRoot.value > 0) entries.push([`variant:${variantRoot.type}`, variantRoot.value]);
   if (!entries.length) return { tier: '無靈根', attrs: [], reveal: '測靈玉黯然無光——你竟無半分靈根，此生與仙道無緣，唯江湖武道可期。' };
   const max = Math.max(...entries.map(([, v]) => v));
   const sig = entries.filter(([, v]) => v >= max * 0.5);
-  const attrs = sig.map(([k]) => ATTR[k] || k);
+  const attrs = sig.map(([k]) => k.startsWith('variant:') ? k.slice('variant:'.length) : (ATTR[k] || k));
+  const pureVariant = sig.length === 1 && sig[0][0].startsWith('variant:');
   let tier: RootTest['tier'];
   let reveal: string;
-  if (sig.length === 1) {
+  if (pureVariant) {
+    tier = '異靈根';
+    reveal = `測靈玉驟然迸出異象，${attrs[0]}光奔走不定、純粹凌厲——萬中無一的「${attrs[0]}靈根（異靈根）」！滿堂長老無不動容。`;
+  } else if (sig.length === 1) {
     tier = '天靈根';
     reveal = `測靈玉驟然爆出耀目${attrs[0]}光，純粹得不見一絲駁雜——百年難遇的「天靈根（${attrs[0]}）」！滿堂長老無不動容。`;
   } else if (sig.length <= 3) {
@@ -59,8 +72,8 @@ function presiderOf(sect: SectDef): string {
 }
 
 /** 組裝入門典禮（依門派類別給不同儀軌）。 */
-export function buildCeremony(sect: SectDef, ctx: { roots?: SpiritualRoots; playerName: string; realmName: string }): Ceremony {
-  const rootTest = testSpiritualRoot(ctx.roots);
+export function buildCeremony(sect: SectDef, ctx: { roots?: SpiritualRoots; variantRoot?: VariantRootInput | null; playerName: string; realmName: string }): Ceremony {
+  const rootTest = testSpiritualRoot(ctx.roots, ctx.variantRoot);
   const presider = presiderOf(sect);
   const rankName = sect.ranks[0]?.name || '記名弟子';
   const entryArt = sect.resources[0]?.name || (sect.category === '武林門派' ? '門中外功' : '入門功法');

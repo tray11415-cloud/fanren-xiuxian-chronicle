@@ -7,7 +7,7 @@ import { initCensus, tickCensus } from './engine/census';
 import { initPopulation, tickDemographics } from './engine/demographics';
 import { initReputation, applyDeed } from './engine/reputation';
 import { getSect, canJoinSect, gainMerit, effectiveRank } from './engine/sect';
-import { buildCeremony } from './engine/induction';
+import { buildCeremony, hasAnySpiritualRoot } from './engine/induction';
 import {
   pickMentor, oathOf, accrueStipend, runMission, buildPromotionCeremony,
   departureOutcome, maybeRollSectEvent, resolveSectEvent,
@@ -771,7 +771,7 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
     if (!player || !world.enabled) return;
     const sect = getSect(sectId);
     if (!sect) return;
-    const hasRoot = !!player.spiritualRoots && Object.values(player.spiritualRoots as Record<string, number>).some((v) => v > 0);
+    const hasRoot = hasAnySpiritualRoot(player.spiritualRoots, player.variantRoot);
     const check = canJoinSect(sect, { realmName: player.realm, hasRoot, currentSectId: world.sect?.sectId });
     if (!check.ok) { gameStore.addLog(check.reason, 'danger'); return; }
     // 持升仙令等引薦信物（viaItem）＝升仙大會受招，免親至山門；否則須在本門內。
@@ -779,7 +779,12 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
     if (!viaItem && !requireAtSect(world, sect, gameStore)) return; // 拜師須親至山門
     // 入門典禮：測靈根 → 拜師大典 → 立誓 → 賜物（詳細儀軌於 UI 呈現，此處落地賜物與身分）
     const day = world.clock.totalDays;
-    const ceremony = buildCeremony(sect, { roots: player.spiritualRoots, playerName: player.name, realmName: player.realm });
+    const ceremony = buildCeremony(sect, {
+      roots: player.spiritualRoots,
+      variantRoot: player.variantRoot,
+      playerName: player.name,
+      realmName: player.realm,
+    });
     const master = pickMentor(sect, day);
     const membership: SectMembership = {
       sectId: sect.id, sectName: sect.name, rankIndex: 0, contribution: 0, merit: 0, demerit: 0,

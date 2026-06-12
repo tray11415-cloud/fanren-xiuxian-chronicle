@@ -5,7 +5,7 @@ import { useWorldStore } from '../worldStore';
 import { allSects, getSect, nextRank, canJoinSect, promotionGate, rankRealmReqName } from '../engine/sect';
 import { getLore, accrueStipend, eventCountdown, isAtSectHome, sectHomeName, sectInRegion } from '../engine/sectRitual';
 import { getRegion } from '../engine/canonLoader';
-import { buildCeremony, type Ceremony } from '../engine/induction';
+import { buildCeremony, hasAnySpiritualRoot, type Ceremony } from '../engine/induction';
 
 const EVENT_ICON: Record<string, string> = { lecture: '🪷', tournament: '⚔️', secret_realm: '🌀' };
 
@@ -62,7 +62,7 @@ const SectPanel: React.FC<Props> = ({ world, player, busy, onClose }) => {
     if (query) return allSectsList.filter((s) => s.name.includes(query) || (s.alignment || '').includes(query));
     return allSectsList.filter((s) => s.id === m?.sectId || sectInRegion(s, world.currentLocationId));
   }, [allSectsList, query, world.currentLocationId, m?.sectId]);
-  const hasRoot = !!player.spiritualRoots && Object.values(player.spiritualRoots as Record<string, number>).some((v) => v > 0);
+  const hasRoot = hasAnySpiritualRoot(player.spiritualRoots, player.variantRoot);
   const [ceremony, setCeremony] = useState<Ceremony | null>(null);
   const [pendingId, setPendingId] = useState('');
   const [joinErr, setJoinErr] = useState('');
@@ -71,7 +71,12 @@ const SectPanel: React.FC<Props> = ({ world, player, busy, onClose }) => {
     setJoinErr('');
     const chk = canJoinSect(s, { realmName: player.realm, hasRoot, currentSectId: m?.sectId });
     if (!chk.ok) { setJoinErr(chk.reason); return; }
-    setCeremony(buildCeremony(s, { roots: player.spiritualRoots as any, playerName: player.name, realmName: player.realm }));
+    setCeremony(buildCeremony(s, {
+      roots: player.spiritualRoots as any,
+      variantRoot: player.variantRoot,
+      playerName: player.name,
+      realmName: player.realm,
+    }));
     setPendingId(s.id);
   };
   const completeInduction = () => {
