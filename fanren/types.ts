@@ -408,6 +408,10 @@ export interface FanrenWorldState {
   karma: number; // 異能/禁忌之力累積的業力池（影響天劫/心魔）
   daoHeartId: string | null;
   originId: string | null;
+  /** 創角身分（供角色面板顯示；不影響機制）：天命等級 id、性別、初始年齡。舊存檔為 undefined，顯示時須 null 安全。 */
+  fortuneId?: string;
+  gender?: 'male' | 'female' | 'unset';
+  age?: number;
   npcStates: Record<string, NpcRuntimeState>;
   worldEventStates: Record<string, WorldEventState>;
   /** 主要 NPC 結局里程碑觸發記錄（key＝NPC id）。 */

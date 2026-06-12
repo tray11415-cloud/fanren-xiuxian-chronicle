@@ -355,7 +355,7 @@ function ModalsContainer({
         />
       )}
 
-      {modals.isCharacterOpen && (
+      {!canonMode && modals.isCharacterOpen && (
         <CharacterModal
           isOpen={modals.isCharacterOpen}
           onClose={() => handlers.setIsCharacterOpen(false)}

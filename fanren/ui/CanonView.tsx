@@ -11,6 +11,7 @@ import MarketPanel from './MarketPanel';
 import CodexPanel from './CodexPanel';
 import SectPanel from './SectPanel';
 import AiSettingsPanel from './AiSettingsPanel';
+import CanonCharacterPanel from './CanonCharacterPanel';
 import { BrandLockup } from './Brand';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
@@ -36,7 +37,7 @@ const QUICK = [
 
 // 系統工具列：開啟既有功能模態框（背包/角色/煉丹/洞府…）
 const SYSTEM_TABS: { key: string; label: string; icon: string }[] = [
-  { key: 'isCharacterOpen', label: '角色', icon: '👤' },
+  // 「角色」改用 canon 專屬面板 CanonCharacterPanel（對應創角的天命/靈根/稟性/戰力），不再走舊引擎 CharacterModal。
   { key: 'isInventoryOpen', label: '背包', icon: '🎒' },
   // 功法（具名功法/神通）與煉丹（丹道百藝）已統一收於上方 🛠️ 百藝（fanren BaiYiPanel）；
   // 宗門→⛩️宗門、洞府→🏔️洞府。經典 SectModal/GrottoModal/ShopModal/CultivationModal/CraftingModal 在 canon 模式皆已抑制，避免雙系統突兀。
@@ -66,6 +67,7 @@ const CanonView: React.FC = () => {
   const [showCodex, setShowCodex] = useState(false);
   const [showSect, setShowSect] = useState(false);
   const [showAi, setShowAi] = useState(false);
+  const [showCharacter, setShowCharacter] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const pendingChoice = world.pendingChoice;
@@ -130,6 +132,7 @@ const CanonView: React.FC = () => {
         )}
         {/* 系統工具列：開啟既有功能（劇情中行動類功能停用，史冊/萬物譜唯讀可閱） */}
         <div className="mb-3 flex flex-wrap gap-1.5">
+          <button onClick={() => setShowCharacter(true)} className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400">👤 角色</button>
           <button onClick={() => setShowChronicle(true)} className="rounded-lg border border-amber-700/60 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200 transition hover:border-amber-400">📜 史冊</button>
           <button disabled={storyLock} onClick={() => setShowCreate(true)} className={`rounded-lg border border-rose-700/60 bg-rose-950/30 px-2.5 py-1 text-xs text-rose-200 transition hover:border-rose-400${gate}`}>✦ 自創</button>
           <button disabled={storyLock} onClick={() => setShowMap(true)} className={`rounded-lg border border-emerald-700/60 bg-emerald-950/30 px-2.5 py-1 text-xs text-emerald-200 transition hover:border-emerald-400${gate}`}>🗺️ 地圖</button>
@@ -293,6 +296,7 @@ const CanonView: React.FC = () => {
     {showCodex && <CodexPanel world={world} onClose={() => setShowCodex(false)} />}
     {showSect && <SectPanel world={world} player={player} busy={busy} onClose={() => setShowSect(false)} />}
     {showAi && <AiSettingsPanel onClose={() => setShowAi(false)} />}
+    {showCharacter && <CanonCharacterPanel world={world} player={player} onClose={() => setShowCharacter(false)} />}
     </>
   );
 };
