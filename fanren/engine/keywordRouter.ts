@@ -58,11 +58,20 @@ interface RouteRule {
   patterns: RegExp[];
   scale?: TimeScale;
 }
+
+const NATURAL_QUERY_RE = /(?:哪些|那些|哪幾|有誰|何人|誰在|是誰|什麼|何事|如何|怎麼|哪裡|何處|多少|可有|是否|嗎|呢|[？?])(?:[^。！!]*$)/;
+const PASSIVE_LOOK_RE = /^(?:查看|看看|觀察|观察|檢視|检视|打量|瞧瞧|環顧|环顾)/;
+
 // 順序即優先序
 const RULES: RouteRule[] = [
   { type: 'use_golden_finger', patterns: [/金手指|外掛|發動.*(瓶|外掛|系統)|催熟|系統面板/], scale: 'instant' },
   { type: 'recall', patterns: [/回憶|想起|回想|記得.*嗎|過去發生/], scale: 'instant' },
-  { type: 'inspect', patterns: [/查看|看看|狀態|屬性|世界.*(動向|局勢|發生)|打聽|觀察|檢視|地圖|背包/], scale: 'instant' },
+  { type: 'inspect', patterns: [
+    /^(?:環視四周|查看天下動向|查看世界局勢|打探消息|打聽風聲|探聽風聲)$/,
+    /(?:世界|天下|修仙界).{0,6}(?:動向|局勢|大事|風聲)/,
+    /(?:打聽|打探|探聽).{0,6}(?:消息|風聲|天下事|大事)/,
+    /(?:最近|近日|近期).{0,6}(?:發生|有).{0,6}(?:什麼|何事|大事)/,
+  ], scale: 'instant' },
   { type: 'organize', patterns: [
     /(成立|創立|创立|組建|组建|開設|开设|開創|开创|創建|创建|開宗|开宗|立宗|建派|開派|开派|開山立派|开山立派|招攬.{0,4}(弟子|手下|班底))/,
     /(建立|組成|组成|拉起|拉攏.{0,4}(成|為)).{0,8}(船隊|船团|商團|商团|商會|商行|宗門|宗门|門派|门派|宗派|拍賣行|拍卖行|坊市|護衛團|护卫团|镖局|鏢局|聯盟|联盟|丹閣|丹阁|幫派|帮派|工坊|貨棧|勢力|势力|組織|组织)/,
@@ -116,7 +125,9 @@ export function parseIntent(
     }
   }
 
-  const scale: TimeScale = dur.days !== undefined ? dur.scale : matched?.scale || 'short';
+  const scale: TimeScale = dur.days !== undefined
+    ? dur.scale
+    : matched?.scale || (NATURAL_QUERY_RE.test(text) || PASSIVE_LOOK_RE.test(text) ? 'instant' : 'short');
   const confidence = matched ? (targets.length ? 0.9 : 0.7) : 0.3;
   return {
     type,

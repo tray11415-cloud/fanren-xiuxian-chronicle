@@ -734,7 +734,15 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
       // freeform / reframe：盡量給出有實質的確定性回應（無 LLM 時尤要），而非空泛一句。
       const place = getRegion(w.currentLocationId)?.name || w.currentLocationId;
       const rt = intent.rawText;
-      if (/掌天瓶|小綠瓶|小绿瓶|青色小瓶|綠瓶|绿瓶/.test(rt)) {
+      if (/(?:此地|此處|這裡|这里|附近|周圍|周围|周遭).{0,10}(?:修士|人物|人|誰|谁)|(?:有|有哪些|有那些|哪幾位|哪几位).{0,8}(?:修士|人物|人)|(?:看看|查看).{0,8}(?:修士|人物|有誰|有谁)/.test(rt)) {
+        const nearby = presentNpcs(w, oldDay, 12);
+        if (nearby.length) {
+          const roster = nearby.map((n) => `${n.name}（${n.realm || '境界不明'}${n.activity ? `，${n.activity.slice(0, 36)}` : ''}）`);
+          mechanical = `你放出神識，細察${place}周遭。此刻可辨認的修士有：${roster.join('；')}。`;
+        } else {
+          mechanical = `你放出神識，細察${place}周遭，未發現此刻可確認身分、且能與你接觸的具名修士。其餘來往之人多收斂氣息，身分難辨。`;
+        }
+      } else if (/掌天瓶|小綠瓶|小绿瓶|青色小瓶|綠瓶|绿瓶/.test(rt)) {
         // 掌天瓶乃韓立本命機緣、天授之物，非尋覓強求可得
         mechanical = `你四處探聽、暗中搜尋那只傳說中的青色小瓶。然此物乃機緣天授、冥冥中自有其主——翻找強求皆是徒勞，唯有緣者於命定之時方能得之。你一無所獲，徒耗${days}日光陰。`;
         logType = 'normal';
