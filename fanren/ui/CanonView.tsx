@@ -10,6 +10,7 @@ import AbodePanel from './AbodePanel';
 import MarketPanel from './MarketPanel';
 import CodexPanel from './CodexPanel';
 import SectPanel from './SectPanel';
+import AiSettingsPanel from './AiSettingsPanel';
 import { BrandLockup } from './Brand';
 import { formatTime } from '../engine/clock';
 import { buildReminders } from '../engine/reminderRecall';
@@ -64,6 +65,7 @@ const CanonView: React.FC = () => {
   const [showMarket, setShowMarket] = useState(false);
   const [showCodex, setShowCodex] = useState(false);
   const [showSect, setShowSect] = useState(false);
+  const [showAi, setShowAi] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const pendingChoice = world.pendingChoice;
@@ -136,6 +138,7 @@ const CanonView: React.FC = () => {
           <button disabled={storyLock} title={atMarket ? '' : '此處無坊市，須往城鎮坊市或修仙宗門所在'} onClick={() => { if (atMarket) setShowMarket(true); else useGameStore.getState().addLog(`此處（${region?.name || world.currentLocationId}）荒僻無市，修士交易須往城鎮坊市、或修仙宗門所在——可開地圖尋一處坊市前往。`, 'normal'); }} className={`rounded-lg border px-2.5 py-1 text-xs transition ${atMarket ? 'border-yellow-700/60 bg-yellow-950/20 text-yellow-200 hover:border-yellow-400' : 'border-zinc-800 bg-zinc-900/40 text-zinc-500'}${gate}`}>💰 坊市{atMarket ? '' : '（無）'}</button>
           <button disabled={storyLock} onClick={() => setShowSect(true)} className={`rounded-lg border border-indigo-700/60 bg-indigo-950/20 px-2.5 py-1 text-xs text-indigo-200 transition hover:border-indigo-400${gate}`}>⛩️ 宗門</button>
           <button onClick={() => setShowCodex(true)} className="rounded-lg border border-teal-700/60 bg-teal-950/20 px-2.5 py-1 text-xs text-teal-200 transition hover:border-teal-400">📖 萬物譜</button>
+          <button onClick={() => setShowAi(true)} title="填入你自己的 API 金鑰，啟用 AI 敘事（不填則用內建模板）" className="rounded-lg border border-sky-700/60 bg-sky-950/20 px-2.5 py-1 text-xs text-sky-200 transition hover:border-sky-400">🔑 AI 設定</button>
           {SYSTEM_TABS.map((t) => (
             <button key={t.key} disabled={storyLock} onClick={() => setModal(t.key as any, true)} className={`rounded-lg border border-zinc-700 bg-zinc-800/60 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-500 hover:text-amber-200${gate}`}>{t.icon} {t.label}</button>
           ))}
@@ -289,6 +292,7 @@ const CanonView: React.FC = () => {
     {showMarket && <MarketPanel world={world} player={player} busy={busy} onClose={() => setShowMarket(false)} />}
     {showCodex && <CodexPanel world={world} onClose={() => setShowCodex(false)} />}
     {showSect && <SectPanel world={world} player={player} busy={busy} onClose={() => setShowSect(false)} />}
+    {showAi && <AiSettingsPanel onClose={() => setShowAi(false)} />}
     </>
   );
 };
