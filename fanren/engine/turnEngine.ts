@@ -31,7 +31,8 @@ import { resolveBaiYi, practiceBaiYi, isMakingProduct, rankName } from './baiyi'
 import { findTechniqueByName } from '../data/techniques';
 import { foundOrganization, growOrganizations } from './organizations';
 import { abodeCultivationBonus } from './abode';
-import { genMonster, genNpc, genFaction } from './procGen';
+import { genMonster, genNpc, genFaction, genItem } from './procGen';
+import { sectSiteOf } from './sectSites';
 import { tickDemographics } from './demographics';
 import { tickCensus } from './census';
 import { rollQiDeviation } from './qiDeviation';
@@ -566,6 +567,34 @@ export async function runTurn(rawText: string, ctx: TurnContext): Promise<TurnOu
       } else if (encRoll < 0.62) {
         const fac = genFaction(regionName0);
         encTxt = `\n\n你遠遠望見一處新立的勢力旗號——「${fac.name}」（${fac.type}·${fac.alignment}）。${fac.note}`;
+      }
+      // 修仙門派據點設施採集：靈脈採氣／藥園採藥／礦脈採材（30 日冷卻，落地 sectSiteState）
+      const exploreSite = sectSiteOf(w.currentLocationId);
+      if (exploreSite) {
+        const st = w.sectSiteState || {};
+        const nextState = { ...st };
+        const gained: string[] = [];
+        for (const fac of exploreSite.facilities) {
+          if (fac.kind !== '靈脈' && fac.kind !== '藥園' && fac.kind !== '礦脈') continue;
+          const key = `${exploreSite.nodeId}:${fac.kind}`;
+          const last = nextState[key]?.lastHarvestDay ?? -99999;
+          if (newDay - last < 30) continue;
+          if (fac.kind === '靈脈') {
+            const bonus = Math.max(1, Math.round(expGain * 0.6));
+            playerDeltas.exp = (playerDeltas.exp || 0) + bonus;
+            gained.push(`於「${fac.name}」值守採氣（修為 +${bonus}）`);
+          } else {
+            const it = genItem(ctx.player.realmType, fac.kind === '藥園' ? '草药' : '材料');
+            itemsGranted = [...(itemsGranted || []), it];
+            gained.push(`於「${fac.name}」採得 ${it.name}×${it.quantity}`);
+          }
+          nextState[key] = { ...(nextState[key] || {}), lastHarvestDay: newDay };
+        }
+        if (gained.length) {
+          worldPatch.sectSiteState = nextState;
+          encTxt += `\n\n此地乃「${exploreSite.sectName}」據點，你趁隙${gained.join('；')}。`;
+          if (logType === 'normal') logType = 'gain';
+        }
       }
       mechanical = `你在${regionName0}遊歷查探${days}日，略有所獲（靈石 +${stones}，修為 +${expGain}）。${lootTxt}${mh.narrative ? ' ' + mh.narrative : ''}${encTxt}`;
       memoryNote = { summary: `於${w.currentLocationId}歷練`, tags: ['歷練', w.currentLocationId], important: false };

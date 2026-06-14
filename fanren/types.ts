@@ -288,6 +288,8 @@ export interface Divergence {
   magnitude?: number; // 時間線震幅（蝴蝶效應規模）
 }
 
+/** 宗門間關係類型（合縱連橫）：同盟/競爭/世仇/附庸/臥底/聯姻。 */
+export type SectRelationKind = 'ally' | 'rival' | 'enemy' | 'vassal' | 'infiltrator' | 'marriage';
 export interface FactionState {
   id: string;
   name: string;
@@ -295,6 +297,8 @@ export interface FactionState {
   relationToPlayer: number; // -100..100
   status: 'rising' | 'stable' | 'declining' | 'destroyed';
   note?: string;
+  allianceId?: string; // 所屬聯盟（指向另一 FactionState.id，如 '天道盟'、'魔道六宗'、'越國七派'）
+  relations?: Record<string, SectRelationKind>; // 對其他勢力的關係（key＝對方 faction id/中文名）
 }
 
 export interface ExpandedRegion {
@@ -436,6 +440,8 @@ export interface FanrenWorldState {
   bottleSpace?: { herbs: { name: string; quality: number }[]; lingZhiAwakened: boolean }; // 掌天瓶內空間（藏藥/瓶靈）
   abode?: OwnedAbode; // 洞府（聚靈陣加修煉、藥園、禁制）
   garden?: GardenPlot[]; // 洞府藥園所植靈藥
+  // 修仙門派據點設施的可變狀態（key=`${nodeId}:${kind}`）。僅存玩家改變過的部分，其餘靠決定性生成；舊存檔為 undefined。
+  sectSiteState?: Record<string, { lastHarvestDay?: number; claimedByPlayer?: boolean; depleted?: boolean }>;
   population?: WorldPopulation; // 活世界背景人口（繁衍/殞落，不影響正史）
   census?: WorldCensus; // 天下生靈・境界分層人口普查（~50萬，越高越少）
   reputation?: Reputation; // 聲望/名號（正邪兩軸，影響世界對玩家的反應）
@@ -630,6 +636,7 @@ export interface TechniqueDef {
   canonRefs?: string[];
   neigong?: TechniqueNeigong[]; // 分層解鎖的神通
   statBonus?: Partial<Record<'attack' | 'defense' | 'spirit' | 'physique' | 'speed' | 'maxHp', number>>; // 每層加成
+  element?: 'metal' | 'wood' | 'water' | 'fire' | 'earth'; // 五行屬性（可選；未標則由 category/desc 推導，供戰鬥相剋用）
 }
 export interface LearnedTechnique {
   id: string;
@@ -769,6 +776,27 @@ export interface GardenPlot {
   matureDay: number;
 }
 
+// ── 修仙/魔道宗門據點與設施（程序生成；通用設施＋宗門專屬特色設施）──
+export type FacilityKind =
+  | '坊市' | '靈脈' | '藥園' | '礦脈' | '護山大陣' | '傳送陣' | '洞府'
+  // 宗門專屬特色設施（依原著招牌）：功法閣（傳承）、御靈宗異獸山脈、劍宗劍冢、丹宗丹房、魔道煉屍洞/血池/刀冢/養鬼幡堂
+  | '功法閣' | '異獸山脈' | '劍冢' | '丹房' | '煉屍洞' | '血池' | '刀冢' | '養鬼幡堂';
+export interface SectFacility {
+  kind: FacilityKind;
+  name: string; // 程序生成名（如「玄霞靈脈」）
+  tier: number; // 品階（靈脈沿用 LingMai grade；其餘自有等級）
+  desc: string;
+  yield?: { itemKind?: '草药' | '材料' | '丹药' | '法宝'; rarityHint?: string; note?: string }; // 互動產出/效果摘要
+  techniques?: string[]; // 功法閣專用：本宗可傳承功法名（與 techniques.ts 相符）
+}
+export interface SectSite {
+  nodeId: string; // WORLD_MAP 節點 id
+  nodeName: string;
+  sectName: string; // 控制此據點的修仙/魔道宗門（中文名）
+  category: '修仙宗門' | '魔道宗門';
+  facilities: SectFacility[];
+}
+
 export interface Organization {
   id: string;
   name: string;
@@ -792,7 +820,14 @@ export interface NpcFate {
 export interface CascadeEffect {
   cancelEventIds?: string[]; // 被改寫、不再依正史發生的事件
   npcFates?: NpcFate[]; // 受牽連角色的命運改變（依震幅觸發）
-  factionShifts?: { name: string; status?: string; note?: string }[];
+  factionShifts?: {
+    name: string;
+    status?: string;
+    note?: string;
+    setRelation?: { with: string; to: SectRelationKind }; // 合縱／連橫：改寫此宗對某宗的關係
+    joinAlliance?: string; // 該宗加入某聯盟
+    leaveAlliance?: boolean; // 該宗脫離原聯盟（自立）
+  }[];
   worldNote?: string; // 天下大勢變動敘述
 }
 export interface OpportunityAction {

@@ -139,6 +139,23 @@ export function findSectByName(text: string): SectDef | undefined {
   return SECTS.find((s) => text.includes(s.name));
 }
 
+// ── 凡俗江湖勢力黑名單：未登錄 SectDef 的幫派/世家（getSect 回 undefined，須名單兜底）──
+const MORTAL_FACTION_NAMES = new Set(['野狼幫', '驚蛟會', '黑煞教', '燕家']);
+
+/**
+ * 是否為「凡俗/武林」勢力（不應列入修仙勢力榜與修仙界地塊佔領）。
+ * 還原原著：修仙界由修仙宗門/魔道宗門主導，凡俗武林（七玄門等）不入修仙勢力排名。
+ */
+export function isMartialFaction(name: string): boolean {
+  if (!name) return false;
+  const s = getSect(name);
+  if (s) return s.category === '武林門派'; // 七玄門 → true；黃楓谷 → false
+  if (MORTAL_FACTION_NAMES.has(name)) return true; // 凡俗幫派不在 SECTS，名單兜底
+  // 聚合名/種族（正道七派、魔道六宗、九國盟等）非單一武林門派，不排除
+  if (/^(正道|魔道|九國盟|九国盟|三道四宗|人族|妖族|七大|四大|聯盟|联盟)/.test(name)) return false;
+  return inferCategory({ name }) === '武林門派';
+}
+
 export interface JoinCheck { ok: boolean; reason: string }
 /** 入門資格：仙凡有別——武林門派乃凡俗武者所聚，修仙者不投；修仙/魔道宗門須靈根與修為。已有師門者須先退出。 */
 export function canJoinSect(sect: SectDef, ctx: { realmName: string; hasRoot: boolean; currentSectId?: string }): JoinCheck {

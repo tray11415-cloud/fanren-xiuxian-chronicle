@@ -3,6 +3,8 @@ import type { FanrenWorldState } from '../types';
 import type { PlayerStats } from '../../types';
 import { SCHEDULED_EVENTS, spoilerBudget } from '../engine/canonLoader';
 import { factionTerritories } from '../engine/mapIntel';
+import { allSectSites } from '../engine/sectSites';
+import { allianceOf } from '../engine/alliances';
 import { formatTime } from '../engine/clock';
 import { canonRealmDisplay, getRealmIndex } from '../engine/realm';
 import { CANON_REALMS } from '../data/realms';
@@ -40,7 +42,13 @@ const ChroniclePanel: React.FC<Props> = ({ world, player, onClose }) => {
     ...upcomingAll.filter((e) => e.tier !== 'beat').slice(0, 4),
     ...upcomingAll.filter((e) => e.tier === 'beat').slice(0, 2),
   ].sort((a, b) => a.scheduledDay - b.scheduledDay).slice(0, 6);
-  const territories = factionTerritories().slice(0, 12);
+  // 疊加各修仙門派的據點設施數，讓實質佔據洞天福地的宗門排名更高（修仙界由宗門主導）
+  const siteBonus: Record<string, number> = {};
+  for (const s of allSectSites()) siteBonus[s.sectName] = (siteBonus[s.sectName] || 0) + s.facilities.length;
+  const territories = factionTerritories()
+    .map((t) => ({ ...t, score: t.score + (siteBonus[t.name] || 0) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 12);
   const maxTerr = territories[0]?.score || 1;
   const factionStatus = (name: string): string | undefined => (world.factionStates || {})[name]?.status;
   const gf = world.goldenFinger;
@@ -211,6 +219,8 @@ const ChroniclePanel: React.FC<Props> = ({ world, player, onClose }) => {
                   <div key={t.name}>
                     <div className="flex items-center gap-2">
                       <span className={`w-24 shrink-0 truncate ${destroyed ? 'text-zinc-600 line-through' : ''}`}>{t.name}</span>
+                      {(() => { const al = allianceOf(t.name); return al && al !== t.name
+                        ? <span className="shrink-0 rounded border border-indigo-700/50 px-1 text-[9px] text-indigo-300/80">{al}</span> : null; })()}
                       <span className="h-1.5 flex-1 overflow-hidden rounded bg-zinc-800">
                         <span className="block h-full bg-gradient-to-r from-amber-700 to-amber-400" style={{ width: `${Math.round((t.score / maxTerr) * 100)}%` }} />
                       </span>

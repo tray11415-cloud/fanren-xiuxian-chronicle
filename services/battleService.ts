@@ -38,6 +38,10 @@ import { getPlayerTotalStats } from '../utils/statUtils';
 import { getRandomEnemyName } from './templateService';
 import { logger } from '../utils/logger';
 import { getItemsByType } from '../utils/itemConstantsUtils';
+import { buildCanonBattleSkills } from './techniqueToBattleSkill';
+import { elementMultiplier, realmGapMultiplier, dominantElement, ELEMENT_CN } from '../constants/wuxing';
+import type { SpiritualRootType } from '../constants/spiritualRoots';
+import type { LearnedTechnique } from '../fanren/types';
 
 
 const randomId = () => Math.random().toString(36).slice(2, 9);
@@ -687,6 +691,18 @@ function handlePetAction(
   }
 }
 
+/** 由敵人名/稱號推五行屬性（無命中則隨機），供戰鬥相剋用。 */
+function enemyElement(name: string, title: string): SpiritualRootType {
+  const t = (name || '') + (title || '');
+  if (/焰|火|赤|陽|阳|炎/.test(t)) return 'fire';
+  if (/冰|水|寒|霜|蛟|海|淵|渊/.test(t)) return 'water';
+  if (/雷|金|劍|剑|鋒|锋|鐵|铁/.test(t)) return 'metal';
+  if (/木|蟲|虫|藤|妖樹|妖树|青|草/.test(t)) return 'wood';
+  if (/土|山|石|磁|岩|沙/.test(t)) return 'earth';
+  const pool: SpiritualRootType[] = ['metal', 'wood', 'water', 'fire', 'earth'];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 export const createEnemy = async (
   player: PlayerStats,
   adventureType: AdventureType,
@@ -705,6 +721,7 @@ export const createEnemy = async (
   speed: number;
   spirit: number;
   strengthMultiplier: number;
+  element: SpiritualRootType;
 }> => {
   const currentRealmIndex = REALM_ORDER.indexOf(player.realm);
 
@@ -761,7 +778,7 @@ export const createEnemy = async (
   if (!realm) {
     const fallbackRealm = REALM_ORDER[0];
     if (!fallbackRealm) throw new Error('REALM_ORDER is empty');
-    return { name: '未知敌人', title: '神秘的', realm: fallbackRealm, attack: 10, defense: 8, maxHp: 50, speed: 10, spirit: 5, strengthMultiplier: 1 };
+    return { name: '未知敌人', title: '神秘的', realm: fallbackRealm, attack: 10, defense: 8, maxHp: 50, speed: 10, spirit: 5, strengthMultiplier: 1, element: 'metal' };
   }
   const baseDifficulty = getBattleDifficulty(adventureType, riskLevel);
   const strengthRoll = Math.random();
@@ -893,6 +910,7 @@ export const createEnemy = async (
       speed: Math.round(baseSpeed * powerRatio),
       spirit: Math.round(baseSpirit * powerRatio),
       strengthMultiplier: randomMultiplier,
+      element: enemyElement(name, title),
     };
   }
 
@@ -910,6 +928,7 @@ export const createEnemy = async (
     speed: Math.max(6, Math.round(baseSpeed * (0.7 + Math.random() * 0.3) * strengthMultiplier)),
     spirit: Math.max(5, Math.round(baseSpirit * v * finalDifficulty)),
     strengthMultiplier,
+    element: enemyElement(name, title),
   };
 };
 
@@ -1370,7 +1389,8 @@ export const initializeTurnBasedBattle = async (
   riskLevel?: '低' | '中' | '高' | '极度危险',
   realmMinRealm?: RealmType,
   sectMasterId?: string | null,
-  bossId?: string // 指定的天地之魄BOSS ID（用于事件模板）
+  bossId?: string, // 指定的天地之魄BOSS ID（用于事件模板）
+  canonTechniques?: LearnedTechnique[] // 玩家已習的原著具名功法（橋接成戰鬥技能；放最後，向後相容既有呼叫）
 ): Promise<BattleState> => {
   // 创建敌人（如果是追杀战斗，从 player 对象中获取追杀参数）
   const huntSectId = adventureType === 'sect_challenge' && player.sectId === null ? player.sectHuntSectId : undefined;
@@ -1378,7 +1398,7 @@ export const initializeTurnBasedBattle = async (
   const enemyData = await createEnemy(player, adventureType, riskLevel, realmMinRealm, huntSectId, huntLevel, bossId);
 
   // 创建玩家战斗单位
-  const playerUnit = createBattleUnitFromPlayer(player);
+  const playerUnit = createBattleUnitFromPlayer(player, canonTechniques);
 
   // 创建敌人战斗单位
   const enemyUnit: BattleUnit = {
@@ -1399,6 +1419,7 @@ export const initializeTurnBasedBattle = async (
     mana: Math.floor(enemyData.attack * 0.3 + enemyData.maxHp * 0.05),
     maxMana: Math.floor(enemyData.attack * 0.3 + enemyData.maxHp * 0.05),
     isDefending: false,
+    element: enemyData.element,
   };
 
   // 获取激活的灵宠
@@ -1480,7 +1501,7 @@ export const initializeTurnBasedBattle = async (
 /**
  * 为没有配置技能的功法生成默认技能
  */
-function generateDefaultSkillForArt(art: { id: string; name: string; type: string; grade: string; effects: any }): BattleSkill | null {
+function generateDefaultSkillForArt(art: { id: string; name: string; type: string; grade: string; effects: any; spiritualRoot?: SpiritualRootType }): BattleSkill | null {
   // 根据功法类型和品级生成不同的技能
   const multiplier = GRADE_MULTIPLIERS[art.grade] || 1.0;
   const powerBonus = GRADE_POWER_BONUS[art.grade] || GRADE_POWER_BONUS['黄'];
@@ -1513,6 +1534,7 @@ function generateDefaultSkillForArt(art: { id: string; name: string; type: strin
         type: 'physical',
         critChance: 0.1 + (multiplier - 1) * 0.05 + powerBonus.critChance,
         critMultiplier: 1.5 + (multiplier - 1) * 0.2 + powerBonus.critMultiplier,
+        element: art.spiritualRoot,
       },
     };
   } else if (art.type === 'mental') {
@@ -1577,6 +1599,7 @@ function generateDefaultSkillForArt(art: { id: string; name: string; type: strin
           type: 'magical',
           critChance: 0.15 + (multiplier - 1) * 0.05 + powerBonus.critChance,
           critMultiplier: 2.0 + (multiplier - 1) * 0.3 + powerBonus.critMultiplier,
+          element: art.spiritualRoot,
         },
       };
     }
@@ -1589,7 +1612,7 @@ function generateDefaultSkillForArt(art: { id: string; name: string; type: strin
 /**
  * 从玩家数据创建战斗单位
  */
-function createBattleUnitFromPlayer(player: PlayerStats): BattleUnit {
+function createBattleUnitFromPlayer(player: PlayerStats, canonTechniques?: LearnedTechnique[]): BattleUnit {
   // 获取包含心法加成的总属性
   const totalStats = getPlayerTotalStats(player);
 
@@ -1657,6 +1680,9 @@ function createBattleUnitFromPlayer(player: PlayerStats): BattleUnit {
   });
 
 
+  // 3. 原著具名功法技能（canon 功法橋接：依 category/層數/神通生成可用招式）
+  skills.push(...buildCanonBattleSkills(canonTechniques).map((s) => ({ ...s, cooldown: 0 })));
+
   // 应用被动效果（心法）
   const buffs: Buff[] = [];
   if (player.activeArtId) {
@@ -1710,6 +1736,7 @@ function createBattleUnitFromPlayer(player: PlayerStats): BattleUnit {
     mana: currentMana,
     maxMana: maxMana,
     isDefending: false,
+    element: dominantElement(player.spiritualRoots),
   };
 }
 
@@ -1912,7 +1939,11 @@ function executeNormalAttack(
   const target = targetId === 'player' ? battleState.player : battleState.enemy;
 
   // 计算基础伤害
-  const baseDamage = calcDamage(attacker.attack, target.defense);
+  let baseDamage = calcDamage(attacker.attack, target.defense);
+  // 五行相剋 + 跨境界傷害修正（普攻取攻方主屬性 vs 守方屬性）
+  const elemN = elementMultiplier(attacker.element, target.element);
+  const realmN = realmGapMultiplier(attacker.realm, target.realm);
+  baseDamage = Math.round(baseDamage * elemN.mult * realmN * (elemN.broke ? 1.15 : 1));
 
   // 计算暴击（优化：统一暴击率计算，设置上限）
   let critChance = 0.10; // 基础暴击率10%
@@ -2030,6 +2061,12 @@ function executeNormalAttack(
       description += ` 你的反弹效果对${attacker.name}造成了 ${reflectedDamage} 点伤害！`;
     }
   }
+  // 五行相剋戰術回饋
+  if (elemN.broke && attacker.element && target.element) {
+    description += `（${ELEMENT_CN[attacker.element]}剋${ELEMENT_CN[target.element]}・破防）`;
+  } else if (elemN.restrained && attacker.element && target.element) {
+    description += `（屬性被${ELEMENT_CN[target.element]}所剋・威力大減）`;
+  }
 
   return {
     id: randomId(),
@@ -2100,6 +2137,10 @@ function executeSkill(
 
     // 使用统一的伤害计算函数
     let baseDamage = calcDamage(skillAttack, targetDefense);
+    // 五行相剋（技能屬性優先，其次施法者主屬性）+ 跨境界傷害修正
+    const skElem = elementMultiplier(skill.damage.element ?? caster.element, target.element);
+    const skRealm = realmGapMultiplier(caster.realm, target.realm);
+    baseDamage = Math.round(baseDamage * skElem.mult * skRealm * (skElem.broke ? 1.2 : 1));
 
     // 计算暴击
     let critChance = skill.damage.critChance || 0;

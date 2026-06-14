@@ -252,6 +252,7 @@ function ModalsContainer({
           riskLevel={modalState.turnBasedBattleParams.riskLevel}
           realmMinRealm={modalState.turnBasedBattleParams.realmMinRealm}
           bossId={modalState.turnBasedBattleParams.bossId}
+          canonTechniques={modalState.turnBasedBattleParams.canonTechniques}
           autoAdventure={autoAdventure}
           onClose={(result, updatedInventory) => {
             if (handlers.setIsTurnBasedBattleOpen) {

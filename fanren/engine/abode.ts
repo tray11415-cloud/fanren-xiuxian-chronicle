@@ -7,6 +7,7 @@ import { hasMarketAt } from './mapGate';
 import { isAtSectHome } from './sectRitual';
 import { getSect } from './sect';
 import { findMapNode } from './mapIntel';
+import { sectSiteOf } from './sectSites';
 
 /** 洞府聚靈陣帶來的閉關修煉加成（+%，0..1）。 */
 export function abodeCultivationBonus(world: FanrenWorldState): number {
@@ -47,6 +48,7 @@ export function isProtectedLocation(world: FanrenWorldState): boolean {
   if (hasMarketAt(loc)) return true;
   const sect = world.sect ? getSect(world.sect.sectId) : undefined;
   if (sect && isAtSectHome(loc, sect)) return true;
+  if (sectSiteOf(loc)?.facilities.some((f) => f.kind === '護山大陣')) return true; // 修仙門派護山大陣＝有人坐鎮庇護
   return false;
 }
 

@@ -983,6 +983,7 @@ export interface BattleSkill {
     type: 'physical' | 'magical'; // 物理/法术伤害
     critChance?: number; // 暴击概率（0-1）
     critMultiplier?: number; // 暴击倍率
+    element?: 'metal' | 'wood' | 'water' | 'fire' | 'earth'; // 五行属性（用于相克伤害修正；未标则取施法者属性）
   };
   heal?: {
     base: number; // 基础治疗
@@ -1010,6 +1011,7 @@ export interface BattleUnit {
   energy?: number; // 能量值（可选，用于特殊技能）
   maxEnergy?: number; // 最大能量值
   isDefending?: boolean; // 是否处于防御状态
+  element?: 'metal' | 'wood' | 'water' | 'fire' | 'earth'; // 五行属性（敌我皆用，驱动相克伤害修正）
 }
 
 // 战斗行动
