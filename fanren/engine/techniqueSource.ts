@@ -28,10 +28,12 @@ export const TECHNIQUE_SOURCE: Record<string, TechSource> = {
   換形訣: { sect: '掩月宗', hint: '掩月宗的潛行易容之術' },
   玄月吸陰功: { sect: '合歡宗', hint: '合歡宗媚術吸陰一脈的魔功' },
   御靈馭獸訣: { sect: '御靈宗', hint: '御靈宗馭靈蟲靈獸的秘傳' },
+  五行靈嬰秘法: { sect: '御靈宗', hint: '御靈宗鎮宗靈嬰秘法，馭五行靈獸之核心機密' },
+  巨劍術: { sect: '巨劍門', hint: '巨劍門御使無鞘巨劍、雙手擲射的鎮派劍術' },
   鬼靈攝魂大法: { sect: '鬼靈門', hint: '鬼靈門驅鬼攝魂的魔法' },
   血雲遁術: { sect: '鬼靈門', hint: '鬼靈門的血遁之術' },
   化血神功: { sect: '化血教', hint: '化血教采血煉氣的魔道功法' },
-  青元劍訣: { sect: '鸞鳴宗', hint: '御劍劍修一脈（鸞鳴宗等劍宗）的劍訣傳承' },
+  青元劍訣: { place: '黃楓谷', sect: '黃楓谷', hint: '黃楓谷鎮派法訣，可修出青元劍芒、御劍殺敵——然每進一境略有法力流失之弊，故谷中以丹道補強' },
   隴家無情道: { sect: '隴家', hint: '隴家不傳外人的無情道傳承' },
   天瀾聖獸傳承: { place: '天瀾聖殿', sect: '天瀾聖殿', hint: '慕蘭草原天瀾聖殿的聖獸傳承' },
   大衍訣: { hint: '此乃機緣天授之神通（非凡間宗門可傳），唯持掌天瓶之奇遇者得之' },
@@ -60,6 +62,14 @@ function atPlace(currentLocationId: string, placeName: string): boolean {
 
 export function techSourceOf(name: string): TechSource | undefined {
   return TECHNIQUE_SOURCE[name];
+}
+
+/** 列出某宗門可傳承之原著功法名（TECHNIQUE_SOURCE 中 sect 命中者）。供「功法閣」設施就地列示。 */
+export function sectTechniques(sectName: string): string[] {
+  if (!sectName) return [];
+  return Object.entries(TECHNIQUE_SOURCE)
+    .filter(([, s]) => s.sect === sectName)
+    .map(([name]) => name);
 }
 
 export interface LearnCheck { ok: boolean; reason: string }

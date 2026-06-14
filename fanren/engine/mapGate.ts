@@ -10,6 +10,7 @@ import type { WorldMapNode, FanrenWorldState } from '../types';
 import { WORLD_MAP } from '../data/worldMap';
 import { findMapNode } from './mapIntel';
 import { findSectByName } from './sect';
+import { sectSiteOf } from './sectSites';
 
 // ── 坊市：唯有人煙聚集的城鎮坊市、或修仙/魔道宗門所在，方有坊市可逛（凡人荒野山島無從交易）──
 const MARKET_KW = /坊市|坊$|市集|市$|城$|鎮$|京$|埠$|墟$|集$|閣$|樓$|宮$|殿$/;
@@ -20,6 +21,7 @@ export function hasMarketAt(locationId: string): boolean {
   if (MARKET_KW.test(node.name)) return true;
   const sect = findSectByName(node.name); // 修仙/魔道宗門設有門中坊市；武林門派（凡俗）不算
   if (sect && sect.category !== '武林門派') return true;
+  if (sectSiteOf(node.id)?.facilities.some((f) => f.kind === '坊市')) return true; // 修仙門派據點坊市
   return false;
 }
 

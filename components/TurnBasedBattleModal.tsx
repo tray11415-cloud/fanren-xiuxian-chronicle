@@ -35,6 +35,7 @@ interface TurnBasedBattleModalProps {
   riskLevel?: '低' | '中' | '高' | '极度危险';
   realmMinRealm?: RealmType;
   bossId?: string; // 指定的天地之魄BOSS ID（用于事件模板）
+  canonTechniques?: Array<{ id: string; name: string; level: number }>; // 玩家已習原著功法，橋接成戰鬥技能
   autoAdventure?: boolean; // 是否在自动历练模式下
   onClose: (
     result?: {
@@ -66,6 +67,7 @@ const TurnBasedBattleModal: React.FC<TurnBasedBattleModalProps> = ({
   riskLevel,
   realmMinRealm,
   bossId,
+  canonTechniques,
   autoAdventure = false,
   onClose,
 }) => {
@@ -117,7 +119,8 @@ const TurnBasedBattleModal: React.FC<TurnBasedBattleModalProps> = ({
         riskLevel,
         realmMinRealm as any,
         undefined,
-        bossId
+        bossId,
+        canonTechniques
       )
         .then((state) => {
           if (hasInitTimedOutRef.current || !isInitializedRef.current) {

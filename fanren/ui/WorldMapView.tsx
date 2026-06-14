@@ -8,6 +8,7 @@ import { findMapNode } from '../engine/mapIntel';
 import { planTravel, humanizeDays } from '../engine/travel';
 import { gateOf } from '../engine/mapGate';
 import { lingMaiOf } from '../engine/lingMai';
+import { sectSiteOf } from '../engine/sectSites';
 import { initialDiscoveries } from '../engine/mapDiscovery';
 
 interface Props {
@@ -300,6 +301,21 @@ const WorldMapView: React.FC<Props> = ({ onClose, onTravel }) => {
             {selNode.factions && selNode.factions.length > 0 && (
               <div className="mt-1 text-[11px] text-zinc-600">勢力：{selNode.factions.slice(0, 5).join('、')}</div>
             )}
+            {(() => {
+              const site = sectSiteOf(selNode.id);
+              if (!site || site.facilities.length === 0) return null;
+              const gefa = site.facilities.find((f) => f.kind === '功法閣' && f.techniques && f.techniques.length > 0);
+              return (
+                <>
+                  <div className="mt-1 text-[11px] text-cyan-300/70">
+                    {site.sectName}據點設施：{site.facilities.map((f) => f.name).join('、')}
+                  </div>
+                  {gefa ? (
+                    <div className="mt-0.5 text-[10px] text-amber-300/70">📜 {gefa.name}傳承：{gefa.techniques!.join('、')}</div>
+                  ) : null}
+                </>
+              );
+            })()}
           </div>
         )}
         {view === 'map' && !selNode && (

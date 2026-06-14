@@ -31,6 +31,7 @@ import { applyTrigger, passiveStatBonus } from './engine/mechanics';
 import { extrapolateMechanic, extrapolateMechanicSync } from './engine/extrapolate';
 import { CANON_FACTIONS } from './data/factions';
 import { ORIGINS, SPIRITUAL_ROOT_PROFILES, DAO_HEARTS } from './data/creationOptions';
+import { findTechniqueByName } from './data/techniques';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
 
@@ -249,6 +250,11 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
       canonRealmIndex: realmIndexFromType(String(origin?.startRealm || '炼气期')),
       canonSubStage: 0,
       memory: [],
+      // 起始功法：把出身的 startingArtIds（原著功法中文名）落地為 world.techniques（單一事實來源，並橋接成戰鬥技能）
+      techniques: (origin?.startingArtIds || [])
+        .map((nm) => findTechniqueByName(nm))
+        .filter((t): t is NonNullable<typeof t> => !!t)
+        .map((t) => ({ id: t.id, name: t.name, level: 1 })),
     };
     persistWorld(w);
     set({ world: w, lastResult: null });
@@ -385,6 +391,7 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
           adventureType: 'normal',
           riskLevel: outcome.battle.riskLevel,
           realmMinRealm: toRealmType(outcome.battle.realmMinRealm, player.realm),
+          canonTechniques: get().world.techniques,
         });
       }
     } finally {
@@ -528,6 +535,7 @@ export const useWorldStore = create<WorldStoreState>((set, get) => ({
           adventureType: 'normal',
           riskLevel: '高',
           realmMinRealm: toRealmType(String(foeRealm || ''), player.realm),
+          canonTechniques: get().world.techniques,
         });
       }
     }

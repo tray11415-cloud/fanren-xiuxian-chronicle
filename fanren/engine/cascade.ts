@@ -8,6 +8,7 @@ import { getNpc, spoilerBudget } from './canonLoader';
 import { sameArea } from './npcAvailability';
 import { chapterToDay } from './clock';
 import { HIDDEN_OPPORTUNITIES, getOpportunity } from '../data/hiddenOpportunities';
+import { RELATION_LABEL } from './alliances';
 
 export { getOpportunity };
 
@@ -77,8 +78,17 @@ export function applyCascade(world: FanrenWorldState, opp: HiddenOpportunity, ac
   }
   if (c?.factionShifts) {
     for (const fs of c.factionShifts) {
-      factionStates[fs.name] = { ...(factionStates[fs.name] || { id: fs.name, name: fs.name }), status: fs.status || factionStates[fs.name]?.status, note: fs.note };
-      logLines.push(`◈ ${fs.name}：${fs.note || fs.status || ''}`);
+      const prev = factionStates[fs.name] || { id: fs.name, name: fs.name };
+      const next: any = { ...prev, status: fs.status || prev.status, note: fs.note ?? prev.note };
+      // 合縱／連橫：改寫此宗對某宗的關係（同盟/世仇/聯姻…）
+      if (fs.setRelation) {
+        next.relations = { ...(prev.relations || {}), [fs.setRelation.with]: fs.setRelation.to };
+        logLines.push(`◈ ${fs.name} 與 ${fs.setRelation.with}：關係轉為「${RELATION_LABEL[fs.setRelation.to] || fs.setRelation.to}」`);
+      }
+      if (fs.joinAlliance) { next.allianceId = fs.joinAlliance; logLines.push(`◈ ${fs.name} 歸入「${fs.joinAlliance}」`); }
+      if (fs.leaveAlliance) { next.allianceId = undefined; logLines.push(`◈ ${fs.name} 脫離聯盟自立`); }
+      factionStates[fs.name] = next;
+      if (!fs.setRelation && !fs.joinAlliance && !fs.leaveAlliance) logLines.push(`◈ ${fs.name}：${fs.note || fs.status || ''}`);
     }
   }
 

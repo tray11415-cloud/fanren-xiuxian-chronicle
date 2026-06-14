@@ -13,6 +13,7 @@ import {
   AdventureResult,
 } from '../types';
 import { BattleReplay } from '../services/battleService';
+import type { LearnedTechnique } from '../fanren/types';
 
 // Modal 状态接口
 interface ModalState {
@@ -47,6 +48,7 @@ interface TurnBasedBattleParams {
   riskLevel?: '低' | '中' | '高' | '极度危险';
   realmMinRealm?: RealmType;
   bossId?: string;
+  canonTechniques?: LearnedTechnique[]; // 玩家已習原著功法，橋接成戰鬥技能
   onBattleInitialized?: (enemyName: string) => void; // 战斗初始化完成后的回调，用于输出日志
 }
 

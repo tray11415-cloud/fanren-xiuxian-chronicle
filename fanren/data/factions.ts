@@ -11,6 +11,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '越國七大修仙門派之一，韓立出身門派，坐落太岳山脈，弟子萬餘，有數位結丹期長老及元嬰修士令狐老祖坐鎮。初期對玩家中立，可選為起點門派。',
+    allianceId: '越國七派',
+    relations: { 掩月宗: 'rival' },
   },
   {
     id: '掩月宗',
@@ -19,6 +21,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '越國七派之首，實力最強，提倡陰陽雙修，弟子男女各半，南宮婉為結丹期師祖。與黃楓谷同屬正道，但競爭關係微妙。',
+    allianceId: '越國七派',
+    relations: { 黃楓谷: 'rival', 合歡宗: 'rival', 靈獸山: 'ally' },
   },
   {
     id: '靈獸山',
@@ -27,6 +31,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'declining',
     note: '越國七派之一，以驅使靈獸昆蟲著稱，實為御靈宗千年前埋下的暗樁，在七派大戰中陣前背叛，致七派聯軍大敗，後期地位急速衰落。',
+    allianceId: '越國七派',
+    relations: { 御靈宗: 'infiltrator', 越國七派: 'vassal' },
   },
   {
     id: '七玄門',
@@ -35,6 +41,14 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 5,
     status: 'stable',
     note: '越國普通修仙門派，非七大主流門派，坐落鏡州，設有藥圃，弟子規模較小。「凡人逆襲」開局的起點，師長賦予採藥任務，修煉資源匱乏但人情味濃。',
+  },
+  {
+    id: '越國七派',
+    name: '越國七派',
+    power: 60,
+    relationToPlayer: 0,
+    status: 'stable',
+    note: '掩月宗、靈獸山、黃楓谷、清虛門、化刀塢、天闕堡、巨劍門七大修仙門派之中立會盟（非正非邪），共禦外侮、共管血色試煉禁地與月陽寶珠。後因靈獸山陣前背叛（實為御靈宗暗樁）而聯軍大敗。',
   },
 
   // ──────────────────────────────────────────────
@@ -47,6 +61,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: -20,
     status: 'declining',
     note: '天羅國魔道六宗之一，擅驅鬼役妖、毒術與暗術，以血靈大法為核心，少主王蟬曾在燕翎堡設陰火大陣謀殺七派築基修士。後被御靈宗逐出越國，逐漸衰落。',
+    allianceId: '魔道六宗',
+    relations: { 御靈宗: 'enemy', 越國七派: 'enemy' },
   },
   {
     id: '御靈宗',
@@ -55,6 +71,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: -15,
     status: 'rising',
     note: '魔道六宗之一，位在天羅國奇靈山，以驅使靈蟲靈獸聞名，五行靈嬰秘法為其核心機密。靈獸山為其千年暗樁，佔據越國後勢力大幅擴張。',
+    allianceId: '魔道六宗',
+    relations: { 靈獸山: 'ally', 越國七派: 'enemy', 鬼靈門: 'enemy' },
   },
   {
     id: '合歡宗',
@@ -63,6 +81,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: -10,
     status: 'stable',
     note: '天南魔道六宗之首，以雙修媚術見長，合歡老魔為天南三大修士之一，修煉玄月吸陰功。表面中立，實則覬覦各方機緣，對韓立有所忌憚。',
+    allianceId: '魔道六宗',
+    relations: { 掩月宗: 'rival' },
   },
 
   // ──────────────────────────────────────────────
@@ -75,6 +95,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'rising',
     note: '溪國頂尖宗門，以煉丹術聞名，占據雲夢山東脈，隸屬天道盟，招收弟子條件最寬鬆。韓立結嬰後加入成為太上長老，憑其威名一躍成天南超級大宗。',
+    allianceId: '天道盟',
+    relations: { 古劍門: 'rival' },
   },
   {
     id: '古劍門',
@@ -83,6 +105,8 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '溪國天道盟三派中實力最強，以御劍術與太白劍訣著稱，占據雲夢山主山脈，試劍大會歷屆冠軍。後因大長老金老怪鬥敗韓立，排名降至落雲宗之下。',
+    allianceId: '天道盟',
+    relations: { 落雲宗: 'rival' },
   },
   {
     id: '天道盟',
@@ -273,6 +297,7 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '越國七大修仙門派之一，以道士為主體，飛行法器為「雪虹綾」。代表人物帶隊長老浮雲子（賭局中本可勝出卻輸給掩月宗，謀略略遜），弟子無子、無遊子師兄弟曾於燕翎堡與他派交流情報。屬越國七派『非正非邪』格局之一員，中游門派。〔人界·天南·越國〕〔中立〕',
+    allianceId: '越國七派',
   },
   {
     id: '化刀塢',
@@ -281,6 +306,7 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '越國七大修仙門派之一，以飛刀法器見長，弟子寒天涯為代表。曾與掩月宗共同派修士守衛靈石礦。越國七派之一，初期登場後記載漸少。注意：正字應作「塢」（化刀塢），既有資料誤作「坞/化刀坞」。〔人界·天南·越國〕〔中立〕',
+    allianceId: '越國七派',
   },
   {
     id: '天闕堡',
@@ -289,6 +315,7 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '越國七大修仙門派之一，擁有月陽寶珠並承擔越國驅霧職責。弟子封嶽惡名在外、余興（築基初期）曾任靈石礦駐守頭領。築基至結丹層級修士，越國七派之一。〔人界·天南·越國〕〔中立〕',
+    allianceId: '越國七派',
   },
   {
     id: '巨劍門',
@@ -297,6 +324,7 @@ export const CANON_FACTIONS: FactionState[] = [
     relationToPlayer: 0,
     status: 'stable',
     note: '越國七大修仙門派之一，武道型劍修宗門：弟子皆男性，背負一人高無鞘巨劍，外形煞氣十足，風格最鮮明。韓立早期曾殺死本派一名赤腳大漢弟子。枯崖山萬家祖先即出身此門。隨越國格局變動而式微。〔人界·天南·越國〕〔中立〕',
+    allianceId: '越國七派',
   },
   {
     id: '魔焰門',

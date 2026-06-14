@@ -1,6 +1,7 @@
 /** 地圖情報：從爬取的世界地圖反推「勢力地盤」與「地點連結」，供勢力榜與路線使用。 */
 import { WORLD_MAP } from '../data/worldMap';
 import type { WorldMapNode } from '../types';
+import { isMartialFaction } from './sect';
 
 const ID2NAME: Record<string, string> = {};
 const NAME2NODE: Record<string, WorldMapNode> = {};
@@ -61,6 +62,7 @@ export function factionTerritories(): FactionTerritory[] {
     for (const raw of n.factions) {
       const f = (raw || '').trim();
       if (!f) continue;
+      if (isMartialFaction(f)) continue; // 凡俗武林（七玄門等）不入修仙勢力榜與地塊佔領
       if (!map[f]) map[f] = { locations: new Set(), score: 0 };
       map[f].locations.add(n.name);
       map[f].score += weight;
